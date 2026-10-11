@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **all four implementation phases complete and audited**. Final implementation commit `30b0238` and CI `38101978789` pass; #10–#11 closed. Final main merge/push follows closure commit; user handoff documented in `docs/RELEASE.md`.
+- Current phase: **all four implementation phases complete and audited, merged and pushed to main**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -173,4 +173,4 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Enabled daily 18:00 America/Chicago schedule; SDK verifies six sequential versioned tasks, one concurrent run, serverless configuration and timeouts. Server normalizes max_retries=0 to omitted/None, which is the zero-retry default; verification handles this.
 - Executed walkthrough and all 29 tests, Ruff/compile, UTF-8/credential scan pass. Non-secret evidence committed under docs/evidence; source PDD unchanged.
 - Power BI data-ready notification delivered. Desktop report connection/creation, interactive dashboard rendering and Loom recording are explicitly unperformed external handoff actions. Final implementation release/report in docs/RELEASE.md.
-- Final closure commit then merge/push main; exact main merge can be read from Git history without relying on a self-referential changelog commit hash.
+- Closure commit `b87c5c5`; Phase 4 merged and pushed main as `31b70da`. Main contains all four audited phases; this final handoff entry records the merge without a self-referential commit hash.

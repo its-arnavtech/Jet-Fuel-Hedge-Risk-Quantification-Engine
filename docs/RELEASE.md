@@ -2,6 +2,8 @@
 
 All four implementation phases completed, each with a whole-repository audit, GitHub findings and fixes before advancing. Source PDD preserved. Phase branches use descriptive names; each audited phase is merged/pushed to main.
 
+Audited main merges: Phase 1 `92e2e83`, Phase 2 `c6e3749`, Phase 3 `2adadec`, Phase 4 `31b70da`. Final closure `b87c5c5`; implementation CI passed at `30b0238`.
+
 ## Delivered and verified
 
 - Actual EIA history: 4,213 daily rows, 874 weekly observations, zero quarantined current records; latest observation **2026-10-06**. Twelve immutable Bronze page events after initial capture and two refreshes; replay does not duplicate Silver business dates.
