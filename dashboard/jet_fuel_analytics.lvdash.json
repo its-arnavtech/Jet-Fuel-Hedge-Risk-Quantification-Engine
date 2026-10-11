@@ -1,0 +1,243 @@
+{
+  "datasets": [
+    {
+      "name": "price_trend",
+      "displayName": "EIA jet fuel price USD per gallon",
+      "queryLines": [
+        "SELECT price_date,jet_fuel_gal FROM workspace.jet_fuel_gold.v_price_correlation WHERE price_date>=date_add((SELECT max(price_date) FROM workspace.jet_fuel_gold.v_price_correlation),-365) ORDER BY price_date\n"
+      ]
+    },
+    {
+      "name": "route_cost",
+      "displayName": "Unhedged cost by synthetic route USD",
+      "queryLines": [
+        "SELECT route_id,sum(monthly_fuel_cost_usd) AS fuel_cost_usd FROM workspace.jet_fuel_gold.v_route_burn GROUP BY route_id ORDER BY fuel_cost_usd DESC\n"
+      ]
+    },
+    {
+      "name": "hedge_marks",
+      "displayName": "Synthetic hedge marks using matching underlying prices",
+      "queryLines": [
+        "SELECT position_id,underlying,current_spot_gal,unrealized_pnl_usd,hedge_status,as_of_date FROM workspace.jet_fuel_gold.v_hedge_mtm\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "overview",
+      "displayName": "Treasury overview",
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layout": [
+        {
+          "widget": {
+            "name": "context",
+            "multilineTextboxSpec": {
+              "lines": [
+                "# Jet Fuel Hedge Analytics\n\n",
+                "Actual EIA Gulf Coast prices; synthetic flight operations and hedge positions. Route costs are historical counterfactual hedge scenarios. Reference-carrier risk uses 1.5 billion gallons/year.\n"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 12,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "price_trend_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "price_trend",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "price_date",
+                      "expression": "`price_date`"
+                    },
+                    {
+                      "name": "jet_fuel_gal",
+                      "expression": "`jet_fuel_gal`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "price_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "jet_fuel_gal",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "USD / gallon"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "EIA jet fuel price USD per gallon"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "route_cost_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "route_cost",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "route_id",
+                      "expression": "`route_id`"
+                    },
+                    {
+                      "name": "fuel_cost_usd",
+                      "expression": "`fuel_cost_usd`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "route_id",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "fuel_cost_usd",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "USD"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Unhedged cost by synthetic route USD"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "hedge_marks_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "hedge_marks",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "position_id",
+                      "expression": "`position_id`"
+                    },
+                    {
+                      "name": "underlying",
+                      "expression": "`underlying`"
+                    },
+                    {
+                      "name": "current_spot_gal",
+                      "expression": "`current_spot_gal`"
+                    },
+                    {
+                      "name": "unrealized_pnl_usd",
+                      "expression": "`unrealized_pnl_usd`"
+                    },
+                    {
+                      "name": "hedge_status",
+                      "expression": "`hedge_status`"
+                    },
+                    {
+                      "name": "as_of_date",
+                      "expression": "`as_of_date`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "position_id",
+                    "displayName": "position id"
+                  },
+                  {
+                    "fieldName": "underlying",
+                    "displayName": "underlying"
+                  },
+                  {
+                    "fieldName": "current_spot_gal",
+                    "displayName": "current spot gal"
+                  },
+                  {
+                    "fieldName": "unrealized_pnl_usd",
+                    "displayName": "unrealized pnl usd"
+                  },
+                  {
+                    "fieldName": "hedge_status",
+                    "displayName": "hedge status"
+                  },
+                  {
+                    "fieldName": "as_of_date",
+                    "displayName": "as of date"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Synthetic hedge marks using matching underlying prices"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 7,
+            "width": 12,
+            "height": 5
+          }
+        }
+      ]
+    }
+  ]
+}

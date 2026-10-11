@@ -37,16 +37,16 @@ Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live
 
 ## Phase 2 — Operations and SQL analytics Gold
 
-Status: **not started; depends on Phase 1 gate**.
+Status: **complete and audited**. 520 Gold fact rows reconcile; issues #6–#7 resolved; 22 tests and CI pass. Initial Gold readiness notification delivered to user.
 
-- [ ] Deterministic BTS-style synthetic routes, individual flights, and explicitly synthetic futures/swap hedge positions; schemas missing from PDD supplied.
-- [ ] Route validity dates, canceled-flight policy, flight uniqueness, monthly aggregation and cost-time alignment.
-- [ ] All six analyses: route fuel burn, 90-calendar-day Pearson correlation, open-position mark-to-market, VaR/CVaR (schema/query ready for Phase 3 data), hedge sensitivity CROSS JOIN, fleet annual consumption summary.
-- [ ] Gold monthly route costs by **scenario** without double-counting flights/position notional; explicit annual reference-carrier versus synthetic-fleet consumption.
-- [ ] Instrument/underlying-aware marks with barrel-to-gallon conversion; reject unsupported option/collar valuation rather than pricing as futures.
-- [ ] Initial Databricks dashboard SQL for price trends, route ranking, hedge status and sensitivity.
-- [ ] Unity Catalog Gold tables, stable keys, date and route dimensions, freshness/source flags, validation metrics and Power BI data dictionary.
-- [ ] Whole-repo audit → GitHub issues → fixes → verified audit closure.
+- [x] Deterministic BTS-style synthetic routes, individual flights, and explicitly synthetic futures/swap hedge positions; schemas missing from PDD supplied.
+- [x] Route validity dates, canceled-flight policy, flight uniqueness, monthly aggregation and cost-time alignment.
+- [x] All six analyses: route burn, 90-day Pearson correlation, matching-underlying MTM, VaR/CVaR view ready for Phase 3, sensitivity grid, fleet summary.
+- [x] Gold monthly costs by scenario without duplicate source counts; reference carrier and synthetic fleet distinct.
+- [x] Underlying-aware marks and explicit unsupported/invalid valuation flags.
+- [x] Initial published dashboard and all dataset queries verified.
+- [x] Unity Catalog Gold, stable grains/dimensions, source lineage/quality and Power BI dictionary.
+- [x] Whole-repo audit → issues #6–#7 → fixes → verified audit closure.
 
 Exit evidence: fixture-backed query results, local/live SQL tests, row counts, reconciliation, and Gold quality results. Inform the user when this first Gold subset is actually deployed and ready, identifying which simulation tables await Phase 3.
 

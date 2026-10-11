@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 1 complete and audited; merging to main, then Phase 2**. No Gold data is deployed yet.
+- Current phase: **Phase 2 complete and audited; merging to main, then Phase 3**. Initial Gold is deployed and Power BI-ready; user notified. Simulation risk remains pending Phase 3.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Complete Phase 1 replay and latest CI verification; close issues #1–#5 with fix commits and actual deployment evidence.
-2. Update audit/plan status, commit closure evidence, merge/push Phase 1 to `main` as requested, then branch `phase-2-gold-analytics`.
-3. Implement synthetic operations and six corrected SQL analytics, deploy and validate initial Gold; notify user when that deployed Gold subset is Power BI-ready.
+1. Close Phase 2 issues #6–#7 with fix commit `5c1ce3f`, commit closure docs, merge/push main, branch `phase-3-gbm-risk`.
+2. Implement EWM calibration, deterministic partition-invariant GBM, full 100K distributed run, risk Gold, MLflow and charts; then whole-repo audit/issues/fixes gate.
+3. Update the existing dashboard ID with risk datasets and extend Power BI handoff when risk Gold is verified.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -57,6 +57,35 @@
 - Replay `76990162773186` SUCCESS. Bronze count remains exactly four; every daily and weekly price/metric still reconciles. Latest SUCCESS watermark: `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`.
 - Final code commit `dcc5389` passed locked CI on both Python versions (run `38099331383`). Nineteen local tests, Ruff and compilation pass.
 - Audit findings #1–#5 resolved with evidence in `docs/audits/phase-01.md`. Closing issues, committing this audit record, merging/pushing to main, then starting `phase-2-gold-analytics`.
+
+### 2026-10-10 — Phase 2 operations and analytics implementation
+
+- Phase 1 audit closure commit `104b681`; issues #1–#5 closed, phase branch pushed, main merged and pushed as `92e2e83`.
+- Started `phase-2-gold-analytics` per user naming preference.
+- Added deterministic eight-route / 8,395 scheduled-flight synthetic dataset for trailing 365 days to actual EIA as-of 2026-10-06. Cancellations are deterministic and excluded from operated fuel cost; all operations/positions explicitly synthetic.
+- Added immutable synthetic input staging, valid-time routes/flights/positions Silver, Gold date/month/route/scenario dimensions, monthly route scenario facts, and six versioned SQL analytics views.
+- Historical costs use as-of EIA marks with explicit observation date/age, no future data. Scenario hedges are hypothetical one-year forward fixed at window start. Three synthetic futures marks use matching jet/WTI/heating-oil prices; WTI converted from barrel to gallon.
+- Added live verifier for every monthly scenario row, linear hedge marks, fleet-share sum and 30-cell sensitivity grid. Risk query/schema prepared but no simulated rows fabricated.
+- Initial test run: 21 pass, one float-equality assertion corrected to tolerance comparison (240.00000000000003 vs 240); full rerun next.
+- Submitted Phase 2 run `1122134599329967`, immutable snapshot `f7a30adee7884b9c7e64bf738744f26837b31027aba92dc90a2fae0567847c46`. Cloud status and Gold readiness pending.
+
+### 2026-10-10 — Phase 2 audit fixes and initial dashboard
+
+- Pushed implementation baseline `052f194` to `phase-2-gold-analytics`.
+- Initial Gold run `1122134599329967` SUCCESS.
+- Filed audit [#6](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/6) for NULL/nonfinite hedge valuation inputs, [#7](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/7) for missing upstream publication lineage. Fixes implemented in SQL, Gold notebook/deployment and verifier.
+- Audit-fix run `498442545839233` SUCCESS. Full live reconciliation/adversarial position checks and dashboard dataset queries running.
+- Published initial AI/BI dashboard `01f1c50e22881d6ea243de94f87b3f46`: https://dbc-236f6036-39b4.cloud.databricks.com/dashboardsv3/01f1c50e22881d6ea243de94f87b3f46 . Three datasets: EIA trend, synthetic route ranking, synthetic position marks. Future updates must reuse this ID (`artifacts/dashboard.json` or `--dashboard-id`).
+- Added `docs/POWER_BI.md` with verified connection settings, model grains/relationships, synthetic flags, cost/P&L meanings and publication readiness checks.
+- 22 local tests pass; Ruff/compile checks pass. Audit closure, latest CI and main merge pending.
+
+### 2026-10-10 — Phase 2 audit closure and Gold readiness
+
+- `scripts/verify_phase2.py --expect-no-risk` passes: 520 route/month/scenario rows independently reconciled, three matching-underlying marks, six adversarial SQL positions, 30 sensitivity cells, fleet shares totaling 100%, and three dashboard dataset queries. Risk view correctly empty before simulation.
+- Quality reconciles 8,395 scheduled / 8,198 operated synthetic flights, 29,584,950 operated gallons, eight routes. Gold SUCCESS `ec1d1d13-bbef-4224-a8d5-3468266d230f` consumes current Silver SUCCESS `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`.
+- Fix commit `5c1ce3f` passes CI (run `38100003329`), 22 local tests, Ruff and compilation.
+- Notified user that initial Gold is Power BI-ready, with hostname/path/catalog/schema and synthetic-operation caveat. `docs/POWER_BI.md` updated with actual counts.
+- Issues #6–#7 ready for verified closure; merge to main and Phase 3 next.
 
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 
