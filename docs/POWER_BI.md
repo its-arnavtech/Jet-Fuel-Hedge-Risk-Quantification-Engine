@@ -1,6 +1,6 @@
 # Power BI connection and Gold data contract
 
-Initial Gold is **deployed and verified as of 2026-10-10**: 520 route/month/scenario rows, 8,198 operated synthetic flights, 29,584,950 gallons, three hedge marks, and 30 sensitivity cells. All costs reconcile with independent local calculations; invalid-position SQL checks pass. Simulated risk tables are delivered in Phase 3. Connection values:
+Analytics and simulation Gold are **deployed and verified as of 2026-10-10**: 520 route/month/scenario rows, 8,198 operated synthetic flights, 29,584,950 gallons, three hedge marks, 30 sensitivity cells and five 100K-path risk scenarios. Costs reconcile with independent local calculations; invalid-position SQL checks pass. Connection values:
 
 | Setting | Value |
 | --- | --- |
@@ -38,11 +38,23 @@ Historical route marks use the last available observation **at or before each fl
 ## Readiness and refresh
 
 Before refresh, require newest `jet_fuel_silver.pipeline_runs` and `jet_fuel_gold.pipeline_runs` entries to be SUCCESS; Gold `analytics_quality.pipeline_run_id` must match latest Gold, and `source_pipeline_run_id` must match latest Silver. A new Silver publication requires Gold rebuild. Run `scripts/verify_phase2.py` for a complete reconciliation before handing off changed data. Refresh order: ingestion/Silver → operations/Gold → simulation risk → Power BI Import refresh. Never treat an old quality table as evidence for an interrupted newer run.
-# Verified simulation Gold — Phase 3
+## Verified simulation Gold — Phase 3
 
 The 100,000-path serverless run `386315486361989` passed independent NumPy/SQL reconciliation. Simulation ID `e35d376c-398b-4bea-8823-4f085f036fd9`, MLflow `4c5cf414a2af4078a5ea0aa8c66186ef`: 500,000 cost rows, five hedge ratios, 53 fan steps including S0, 47.92 seconds measured simulation/tracking work (job startup excluded).
 
 Import `latest_simulation_run` as a one-row run selector; filter `risk_metrics`, `price_fan`, `cost_histogram`, and `simulation_quality` to that ID. These tables retain history. Check that `source_pipeline_run_id` matches current successful Silver publication before refreshing analysis. A prior run can remain available while a new one fails; it must be labeled stale if source changed.
 
 `risk_metrics` grain: simulation ID × hedge ratio. `price_fan`: run × weekly step. `cost_histogram`: run × ratio × occupied bin; sum `path_count`, not bin boundaries. `simulation_quality`: one row per completed candidate run. Import aggregate Gold rather than all raw paths. Incremental VaR is P95 minus mean; CVaR is the mean at/above absolute P95. Both are USD billions, not percentages. The 80% hedge has exactly 80% incremental VaR reduction under this common-path affine model; this identity does not establish a real-world optimal hedge.
+
+## Guarded Import starter and report layout
+
+Prefer `route_fuel_costs_current`, `risk_metrics_current`, `price_fan_current`, `cost_histogram_current` plus `reporting_readiness`. The views fail closed when publication/source/quality IDs do not agree. Before refreshing Import, query readiness and require both flags true; an empty view indicates unavailable data, not zero cost/risk. Power BI imports multiple tables separately, so schedule Import after the full job succeeds and avoid concurrent manual publishers. Source data can lag today's date; display `price_as_of` prominently.
+
+1. Create a blank query, paste `powerbi/GoldTable.pq` in Advanced Editor, and name it `GoldTable`. It uses the documented AWS OAuth entry point `DatabricksMultiCloud.Catalogs`; authenticate through the connector dialog. For PAT-based access, use the Azure Databricks connector's generated source and substitute that source in the function. Do not embed credentials in M.
+2. Add queries such as `= GoldTable("risk_metrics_current")`. Import the current facts, readiness and `dim_route`, `dim_month`, `dim_hedge_scenario`. Rename the route fact **Route Costs**, risk fact **Risk Metrics**, and scenario dimension **Hedge Scenario** to match the DAX starter.
+3. Connect dimensions one-to-many, single direction. Scenario ID relates to route fact. For risk, relate `Hedge Scenario.hedge_ratio` to `Risk Metrics.hedge_ratio` (unique in both current tables); keep filtering from dimension to fact. Do not create bidirectional fact-to-fact relationships.
+4. Add measures from `powerbi/measures.dax` individually. Use a single-select scenario slicer. Mean/P95/VaR/CVaR return blank when several scenarios are selected; do not sum percentiles. Independent gallons/unhedged totals explicitly remove scenario filters to avoid fivefold duplication.
+5. Page 1: source date/readiness cards, historical price/correlation trend, route costs and MTM table. Page 2: mean/P95/VaR/CVaR cards, coverage comparison, fan lines/bands and histogram. Page 3: sensitivity matrix (shock × coverage), synthetic fleet mix and assumptions text.
+
+The Power Query source shape and DAX column names were checked against official documentation/live schemas. Power BI Desktop parsing, authentication and report rendering have not been executed by the agent; connect/import in Desktop as the handoff validation. The published Databricks definition and dataset queries are separately verified.
 

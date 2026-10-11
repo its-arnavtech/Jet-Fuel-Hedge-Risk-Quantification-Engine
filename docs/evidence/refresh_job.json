@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "job_id": 1025825966695931,
+  "schedule": {
+    "pause_status": "UNPAUSED",
+    "quartz_cron_expression": "0 0 18 * * ?",
+    "timezone_id": "America/Chicago"
+  },
+  "max_concurrent_runs": 1,
+  "task_keys": [
+    "refresh_capture",
+    "phase1_pipeline",
+    "refresh_operations",
+    "phase2_gold",
+    "phase3_risk",
+    "reporting_contract"
+  ],
+  "verified_run_id": 1070960481606061,
+  "run_duration_ms": 209618,
+  "tasks": [
+    {
+      "task_key": "phase2_gold",
+      "result": "SUCCESS",
+      "execution_duration_ms": 61000
+    },
+    {
+      "task_key": "refresh_operations",
+      "result": "SUCCESS",
+      "execution_duration_ms": 7000
+    },
+    {
+      "task_key": "phase3_risk",
+      "result": "SUCCESS",
+      "execution_duration_ms": 50000
+    },
+    {
+      "task_key": "reporting_contract",
+      "result": "SUCCESS",
+      "execution_duration_ms": 17000
+    },
+    {
+      "task_key": "refresh_capture",
+      "result": "SUCCESS",
+      "execution_duration_ms": 16000
+    },
+    {
+      "task_key": "phase1_pipeline",
+      "result": "SUCCESS",
+      "execution_duration_ms": 41000
+    }
+  ],
+  "source_docx_sha256": "ba9bd4333d4c2ee57c55279fde5cf4804f559f5968ae5705a559f7d737be8988",
+  "dashboard_datasets": 9
+}

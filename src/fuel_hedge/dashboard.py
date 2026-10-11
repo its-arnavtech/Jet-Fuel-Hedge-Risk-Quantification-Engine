@@ -45,12 +45,11 @@ def dashboard_definition(catalog: str, include_risk: bool = False) -> dict:
            ['position_id','underlying','current_spot_gal','unrealized_pnl_usd','hedge_status','as_of_date'],
            'table',0,7,width=12)
     if include_risk:
-        latest=f'(SELECT simulation_run_id FROM {gold}.latest_simulation_run)'
         widget('risk_metrics','Reference carrier risk USD billions',
-               f'SELECT hedge_ratio,mean_cost_b,p95_cost_b,var_95_b,cvar_95_b,var_reduction_pct FROM {gold}.risk_metrics WHERE simulation_run_id=(SELECT simulation_run_id FROM {gold}.latest_simulation_run)',
+               f'SELECT hedge_ratio,mean_cost_b,p95_cost_b,var_95_b,cvar_95_b,var_reduction_pct FROM {gold}.risk_metrics_current ORDER BY hedge_ratio',
                ['hedge_ratio','mean_cost_b','p95_cost_b','var_95_b','cvar_95_b','var_reduction_pct'],'table',0,12,width=12)
         widget('price_fan','GBM price fan: 5 / 25 / 50 / 75 / 95 percentiles',
-               f'SELECT time_years,p05_price_gal,p25_price_gal,p50_price_gal,p75_price_gal,p95_price_gal FROM {gold}.price_fan WHERE simulation_run_id={latest} ORDER BY step',
+               f'SELECT time_years,p05_price_gal,p25_price_gal,p50_price_gal,p75_price_gal,p95_price_gal FROM {gold}.price_fan_current ORDER BY step',
                ['time_years','p05_price_gal','p25_price_gal','p50_price_gal','p75_price_gal','p95_price_gal'],
                'line',0,17,encodings={
                    'x':{'fieldName':'time_years','scale':{'type':'quantitative'},'axis':{'title':'Years'}},
@@ -58,13 +57,13 @@ def dashboard_definition(catalog: str, include_risk: bool = False) -> dict:
                         'scale':{'type':'quantitative'},'axis':{'title':'USD / gallon'}},
                })
         widget('cost_histogram','Unhedged cost histogram (latest successful run)',
-               f'SELECT (bin_lower_cost_b+bin_upper_cost_b)/2 AS cost_b,path_count FROM {gold}.cost_histogram WHERE simulation_run_id={latest} AND hedge_ratio=0 ORDER BY bin',
+               f'SELECT (bin_lower_cost_b+bin_upper_cost_b)/2 AS cost_b,path_count FROM {gold}.cost_histogram_current WHERE hedge_ratio=0 ORDER BY bin',
                ['cost_b','path_count'],'bar',6,17,encodings={
                    'x':{'fieldName':'cost_b','scale':{'type':'quantitative'},'axis':{'title':'USD billions'}},
                    'y':{'fieldName':'path_count','scale':{'type':'quantitative'}},
                })
         widget('hedge_effectiveness','Incremental VaR reduction by hedge ratio',
-               f'SELECT hedge_ratio,var_reduction_pct FROM {gold}.risk_metrics WHERE simulation_run_id={latest} ORDER BY hedge_ratio',
+               f'SELECT hedge_ratio,var_reduction_pct FROM {gold}.risk_metrics_current ORDER BY hedge_ratio',
                ['hedge_ratio','var_reduction_pct'],'bar',0,22,encodings={
                    'x':{'fieldName':'hedge_ratio','scale':{'type':'categorical'}},
                    'y':{'fieldName':'var_reduction_pct','scale':{'type':'quantitative'},'axis':{'title':'Reduction %'}},
@@ -76,5 +75,14 @@ def dashboard_definition(catalog: str, include_risk: bool = False) -> dict:
                    'y':{'fieldName':'hedge_ratio','scale':{'type':'categorical'}},
                    'color':{'fieldName':'hedged_cost_b','scale':{'type':'quantitative','colorRamp':{'mode':'scheme','scheme':'viridis'}}},
                })
+        widget('reporting_readiness','Publication status and data watermark',
+               f'SELECT price_as_of,n_paths,simulation_run_id,simulation_completed_at,analytics_ready,risk_ready FROM {gold}.reporting_readiness',
+               ['price_as_of','n_paths','simulation_run_id','simulation_completed_at','analytics_ready','risk_ready'],
+               'table',0,27,width=12)
+        # Non-risk datasets also fail closed while analytics publication is incomplete.
+        for dataset in datasets:
+            if dataset['name'] in {'price_trend','route_cost','hedge_marks','sensitivity'}:
+                original=''.join(dataset['queryLines']).strip()
+                dataset['queryLines']=[f'SELECT * FROM ({original}) q WHERE (SELECT analytics_ready FROM {gold}.reporting_readiness)\n']
     return {'datasets':datasets,'pages':[{'name':'overview','displayName':'Treasury overview',
                                           'pageType':'PAGE_TYPE_CANVAS','layout':layout}]}

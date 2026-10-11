@@ -1,6 +1,7 @@
 # Jet fuel hedge engine implementation plan
 
 Last updated: 2026-10-10 (America/Chicago).
+
 Source: `pdd_airline_fuel_hedge_engine.docx`, v1.0, sections 1–10 and appendices A–B, read in full including all six SQL examples, schema definitions, equations, code, and environment instructions. No substantive footnotes, endnotes, or comments were present.
 
 ## Objective and delivery contract
@@ -52,7 +53,7 @@ Exit evidence: fixture-backed query results, local/live SQL tests, row counts, r
 
 ## Phase 3 — Distributed GBM, risk Gold, and experiment tracking
 
-Status: **complete and audited; #8�#9 closed, full 100K run and CI pass**. Phase 2 merged to main as `c6e3749`.
+Status: **complete and audited; #8–#9 closed, full 100K run and CI pass**. Phase 2 merged to main as `c6e3749`.
 
 - [x] EWM lambda 0.94 on regular weekly log returns; annual variance and drift correction; latest chronological positive S0; record calibration window and sample count.
 - [x] Deterministic Box–Muller normal generation; explicit base seed/path ID; batched Spark DataFrame/mapInPandas execution, supported on serverless, bounded per-worker memory.
@@ -70,16 +71,16 @@ Exit evidence: reproducible full run, five ratio results and corresponding raw c
 
 ## Phase 4 — Power BI, walkthrough, and final release
 
-Status: **not started; depends on Phase 3 gate**.
+Status: **complete and audited; #10–#11 resolved, final refresh/verifiers/CI pass**.
 
-- [ ] Reproducible notebook walkthrough from ingestion through calibrated risk outputs and charts; explicit source and modeling limitations.
-- [ ] Power BI handoff: verified workspace hostname, SQL warehouse HTTP path, catalog/schema and Gold tables; OAuth or supported workspace token auth, Import-first approach for quotas, refresh instructions.
-- [ ] Power Query starter, schema/relationships, DAX measure guidance; avoid summing percentiles or duplicating monthly consumption across scenarios.
-- [ ] README architecture, GBM derivation, metric definitions, installation/deployment, actual findings, provenance, troubleshooting and runbook.
-- [ ] Configure bounded daily source refresh/orchestration with a project secret scope (if supported); verify incremental revision replay and failure visibility. Preserve manual local capture/staging fallback for restricted outbound networking.
-- [ ] Five-minute demo script and screen-recording checklist; Loom video itself needs user recording/account access if unavailable.
-- [ ] Final whole-repo audit → GitHub issues → fixes → verified audit closure.
-- [ ] Completion report distinguishes locally tested, deployed, externally validated, and outstanding user actions. Mark complete only when required delivery work is finished.
+- [x] Reproducible notebook walkthrough from ingestion through calibrated risk outputs and charts; explicit source and modeling limitations.
+- [x] Power BI handoff: verified workspace hostname, SQL warehouse HTTP path, catalog/schema and Gold tables; OAuth or supported workspace token auth, Import-first approach for quotas, refresh instructions.
+- [x] Power Query starter, schema/relationships, DAX measure guidance; avoid summing percentiles or duplicating monthly consumption across scenarios.
+- [x] README architecture, GBM derivation, metric definitions, installation/deployment, actual findings, provenance, troubleshooting and runbook.
+- [x] Configure bounded daily source refresh/orchestration with a project secret scope (if supported); verify incremental revision replay and failure visibility. Preserve manual local capture/staging fallback for restricted outbound networking.
+- [x] Five-minute demo script and screen-recording checklist; Loom video itself needs user recording/account access if unavailable.
+- [x] Final whole-repo audit → GitHub issues → fixes → verified audit closure.
+- [x] Completion report distinguishes locally tested, deployed, externally validated, and outstanding user actions. Mark complete only when required delivery work is finished.
 
 ## Requirements coverage
 
@@ -101,7 +102,7 @@ Status: **not started; depends on Phase 3 gate**.
 
 ## External prerequisites and current blockers
 
-- Databricks workspace credentials and warehouse are configured locally; all three phase deployments and live verification succeeded.
+- Databricks workspace credentials and warehouse are configured locally; all four phases and live refresh verification succeeded.
 - EIA key configured locally; actual history captured. Synthetic operations are explicitly labeled.
 - GitHub CLI works outside sandbox; incremental commits/pushes authorized. Connector remains inaccessible. Use host-context CLI for audit issues.
 - Native DOCX rendering is unavailable in this Windows runtime: no bundled LibreOffice supplied; text and OOXML contents were fully inspected. Source DOCX is unchanged; no generated DOCX is a deliverable.
@@ -114,3 +115,5 @@ Status: **not started; depends on Phase 3 gate**.
 - https://docs.databricks.com/aws/en/partners/bi/power-bi/
 - https://learn.microsoft.com/en-us/power-query/connectors/databricks
 - https://www.eia.gov/opendata/browser/petroleum/pri/spt
+
+Implementation release: `docs/RELEASE.md`. User handoff actions: connect/build Power BI report, record/upload the prepared Loom walkthrough. No unresolved implementation blocker.

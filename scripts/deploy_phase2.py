@@ -13,25 +13,10 @@ from fuel_hedge.databricks import ensure_project_schemas, upload_immutable, work
 from fuel_hedge.operations import synthetic_operations
 
 
-def main():
-    from databricks.sdk.service import jobs, workspace
-    root = Path(__file__).resolve().parents[1]
-    load_env(root / '.env')
-    settings = Settings.from_env()
-    client = workspace_client(settings)
-    ensure_project_schemas(client, settings.catalog)
-    as_of = date.fromisoformat(pd.read_csv(root / 'artifacts/silver/fuel_prices.csv').price_date.max())
-    data = synthetic_operations(as_of)
-    encoded = {name: (frame.to_json(orient='records', lines=True) + '\n').encode()
-               for name, frame in data.items()}
-    snapshot = hashlib.sha256(b''.join(encoded[name] for name in sorted(encoded))).hexdigest()
-    folder = f'/Volumes/{settings.catalog}/jet_fuel_bronze/landing/operations/{snapshot}'
-    client.files.create_directory(folder)
-    for name, content in encoded.items():
-        upload_immutable(client, f'{folder}/{name}.jsonl', content)
-    source = (root / 'notebooks/phase2_gold.py').read_text()
-    for sql in sorted((root / 'sql').glob('0*.sql')):
-        source += '\n# COMMAND ----------\nspark.sql(' + repr(sql.read_text()) + ')\n'
+def build_source(root):
+    source = (root / 'notebooks/phase2_gold.py').read_text(encoding='utf-8')
+    for sql in sorted((root / 'sql').glob('0[1-6]_*.sql')):
+        source += '\n# COMMAND ----------\nspark.sql(' + repr(sql.read_text(encoding='utf-8')) + ')\n'
     source += '''
 # COMMAND ----------
 spark.sql(f"""CREATE OR REPLACE TABLE jet_fuel_gold.analytics_quality USING DELTA AS
@@ -57,6 +42,26 @@ if (source_latest.status!='SUCCESS' or source_latest.pipeline_run_id!=source_pip
 spark.sql(f"UPDATE jet_fuel_gold.pipeline_runs SET status='SUCCESS',completed_at=current_timestamp() WHERE pipeline_run_id='{gold_run_id}'")
 display(spark.table('jet_fuel_gold.analytics_quality'))
 '''
+    return source
+
+
+def main():
+    from databricks.sdk.service import jobs, workspace
+    root = Path(__file__).resolve().parents[1]
+    load_env(root / '.env')
+    settings = Settings.from_env()
+    client = workspace_client(settings)
+    ensure_project_schemas(client, settings.catalog)
+    as_of = date.fromisoformat(pd.read_csv(root / 'artifacts/silver/fuel_prices.csv').price_date.max())
+    data = synthetic_operations(as_of)
+    encoded = {name: (frame.to_json(orient='records', lines=True) + '\n').encode()
+               for name, frame in data.items()}
+    snapshot = hashlib.sha256(b''.join(encoded[name] for name in sorted(encoded))).hexdigest()
+    folder = f'/Volumes/{settings.catalog}/jet_fuel_bronze/landing/operations/{snapshot}'
+    client.files.create_directory(folder)
+    for name, content in encoded.items():
+        upload_immutable(client, f'{folder}/{name}.jsonl', content)
+    source = build_source(root)
     remote = f'/Users/{client.current_user.me().user_name}/jet-fuel-hedge-engine/phase2_gold'
     client.workspace.import_(path=remote, content=base64.b64encode(source.encode()).decode(),
                              format=workspace.ImportFormat.SOURCE, language=workspace.Language.PYTHON,

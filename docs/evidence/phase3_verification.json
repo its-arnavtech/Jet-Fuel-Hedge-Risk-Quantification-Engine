@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "simulation_run_id": "e35ce811-826d-45a9-bfa2-6b6750a7e1dd",
+  "n_paths": 100000,
+  "cost_rows": 500000,
+  "fan_steps": 53,
+  "sample_paths_checked": 5,
+  "duration_seconds": 29.265758851999976,
+  "mlflow_run_id": "e7df68a9556543609e00b60cb61b9f90",
+  "source_pipeline_run_id": "5a0bd934-5f04-4458-ba77-995fcef3c61f",
+  "calibration": {
+    "mu": 0.9291402579710721,
+    "sigma": 0.6050536840108929,
+    "decay": 0.94,
+    "n_returns": 52,
+    "calibration_start": "2025-10-03",
+    "calibration_end": "2026-10-02",
+    "weekly_log_mean": 0.014347986109682603,
+    "weekly_log_variance": 0.007040191548752949
+  },
+  "metrics": [
+    {
+      "hedge_ratio": 0.0,
+      "mean_cost_b": 10.82779623198081,
+      "p50_cost_b": 9.924484553422555,
+      "p95_cost_b": 19.283000195002483,
+      "var_95_b": 8.455203963021672,
+      "cvar_95_b": 23.457696235592742,
+      "n_paths": 100000,
+      "var_reduction_pct": 0.0
+    },
+    {
+      "hedge_ratio": 0.2,
+      "mean_cost_b": 10.017997100047653,
+      "p50_cost_b": 9.29534775720105,
+      "p95_cost_b": 16.782160270464992,
+      "var_95_b": 6.764163170417339,
+      "cvar_95_b": 20.1219171029372,
+      "n_paths": 100000,
+      "var_reduction_pct": 19.999999999999986
+    },
+    {
+      "hedge_ratio": 0.4,
+      "mean_cost_b": 9.208197968114495,
+      "p50_cost_b": 8.666210960979544,
+      "p95_cost_b": 14.281320345927499,
+      "var_95_b": 5.073122377813004,
+      "cvar_95_b": 16.786137970281654,
+      "n_paths": 100000,
+      "var_reduction_pct": 39.99999999999999
+    },
+    {
+      "hedge_ratio": 0.6,
+      "mean_cost_b": 8.398398836181338,
+      "p50_cost_b": 8.037074164758035,
+      "p95_cost_b": 11.780480421390008,
+      "var_95_b": 3.3820815852086703,
+      "cvar_95_b": 13.450358837626109,
+      "n_paths": 100000,
+      "var_reduction_pct": 59.999999999999986
+    },
+    {
+      "hedge_ratio": 0.8,
+      "mean_cost_b": 7.588599704248181,
+      "p50_cost_b": 7.40793736853653,
+      "p95_cost_b": 9.279640496852513,
+      "var_95_b": 1.6910407926043325,
+      "cvar_95_b": 10.114579704970565,
+      "n_paths": 100000,
+      "var_reduction_pct": 80.00000000000001
+    }
+  ]
+}

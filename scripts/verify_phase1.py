@@ -25,6 +25,10 @@ def query(client, warehouse_id, statement):
         result = client.statement_execution.get_statement(result.statement_id)
     if result.status.state.value != "SUCCEEDED":
         raise RuntimeError(f"SQL verification failed: {result.status.error}")
+    if result.manifest and result.manifest.truncated:
+        raise ValueError('SQL result was truncated; verification requires complete results')
+    if result.result is None or result.manifest is None or result.manifest.schema is None:
+        return pd.DataFrame()  # Successful DDL has no tabular result.
     columns = [c.name for c in result.manifest.schema.columns]
     data = list(result.result.data_array or [])
     chunk = result.result.next_chunk_index

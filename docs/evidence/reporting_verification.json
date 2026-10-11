@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "readiness": [
+    {
+      "source_pipeline_run_id": "5a0bd934-5f04-4458-ba77-995fcef3c61f",
+      "analytics_pipeline_run_id": "b5873e33-8588-49ba-9a07-071162fcd4f1",
+      "simulation_run_id": "e35ce811-826d-45a9-bfa2-6b6750a7e1dd",
+      "price_as_of": "2026-10-06",
+      "n_paths": "100000",
+      "simulation_completed_at": "2026-10-11T01:21:40.875Z",
+      "analytics_ready": "true",
+      "risk_ready": "true"
+    }
+  ],
+  "counts": {
+    "route_fuel_costs_current": 520,
+    "risk_metrics_current": 5,
+    "price_fan_current": 53
+  },
+  "dashboard_rows": {
+    "price_trend": 250,
+    "route_cost": 8,
+    "hedge_marks": 3,
+    "risk_metrics": 5,
+    "price_fan": 53,
+    "cost_histogram": 47,
+    "hedge_effectiveness": 5,
+    "sensitivity": 30,
+    "reporting_readiness": 1
+  },
+  "adversarial_cases": [
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "true"
+    },
+    {
+      "source_status": "STARTED",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S2",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "STARTED",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 499999,
+      "risk_ready": "false"
+    }
+  ]
+}
