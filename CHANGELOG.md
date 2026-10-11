@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 2 implementation and live checks** on `phase-2-gold-analytics`. Phase 1 complete/audited and merged to main (`92e2e83`). Initial Gold job submitted; readiness not yet verified.
+- Current phase: **Phase 2 complete and audited; merging to main, then Phase 3**. Initial Gold is deployed and Power BI-ready; user notified. Simulation risk remains pending Phase 3.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Check Phase 2 Databricks run `1122134599329967`; run `scripts/verify_phase2.py --expect-no-risk` after SUCCESS and fix any diagnostics.
-2. Finish whole-repo Phase 2 audit, file findings, implement and verify fixes, close issues, merge/push to main.
-3. Notify user when initial Gold passes checks, then start descriptive Phase 3 branch after the audit gate.
+1. Close Phase 2 issues #6–#7 with fix commit `5c1ce3f`, commit closure docs, merge/push main, branch `phase-3-gbm-risk`.
+2. Implement EWM calibration, deterministic partition-invariant GBM, full 100K distributed run, risk Gold, MLflow and charts; then whole-repo audit/issues/fixes gate.
+3. Update the existing dashboard ID with risk datasets and extend Power BI handoff when risk Gold is verified.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -78,6 +78,14 @@
 - Published initial AI/BI dashboard `01f1c50e22881d6ea243de94f87b3f46`: https://dbc-236f6036-39b4.cloud.databricks.com/dashboardsv3/01f1c50e22881d6ea243de94f87b3f46 . Three datasets: EIA trend, synthetic route ranking, synthetic position marks. Future updates must reuse this ID (`artifacts/dashboard.json` or `--dashboard-id`).
 - Added `docs/POWER_BI.md` with verified connection settings, model grains/relationships, synthetic flags, cost/P&L meanings and publication readiness checks.
 - 22 local tests pass; Ruff/compile checks pass. Audit closure, latest CI and main merge pending.
+
+### 2026-10-10 — Phase 2 audit closure and Gold readiness
+
+- `scripts/verify_phase2.py --expect-no-risk` passes: 520 route/month/scenario rows independently reconciled, three matching-underlying marks, six adversarial SQL positions, 30 sensitivity cells, fleet shares totaling 100%, and three dashboard dataset queries. Risk view correctly empty before simulation.
+- Quality reconciles 8,395 scheduled / 8,198 operated synthetic flights, 29,584,950 operated gallons, eight routes. Gold SUCCESS `ec1d1d13-bbef-4224-a8d5-3468266d230f` consumes current Silver SUCCESS `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`.
+- Fix commit `5c1ce3f` passes CI (run `38100003329`), 22 local tests, Ruff and compilation.
+- Notified user that initial Gold is Power BI-ready, with hostname/path/catalog/schema and synthetic-operation caveat. `docs/POWER_BI.md` updated with actual counts.
+- Issues #6–#7 ready for verified closure; merge to main and Phase 3 next.
 
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 

@@ -1,6 +1,6 @@
 # Phase 2 repository audit
 
-Date: 2026-10-10. Scope: entire repository including Phase 1 regression checks, operations data, six SQL analyses, publication/lineage, deployment scripts, tests, docs and CI. Status: in progress.
+Date: 2026-10-10. Scope: entire repository including Phase 1 regression checks, operations data, six SQL analyses, publication/lineage, deployment scripts, tests, docs and CI. **Status: passed.**
 
 ## A1 — Linear mark query misclassifies null position inputs
 
@@ -8,7 +8,7 @@ Severity: medium. `sql/03_hedge_mtm.sql` uses `NOT IN` and comparisons without N
 
 Expected: invalid/unsupported positions are explicitly flagged; no linear valuation status for null or nonfinite inputs. Fix both NULL semantics and validity guards, then validate adversarial SQL fixtures alongside correct real-data marks.
 
-GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/6. Resolution: explicit NULL/nonfinite guards implemented; live adversarial SQL fixture and correct mark reconciliation running.
+GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/6. Resolution: explicit NULL/nonfinite guards; six live adversarial SQL cases pass, all three valid marks reconcile. Closed.
 
 ## A2 — Gold readiness does not record the consumed Silver publication
 
@@ -16,7 +16,7 @@ Severity: medium. Phase 2 checks Silver status at start, but analytics quality o
 
 Expected: record consumed Silver run ID, check unchanged SUCCESS before declaring Gold success, and require verifier/Power BI readiness checks to match current upstream publication. Multi-table Gold is guarded by its own registry but also needs source lineage.
 
-GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/7. Resolution: consumed Silver watermark recorded, rechecked before SUCCESS and compared in verifier. Live fixed run SUCCESS; final reconciliation running.
+GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/7. Resolution: consumed Silver watermark recorded, rechecked before SUCCESS and matched by live verifier. Closed.
 
 ## Coverage and pending checks
 
@@ -32,4 +32,4 @@ GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engi
 
 ## Closure
 
-Pending issues, fixes, adversarial SQL checks, Gold data reconciliation, publication watermark, CI and main merge.
+Fix commit `5c1ce3f`. Initial/fixed cloud runs SUCCESS. Live verification passes: all 520 fact rows/keys/costs, three marks, six adversarial positions, 30 sensitivity cells, fleet shares sum to 100, and all three dashboard dataset queries. 8,395 scheduled / 8,198 operated flights reconcile to 29,584,950 gallons at scenario zero. Risk view is correctly empty before Phase 3. Gold watermark `ec1d1d13-bbef-4224-a8d5-3468266d230f` consumes current successful Silver `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`. Twenty-two local tests/Ruff/compile pass; locked CI passes both Python versions ([run](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38100003329)). Initial Gold readiness delivered to user. Main merge follows this closure.

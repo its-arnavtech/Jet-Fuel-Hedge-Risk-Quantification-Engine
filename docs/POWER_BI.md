@@ -1,6 +1,6 @@
 # Power BI connection and Gold data contract
 
-Initial Gold readiness is pending Phase 2 live verification. Simulated risk tables are delivered in Phase 3. These connection values were discovered from the user's Free Edition warehouse on 2026-10-10:
+Initial Gold is **deployed and verified as of 2026-10-10**: 520 route/month/scenario rows, 8,198 operated synthetic flights, 29,584,950 gallons, three hedge marks, and 30 sensitivity cells. All costs reconcile with independent local calculations; invalid-position SQL checks pass. Simulated risk tables are delivered in Phase 3. Connection values:
 
 | Setting | Value |
 | --- | --- |
