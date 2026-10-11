@@ -2,7 +2,7 @@
 
 Actual EIA prices → revision-aware medallion data → synthetic route analytics → 100,000 distributed GBM paths → Power BI-ready hedge risk on **Databricks Free Edition**.
 
-The complete [PDD](pdd_airline_fuel_hedge_engine.docx) was reviewed before implementation. Phases 1–3 are audited and merged to main; final reporting/refresh packaging is being verified. Start with the [plan](docs/PLAN.md), [handoff changelog](CHANGELOG.md), [PDD corrections](docs/DECISIONS.md), [audits](docs/audits) and [runbook](docs/RUNBOOK.md). Phase findings are filed on GitHub and resolved before advancing.
+The complete [PDD](pdd_airline_fuel_hedge_engine.docx) was reviewed before implementation. All four implementation phases are complete and audited; see the [release and handoff](docs/RELEASE.md). Start with the [plan](docs/PLAN.md), [handoff changelog](CHANGELOG.md), [PDD corrections](docs/DECISIONS.md), [audits](docs/audits) and [runbook](docs/RUNBOOK.md). Phase findings are filed on GitHub and resolved before advancing.
 
 ## Architecture and provenance
 

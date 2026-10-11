@@ -71,52 +71,38 @@ Exit evidence: reproducible full run, five ratio results and corresponding raw c
 
 ## Phase 4 — Power BI, walkthrough, and final release
 
-Status: **not started; depends on Phase 3 gate**.
+Status: **complete and audited; #10–#11 resolved, final refresh/verifiers/CI pass**.
 
-- [ ] Reproducible notebook walkthrough from ingestion through calibrated risk outputs and charts; explicit source and modeling limitations.
-- [ ] Power BI handoff: verified workspace hostname, SQL warehouse HTTP path, catalog/schema and Gold tables; OAuth or supported workspace token auth, Import-first approach for quotas, refresh instructions.
-- [ ] Power Query starter, schema/relationships, DAX measure guidance; avoid summing percentiles or duplicating monthly consumption across scenarios.
-- [ ] README architecture, GBM derivation, metric definitions, installation/deployment, actual findings, provenance, troubleshooting and runbook.
-- [ ] Configure bounded daily source refresh/orchestration with a project secret scope (if supported); verify incremental revision replay and failure visibility. Preserve manual local capture/staging fallback for restricted outbound networking.
-- [ ] Five-minute demo script and screen-recording checklist; Loom video itself needs user recording/account access if unavailable.
-- [ ] Final whole-repo audit → GitHub issues → fixes → verified audit closure.
-- [ ] Completion report distinguishes locally tested, deployed, externally validated, and outstanding user actions. Mark complete only when required delivery work is finished.
+- [x] Reproducible notebook walkthrough from ingestion through calibrated risk outputs and charts; explicit source and modeling limitations.
+- [x] Power BI handoff: verified workspace hostname, SQL warehouse HTTP path, catalog/schema and Gold tables; OAuth or supported workspace token auth, Import-first approach for quotas, refresh instructions.
+- [x] Power Query starter, schema/relationships, DAX measure guidance; avoid summing percentiles or duplicating monthly consumption across scenarios.
+- [x] README architecture, GBM derivation, metric definitions, installation/deployment, actual findings, provenance, troubleshooting and runbook.
+- [x] Configure bounded daily source refresh/orchestration with a project secret scope (if supported); verify incremental revision replay and failure visibility. Preserve manual local capture/staging fallback for restricted outbound networking.
+- [x] Five-minute demo script and screen-recording checklist; Loom video itself needs user recording/account access if unavailable.
+- [x] Final whole-repo audit → GitHub issues → fixes → verified audit closure.
+- [x] Completion report distinguishes locally tested, deployed, externally validated, and outstanding user actions. Mark complete only when required delivery work is finished.
 
 ## Requirements coverage
 
 | PDD source | Deliverables | Phase |
-
 | --- | --- | --- |
-
 | 1–3 objectives and airline context | Treasury costs, assumptions, provenance, reference carrier | 1–4 |
-
 | 4 architecture and simulation flow | Bronze/Silver/Gold, serverless pipeline, distributed risk | 1–3 |
-
 | 5.1 prices | Raw events + enriched Silver fuel prices | 1 |
-
 | 5.2 routes and missing flights | Valid-time routes and synthetic flight facts | 2 |
-
 | 5.3 hedge positions | Positions, supported instrument valuation, source flags | 2 |
-
 | 5.4 route costs | Monthly scenario fact, route/date dimensions | 2 |
-
 | 5.5 risk metrics and missing raw paths | Run registry, raw distribution, aggregate risk | 3 |
-
 | 6.1–6.6 SQL | Six corrected, testable queries | 2–3 |
-
 | 7.1–7.3 methodology | EWM calibration, deterministic GBM, correct tails | 3 |
-
 | 8 and Appendix B infrastructure | Free Edition serverless adaptation, secrets, deployment | 1–4 |
-
 | 9 roadmap and 10 packaging | Walkthrough, charts, README, demo script | 4 |
-
 | Appendix A sources | EIA actual prices; synthetic BTS-style ops clearly labeled | 1–2 |
-
 | User addition 2026-10-10 | Live Free Edition medallion data and Power BI-ready Gold notification | 1–4 |
 
 ## External prerequisites and current blockers
 
-- Databricks workspace credentials and warehouse are configured locally; all three phase deployments and live verification succeeded.
+- Databricks workspace credentials and warehouse are configured locally; all four phases and live refresh verification succeeded.
 - EIA key configured locally; actual history captured. Synthetic operations are explicitly labeled.
 - GitHub CLI works outside sandbox; incremental commits/pushes authorized. Connector remains inaccessible. Use host-context CLI for audit issues.
 - Native DOCX rendering is unavailable in this Windows runtime: no bundled LibreOffice supplied; text and OOXML contents were fully inspected. Source DOCX is unchanged; no generated DOCX is a deliverable.
@@ -129,3 +115,5 @@ Status: **not started; depends on Phase 3 gate**.
 - https://docs.databricks.com/aws/en/partners/bi/power-bi/
 - https://learn.microsoft.com/en-us/power-query/connectors/databricks
 - https://www.eia.gov/opendata/browser/petroleum/pri/spt
+
+Implementation release: `docs/RELEASE.md`. User handoff actions: connect/build Power BI report, record/upload the prepared Loom walkthrough. No unresolved implementation blocker.

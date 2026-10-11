@@ -1,6 +1,6 @@
 # Phase 4 whole-repository audit
 
-Status: implementation/live checks passed; release CI and issue closure pending.
+Status: passed; issues #10–#11 closed.
 
 Coverage: complete PDD; all Python/SQL/notebooks, generated walkthrough and artifacts; data revisions/units/grains, simulation math/MLflow, secrets, refresh orchestration, dependencies/CI, dashboard, Power BI schemas and handoff accuracy.
 
@@ -17,3 +17,5 @@ Coverage: complete PDD; all Python/SQL/notebooks, generated walkthrough and arti
 - Dashboard console restricts automated control; published JSON/SQL verified via supported APIs, exported static chart visually inspected. Interactive rendering is not claimed.
 
 Final review found no further actionable findings. The reporting verifier now derives dynamic month/fan counts so month-end windows and alternate horizons are supported. Source DOCX is unchanged. Twenty-nine tests, repository-wide Ruff, compilation, executed notebook and UTF-8/credential scan pass. Daily schedule enabled at 18:00 America/Chicago after successful six-task run. Non-secret release evidence is saved in `docs/evidence/`.
+
+Closure: implementation `30b0238`; locked CI [38101978789](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38101978789) passed both Python versions. Final job schedule, sequential dependencies and deployed notebook syntax independently checked. Release evidence and handoff are recorded in `docs/RELEASE.md`.

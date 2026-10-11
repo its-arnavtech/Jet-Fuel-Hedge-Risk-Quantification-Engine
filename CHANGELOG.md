@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 4 release audit** on `phase-4-portfolio-powerbi`. Phase 3 merged main `2adadec`. Full six-task refresh `1070960481606061` SUCCESS; final reporting checks/CI pending.
+- Current phase: **all four implementation phases complete and audited**. Final implementation commit `30b0238` and CI `38101978789` pass; #10–#11 closed. Final main merge/push follows closure commit; user handoff documented in `docs/RELEASE.md`.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,10 +21,9 @@
 
 ## Next actions
 
-1. Verify reporting guards and all phase verifiers against refresh run 1070960481606061.
-2. Enable the verified daily 18:00 America/Chicago schedule; update the dashboard and validate job settings, tests, CI, UTF-8 and credential scan.
-3. Close Phase 4 audit issues, merge/push main and report handoff. Desktop report creation and Loom recording remain user actions.
-4. Never infer deployment/audit success from local tests alone.
+1. User: connect Power BI Import to guarded Gold views using docs/POWER_BI.md; create the report with supplied Power Query/DAX.
+2. User: record/upload the prepared five-minute Loom walkthrough if needed for the portfolio.
+3. Future maintainer: inspect daily job 1025825966695931 and reporting_readiness for current state; follow RUNBOOK.md on failures or source changes. No unresolved implementation work remains.
 
 ## Blockers requiring external input
 
@@ -166,3 +165,12 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Cloud EIA/project-secret capture and five-task refresh 329335973950618 SUCCESS. Final six-task refresh 1070960481606061 SUCCESS, including guarded reporting publication. Schedule paused pending contract verification.
 - Executed walkthrough (four code cells, actual history, 100K local paths), added Power Query/DAX starter, actual-results/math README and five-minute demo script.
 - Whole-repo audit filed reporting readiness #10 and portable encoding #11; fixes and final checks in progress. No Desktop/Loom validation claimed.
+
+### 2026-10-10 - Phase 4 audit closure and release
+
+- Implementation commit 30b0238; locked CI 38101978789 passed both Python versions. Issues #10 and #11 closed with full evidence; all #1-#11 resolved.
+- Six-task refresh 1070960481606061 SUCCESS in 209.618 seconds end to end. Reconciled 4,213 daily, 874 weekly, 520 route scenarios, 100K paths, 500K costs, all fan quantiles and MLflow FINISHED. Nine dashboard datasets and five reporting guard cases pass.
+- Enabled daily 18:00 America/Chicago schedule; SDK verifies six sequential versioned tasks, one concurrent run, serverless configuration and timeouts. Server normalizes max_retries=0 to omitted/None, which is the zero-retry default; verification handles this.
+- Executed walkthrough and all 29 tests, Ruff/compile, UTF-8/credential scan pass. Non-secret evidence committed under docs/evidence; source PDD unchanged.
+- Power BI data-ready notification delivered. Desktop report connection/creation, interactive dashboard rendering and Loom recording are explicitly unperformed external handoff actions. Final implementation release/report in docs/RELEASE.md.
+- Final closure commit then merge/push main; exact main merge can be read from Git history without relying on a self-referential changelog commit hash.
