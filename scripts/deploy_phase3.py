@@ -22,9 +22,9 @@ def main():
     settings=Settings.from_env()
     client=workspace_client(settings)
     ensure_project_schemas(client,settings.catalog)
-    source=(root/'notebooks/phase3_risk.py').read_text()
-    source=source.replace('# INJECT_SIMULATION_MODULE',(root/'src/fuel_hedge/simulation.py').read_text())
-    source=source.replace('# INJECT_RISK_SQL','spark.sql('+repr((root/'sql/04_risk_metrics.sql').read_text())+')')
+    source=(root/'notebooks/phase3_risk.py').read_text(encoding='utf-8')
+    source=source.replace('# INJECT_SIMULATION_MODULE',(root/'src/fuel_hedge/simulation.py').read_text(encoding='utf-8'))
+    source=source.replace('# INJECT_RISK_SQL','spark.sql('+repr((root/'sql/04_risk_metrics.sql').read_text(encoding='utf-8'))+')')
     source_hash=hashlib.sha256(source.encode()).hexdigest()
     remote=f'/Users/{client.current_user.me().user_name}/jet-fuel-hedge-engine/phase3_risk'
     client.workspace.import_(path=remote,content=base64.b64encode(source.encode()).decode(),

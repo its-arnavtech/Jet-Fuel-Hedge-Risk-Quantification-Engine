@@ -1,10 +1,13 @@
 # Phase 3 repository audit
 
-Status: passed; issues #8–#9 closed. Coverage: PDD mathematics, all Python/SQL/notebooks, tests and CI, credentials, deployment, medallion lineage, dashboard queries and handoff docs.
+Status: passed; issues #8â€“#9 closed. Coverage: PDD mathematics, all Python/SQL/notebooks, tests and CI, credentials, deployment, medallion lineage, dashboard queries and handoff docs.
 
 | Finding | GitHub | Fix / evidence |
+
 | --- | --- | --- |
+
 | Bundled MLflow resolves unavailable Spark registry configuration | [#8](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/8) | Public `set_registry_uri('databricks-uc')`; full cloud rerun pending |
+
 | SUCCESS precedes tracking completion/quality and replaces prior summaries | [#9](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/9) | Run-keyed fan/histogram/quality history; SUCCESS after tracking context; live check pending |
 
 ## Evidence

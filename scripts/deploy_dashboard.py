@@ -21,9 +21,9 @@ def main():
     definition=dashboard_definition(settings.catalog,args.include_risk)
     output=Path('dashboard/jet_fuel_analytics.lvdash.json')
     output.parent.mkdir(parents=True,exist_ok=True)
-    output.write_text(json.dumps(definition,indent=2))
+    output.write_text(json.dumps(definition,indent=2), encoding='utf-8')
     state_path=Path('artifacts/dashboard.json')
-    state=json.loads(state_path.read_text()) if state_path.exists() else {}
+    state=json.loads(state_path.read_text(encoding='utf-8')) if state_path.exists() else {}
     dashboard_id=args.dashboard_id or state.get('dashboard_id')
     if state.get('host') not in {None,settings.host}:
         raise ValueError('Dashboard state belongs to another workspace')
@@ -37,7 +37,7 @@ def main():
     state={'host':settings.host,'dashboard_id':result.dashboard_id,
            'url':f'{settings.host}/dashboardsv3/{result.dashboard_id}'}
     state_path.parent.mkdir(parents=True,exist_ok=True)
-    state_path.write_text(json.dumps(state,indent=2))
+    state_path.write_text(json.dumps(state,indent=2), encoding='utf-8')
     # Run as viewer; don't embed the author's credentials into the published dashboard.
     client.lakeview.publish(result.dashboard_id,embed_credentials=False,warehouse_id=settings.warehouse_id)
     print(json.dumps(state,indent=2))

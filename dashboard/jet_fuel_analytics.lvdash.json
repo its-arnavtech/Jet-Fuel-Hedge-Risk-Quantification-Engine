@@ -4,56 +4,63 @@
       "name": "price_trend",
       "displayName": "EIA jet fuel price USD per gallon",
       "queryLines": [
-        "SELECT price_date,jet_fuel_gal FROM workspace.jet_fuel_gold.v_price_correlation WHERE price_date>=date_add((SELECT max(price_date) FROM workspace.jet_fuel_gold.v_price_correlation),-365) ORDER BY price_date\n"
+        "SELECT * FROM (SELECT price_date,jet_fuel_gal FROM workspace.jet_fuel_gold.v_price_correlation WHERE price_date>=date_add((SELECT max(price_date) FROM workspace.jet_fuel_gold.v_price_correlation),-365) ORDER BY price_date) q WHERE (SELECT analytics_ready FROM workspace.jet_fuel_gold.reporting_readiness)\n"
       ]
     },
     {
       "name": "route_cost",
       "displayName": "Unhedged cost by synthetic route USD",
       "queryLines": [
-        "SELECT route_id,sum(monthly_fuel_cost_usd) AS fuel_cost_usd FROM workspace.jet_fuel_gold.v_route_burn GROUP BY route_id ORDER BY fuel_cost_usd DESC\n"
+        "SELECT * FROM (SELECT route_id,sum(monthly_fuel_cost_usd) AS fuel_cost_usd FROM workspace.jet_fuel_gold.v_route_burn GROUP BY route_id ORDER BY fuel_cost_usd DESC) q WHERE (SELECT analytics_ready FROM workspace.jet_fuel_gold.reporting_readiness)\n"
       ]
     },
     {
       "name": "hedge_marks",
       "displayName": "Synthetic hedge marks using matching underlying prices",
       "queryLines": [
-        "SELECT position_id,underlying,current_spot_gal,unrealized_pnl_usd,hedge_status,as_of_date FROM workspace.jet_fuel_gold.v_hedge_mtm\n"
+        "SELECT * FROM (SELECT position_id,underlying,current_spot_gal,unrealized_pnl_usd,hedge_status,as_of_date FROM workspace.jet_fuel_gold.v_hedge_mtm) q WHERE (SELECT analytics_ready FROM workspace.jet_fuel_gold.reporting_readiness)\n"
       ]
     },
     {
       "name": "risk_metrics",
       "displayName": "Reference carrier risk USD billions",
       "queryLines": [
-        "SELECT hedge_ratio,mean_cost_b,p95_cost_b,var_95_b,cvar_95_b,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run)\n"
+        "SELECT hedge_ratio,mean_cost_b,p95_cost_b,var_95_b,cvar_95_b,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics_current ORDER BY hedge_ratio\n"
       ]
     },
     {
       "name": "price_fan",
       "displayName": "GBM price fan: 5 / 25 / 50 / 75 / 95 percentiles",
       "queryLines": [
-        "SELECT time_years,p05_price_gal,p25_price_gal,p50_price_gal,p75_price_gal,p95_price_gal FROM workspace.jet_fuel_gold.price_fan WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) ORDER BY step\n"
+        "SELECT time_years,p05_price_gal,p25_price_gal,p50_price_gal,p75_price_gal,p95_price_gal FROM workspace.jet_fuel_gold.price_fan_current ORDER BY step\n"
       ]
     },
     {
       "name": "cost_histogram",
       "displayName": "Unhedged cost histogram (latest successful run)",
       "queryLines": [
-        "SELECT (bin_lower_cost_b+bin_upper_cost_b)/2 AS cost_b,path_count FROM workspace.jet_fuel_gold.cost_histogram WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) AND hedge_ratio=0 ORDER BY bin\n"
+        "SELECT (bin_lower_cost_b+bin_upper_cost_b)/2 AS cost_b,path_count FROM workspace.jet_fuel_gold.cost_histogram_current WHERE hedge_ratio=0 ORDER BY bin\n"
       ]
     },
     {
       "name": "hedge_effectiveness",
       "displayName": "Incremental VaR reduction by hedge ratio",
       "queryLines": [
-        "SELECT hedge_ratio,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) ORDER BY hedge_ratio\n"
+        "SELECT hedge_ratio,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics_current ORDER BY hedge_ratio\n"
       ]
     },
     {
       "name": "sensitivity",
       "displayName": "Reference carrier cost under spot-price shocks",
       "queryLines": [
-        "SELECT hedge_ratio,price_change_pct,hedged_cost_b FROM workspace.jet_fuel_gold.v_hedge_sensitivity ORDER BY hedge_ratio,price_change_pct\n"
+        "SELECT * FROM (SELECT hedge_ratio,price_change_pct,hedged_cost_b FROM workspace.jet_fuel_gold.v_hedge_sensitivity ORDER BY hedge_ratio,price_change_pct) q WHERE (SELECT analytics_ready FROM workspace.jet_fuel_gold.reporting_readiness)\n"
+      ]
+    },
+    {
+      "name": "reporting_readiness",
+      "displayName": "Publication status and data watermark",
+      "queryLines": [
+        "SELECT price_as_of,n_paths,simulation_run_id,simulation_completed_at,analytics_ready,risk_ready FROM workspace.jet_fuel_gold.reporting_readiness\n"
       ]
     }
   ],
@@ -622,6 +629,88 @@
             "x": 6,
             "y": 22,
             "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "reporting_readiness_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "reporting_readiness",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "price_as_of",
+                      "expression": "`price_as_of`"
+                    },
+                    {
+                      "name": "n_paths",
+                      "expression": "`n_paths`"
+                    },
+                    {
+                      "name": "simulation_run_id",
+                      "expression": "`simulation_run_id`"
+                    },
+                    {
+                      "name": "simulation_completed_at",
+                      "expression": "`simulation_completed_at`"
+                    },
+                    {
+                      "name": "analytics_ready",
+                      "expression": "`analytics_ready`"
+                    },
+                    {
+                      "name": "risk_ready",
+                      "expression": "`risk_ready`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "price_as_of",
+                    "displayName": "price as of"
+                  },
+                  {
+                    "fieldName": "n_paths",
+                    "displayName": "n paths"
+                  },
+                  {
+                    "fieldName": "simulation_run_id",
+                    "displayName": "simulation run id"
+                  },
+                  {
+                    "fieldName": "simulation_completed_at",
+                    "displayName": "simulation completed at"
+                  },
+                  {
+                    "fieldName": "analytics_ready",
+                    "displayName": "analytics ready"
+                  },
+                  {
+                    "fieldName": "risk_ready",
+                    "displayName": "risk ready"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Publication status and data watermark"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 27,
+            "width": 12,
             "height": 5
           }
         }

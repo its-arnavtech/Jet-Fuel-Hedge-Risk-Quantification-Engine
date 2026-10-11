@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "route_scenario_rows_reconciled": 520,
+  "hedge_marks_reconciled": 3,
+  "sensitivity_rows": 30,
+  "risk_rows_observed": 15,
+  "adversarial_marks_checked": 6,
+  "dashboard_datasets_checked": 3,
+  "quality": {
+    "pipeline_run_id": "b5873e33-8588-49ba-9a07-071162fcd4f1",
+    "source_pipeline_run_id": "5a0bd934-5f04-4458-ba77-995fcef3c61f",
+    "checked_at": "2026-10-11T01:20:42.083Z",
+    "routes": "8",
+    "scheduled_flights": "8395",
+    "operated_flights": "8198",
+    "route_scenario_rows": "520",
+    "operated_gallons": "2.958495E7",
+    "gold_operated_flights": "8198",
+    "sensitivity_rows": "30",
+    "latest_price_date": "2026-10-06",
+    "operations_are_synthetic": "true"
+  }
+}

@@ -15,7 +15,7 @@ from verify_phase1 import query
 
 
 def main():
-    evidence=json.loads(Path('artifacts/phase3_verification.json').read_text())
+    evidence=json.loads(Path('artifacts/phase3_verification.json').read_text(encoding='utf-8'))
     if not evidence['passed']:
         raise ValueError('Independent live reconciliation is required')
     load_env()
@@ -68,7 +68,7 @@ def main():
                  'Actual EIA calibration; 1.5B gallon reference carrier; simplified financing forward',fontsize=14)
     fig.savefig(output/'risk_overview.png',dpi=160)
     plt.close(fig)
-    (output/'provenance.json').write_text(json.dumps(evidence,indent=2))
+    (output/'provenance.json').write_text(json.dumps(evidence,indent=2), encoding='utf-8')
     print(str(output/'risk_overview.png'))
 
 

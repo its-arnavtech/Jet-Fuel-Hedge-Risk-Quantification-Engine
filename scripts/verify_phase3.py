@@ -59,7 +59,7 @@ def main():
               'sample_paths_checked':len(samples),'duration_seconds':float(run.duration_seconds),
               'mlflow_run_id':run.mlflow_run_id,'source_pipeline_run_id':run.source_pipeline_run_id,
               'calibration':calibration,'metrics':expected.to_dict('records')}
-    Path('artifacts/phase3_verification.json').write_text(json.dumps(evidence,indent=2))
+    Path('artifacts/phase3_verification.json').write_text(json.dumps(evidence,indent=2), encoding='utf-8')
     expected.to_csv('artifacts/risk_metrics.csv',index=False)
     fan.to_csv('artifacts/price_fan.csv',index=False)
     hist.to_csv('artifacts/histogram_counts.csv',index=False)

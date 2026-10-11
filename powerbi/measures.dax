@@ -1,0 +1,22 @@
+// Import the guarded *_current views. One selected hedge scenario is required.
+// Add measures to route_fuel_costs_current (rename imported table to Route Costs).
+Fuel Cost USD =
+IF(HASONEVALUE('Route Costs'[scenario_id]), SUM('Route Costs'[hedged_cost_usd]), BLANK())
+
+Unhedged Cost USD =
+CALCULATE(SUM('Route Costs'[unhedged_cost_usd]), REMOVEFILTERS('Route Costs'[scenario_id]),
+    REMOVEFILTERS('Route Costs'[hedge_ratio]), REMOVEFILTERS('Hedge Scenario'), 'Route Costs'[hedge_ratio] = 0)
+
+Fuel Gallons =
+CALCULATE(SUM('Route Costs'[monthly_gallons]), REMOVEFILTERS('Route Costs'[scenario_id]),
+    REMOVEFILTERS('Route Costs'[hedge_ratio]), REMOVEFILTERS('Hedge Scenario'), 'Route Costs'[hedge_ratio] = 0)
+
+// Add measures to risk_metrics_current (rename imported table to Risk Metrics).
+Mean Cost B = SELECTEDVALUE('Risk Metrics'[mean_cost_b])
+P95 Cost B = SELECTEDVALUE('Risk Metrics'[p95_cost_b])
+Incremental VaR95 B = SELECTEDVALUE('Risk Metrics'[var_95_b])
+CVaR95 B = SELECTEDVALUE('Risk Metrics'[cvar_95_b])
+VaR Reduction = DIVIDE(SELECTEDVALUE('Risk Metrics'[var_reduction_pct]), 100)
+
+// Format VaR Reduction as percentage; B metrics as USD billions.
+// SELECTEDVALUE deliberately returns BLANK when multiple ratios/runs are selected.

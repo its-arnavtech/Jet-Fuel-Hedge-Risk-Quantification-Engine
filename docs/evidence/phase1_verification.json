@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-10-11T01:24:58.226645+00:00",
+  "daily_rows_reconciled": 4213,
+  "weekly_rows_reconciled": 874,
+  "publication_run_id": "5a0bd934-5f04-4458-ba77-995fcef3c61f",
+  "quality": {
+    "pipeline_run_id": "5a0bd934-5f04-4458-ba77-995fcef3c61f",
+    "checked_at": "2026-10-11T01:19:30.394Z",
+    "bronze_events": "12",
+    "daily_rows": "4213",
+    "weekly_rows": "874",
+    "quarantine_rows": "0",
+    "long_return_gaps": "6",
+    "latest_price_date": "2026-10-06",
+    "source": "EIA",
+    "is_synthetic": "false"
+  },
+  "passed": true
+}

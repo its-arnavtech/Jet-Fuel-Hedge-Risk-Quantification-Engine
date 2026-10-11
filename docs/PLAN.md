@@ -1,6 +1,7 @@
 # Jet fuel hedge engine implementation plan
 
 Last updated: 2026-10-10 (America/Chicago).
+
 Source: `pdd_airline_fuel_hedge_engine.docx`, v1.0, sections 1–10 and appendices A–B, read in full including all six SQL examples, schema definitions, equations, code, and environment instructions. No substantive footnotes, endnotes, or comments were present.
 
 ## Objective and delivery contract
@@ -52,7 +53,7 @@ Exit evidence: fixture-backed query results, local/live SQL tests, row counts, r
 
 ## Phase 3 — Distributed GBM, risk Gold, and experiment tracking
 
-Status: **complete and audited; #8�#9 closed, full 100K run and CI pass**. Phase 2 merged to main as `c6e3749`.
+Status: **complete and audited; #8–#9 closed, full 100K run and CI pass**. Phase 2 merged to main as `c6e3749`.
 
 - [x] EWM lambda 0.94 on regular weekly log returns; annual variance and drift correction; latest chronological positive S0; record calibration window and sample count.
 - [x] Deterministic Box–Muller normal generation; explicit base seed/path ID; batched Spark DataFrame/mapInPandas execution, supported on serverless, bounded per-worker memory.
@@ -84,19 +85,33 @@ Status: **not started; depends on Phase 3 gate**.
 ## Requirements coverage
 
 | PDD source | Deliverables | Phase |
+
 | --- | --- | --- |
+
 | 1–3 objectives and airline context | Treasury costs, assumptions, provenance, reference carrier | 1–4 |
+
 | 4 architecture and simulation flow | Bronze/Silver/Gold, serverless pipeline, distributed risk | 1–3 |
+
 | 5.1 prices | Raw events + enriched Silver fuel prices | 1 |
+
 | 5.2 routes and missing flights | Valid-time routes and synthetic flight facts | 2 |
+
 | 5.3 hedge positions | Positions, supported instrument valuation, source flags | 2 |
+
 | 5.4 route costs | Monthly scenario fact, route/date dimensions | 2 |
+
 | 5.5 risk metrics and missing raw paths | Run registry, raw distribution, aggregate risk | 3 |
+
 | 6.1–6.6 SQL | Six corrected, testable queries | 2–3 |
+
 | 7.1–7.3 methodology | EWM calibration, deterministic GBM, correct tails | 3 |
+
 | 8 and Appendix B infrastructure | Free Edition serverless adaptation, secrets, deployment | 1–4 |
+
 | 9 roadmap and 10 packaging | Walkthrough, charts, README, demo script | 4 |
+
 | Appendix A sources | EIA actual prices; synthetic BTS-style ops clearly labeled | 1–2 |
+
 | User addition 2026-10-10 | Live Free Edition medallion data and Power BI-ready Gold notification | 1–4 |
 
 ## External prerequisites and current blockers

@@ -66,7 +66,7 @@ def main():
         actual = float(mtm.loc[mtm.position_id==position['position_id'],'unrealized_pnl_usd'].iloc[0])
         np.testing.assert_allclose(actual,mark)
     # Exercise the actual view SELECT on adversarial positions without changing production tables.
-    sql = Path('sql/03_hedge_mtm.sql').read_text().split(' AS\n',1)[1].rstrip(';\n')
+    sql = Path('sql/03_hedge_mtm.sql').read_text(encoding='utf-8').split(' AS\n',1)[1].rstrip(';\n')
     fixture = """WITH test_positions AS (SELECT * FROM VALUES
       ('valid',DATE'2026-01-01','futures','JET_FUEL',100L,2.0D,DATE'2027-01-01'),
       ('null_instrument',DATE'2026-01-01',NULL,'JET_FUEL',100L,2.0D,DATE'2027-01-01'),
@@ -101,7 +101,7 @@ def main():
                 'risk_rows_observed':len(risk),'adversarial_marks_checked':len(bad_marks),
                 'dashboard_datasets_checked':3,
                 'quality':quality.to_dict('records')[0]}
-    Path('artifacts/phase2_verification.json').write_text(json.dumps(evidence,indent=2))
+    Path('artifacts/phase2_verification.json').write_text(json.dumps(evidence,indent=2), encoding='utf-8')
     print(json.dumps(evidence,indent=2))
 
 
