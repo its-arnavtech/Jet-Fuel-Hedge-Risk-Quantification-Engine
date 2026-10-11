@@ -21,14 +21,14 @@
 
 ## Next actions
 
-1. Implement Phase 1 package, safe config and EIA client, immutable Bronze capture, Silver enrichment and weekly sampling, tests/CI and Free Edition staging/streaming notebook.
-2. Run local tests, then audit entire repo; write findings to `docs/audits/phase-01.md` and file on GitHub once access works. Resolve and verify findings before moving to Phase 2.
-3. When user supplies credentials in `.env`, validate Databricks connection without printing secrets; bootstrap managed schemas/volume; run and record live Bronze/Silver checks.
+1. Finish Phase 1 validation: install project dependencies, test deployment helpers and notebook SQL, run live credential preflight and obtain EIA key.
+2. Audit entire repo; write findings to `docs/audits/phase-01.md` and file on GitHub using host-context CLI. Resolve and verify findings before moving to Phase 2.
+3. Databricks token is configured in `.env`; validate without printing secrets, bootstrap managed schemas/volume, and record live Bronze/Silver checks once actual EIA capture is available.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
 
-- Databricks URL and credentials, warehouse ID/permissions; empty `.env` prepared. User has been asked for workspace URL.
+- Databricks URL and token are now configured. Warehouse ID/permissions and live authentication not yet checked.
 - EIA API key for real ingestion.
 - GitHub access restored: the CLI works outside the Windows sandbox. Use escalated `gh`/Git network calls; connector remains inaccessible.
 
@@ -52,6 +52,15 @@
 | GitHub connector repository access | 404 / search permission error |
 | Databricks live access | Not attempted; URL/token absent |
 | Local implementation tests | Pending |
+
+### 2026-10-10 — Phase 1 local checks and deployment code
+
+- Pushed baseline plan/decisions/changelog commit `84a1e5f` to `codex/pdd-implementation`.
+- All 12 unit tests pass with workspace-local TEMP/TMP; the earlier failures were sandbox filesystem ACLs.
+- Added Free Edition deployment helper and notebook: complete-capture immutable JSONL staging, managed volume, append-only bounded stream, Spark SQL Silver/quarantine/calendar/weekly calculations and persisted ingestion quality.
+- Added local/deployment runbook. No credentials are embedded in source/notebooks.
+- User saved Databricks token locally; EIA key still missing. Asked user to add it. Do not read/print token values.
+- Dependency installation inside sandbox failed on DNS; host-context installation requested. Live checks pending.
 
 ## Changelog maintenance contract
 

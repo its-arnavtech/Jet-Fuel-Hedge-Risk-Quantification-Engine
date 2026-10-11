@@ -24,12 +24,12 @@ Status: **in progress**.
 
 - [x] Read the entire PDD and establish requirements, phase gates, handoff docs, and a correction log.
 - [x] Verify current Free Edition, serverless, authentication, and Power BI constraints against primary documentation.
-- [ ] Package and configuration, isolated local credential path, CI, unit tests, deterministic synthetic fixtures.
-- [ ] EIA API v2 client: daily jet fuel, WTI, Brent, heating oil; explicit series/unit contract, pagination, retries/timeouts, missing observations, provenance, date filtering.
-- [ ] Immutable Bronze response events with fetch IDs, source metadata, hashes, timestamps; safe replay and ingestion checkpoints; raw payload retention.
-- [ ] Silver: deduplicate revisions deterministically, align dates, validate units and positive jet fuel prices, preserve null proxy values, compute crack spread, log returns, actual calendar 90-day volatility and Pearson correlation.
-- [ ] Downsample to a regular weekly series for EWM calibration; daily ingestion frequency must not become weekly annualization by accident.
-- [ ] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration.
+- [x] Package and configuration, isolated local credential path, CI, unit tests, deterministic synthetic fixtures.
+- [x] EIA API v2 client: daily jet fuel, WTI, Brent, heating oil; explicit series/unit contract, pagination, retries/timeouts, missing observations, provenance, date filtering.
+- [x] Immutable Bronze response events with fetch IDs, source metadata, hashes, timestamps; safe replay and ingestion checkpoints; raw payload retention.
+- [x] Silver: deduplicate revisions deterministically, align dates, validate units and positive jet fuel prices, preserve null proxy values, compute crack spread, log returns, actual calendar 90-day volatility and Pearson correlation.
+- [x] Downsample to a regular weekly series for EWM calibration; daily ingestion frequency must not become weekly annualization by accident.
+- [x] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration. Code written; live validation pending.
 - [ ] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks when credentials exist.
 - [ ] Whole-repo audit → GitHub issues → fixes → verified audit closure.
 
@@ -100,9 +100,9 @@ Status: **not started; depends on Phase 3 gate**.
 
 ## External prerequisites and current blockers
 
-- Databricks workspace URL, a usable local token or OAuth login, and SQL warehouse access. Credentials belong in Git-ignored `.env`; no credentials are present yet.
+- Databricks workspace URL and token are configured in Git-ignored `.env`; live validation is next. SQL warehouse discovery pending.
 - EIA API key (free registration) for real price ingestion. A public sample/demo must never silently replace real data.
-- GitHub: local `gh auth status` reports an invalid token; connector repository lookup returns 404 and issue search returns permission-related 422. User asked to restore access. Audit issue filing is currently blocked.
+- GitHub CLI works outside sandbox; incremental commits/pushes authorized. Connector remains inaccessible. Use host-context CLI for audit issues.
 - Native DOCX rendering is unavailable in this Windows runtime: no bundled LibreOffice supplied; text and OOXML contents were fully inspected. Source DOCX is unchanged; no generated DOCX is a deliverable.
 
 ## Primary references checked 2026-10-10
