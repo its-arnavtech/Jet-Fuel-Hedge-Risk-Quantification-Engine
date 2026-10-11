@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 1 complete and audited; merging to main, then Phase 2**. No Gold data is deployed yet.
+- Current phase: **Phase 2 implementation and live checks** on `phase-2-gold-analytics`. Phase 1 complete/audited and merged to main (`92e2e83`). Initial Gold job submitted; readiness not yet verified.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Complete Phase 1 replay and latest CI verification; close issues #1–#5 with fix commits and actual deployment evidence.
-2. Update audit/plan status, commit closure evidence, merge/push Phase 1 to `main` as requested, then branch `phase-2-gold-analytics`.
-3. Implement synthetic operations and six corrected SQL analytics, deploy and validate initial Gold; notify user when that deployed Gold subset is Power BI-ready.
+1. Check Phase 2 Databricks run `1122134599329967`; run `scripts/verify_phase2.py --expect-no-risk` after SUCCESS and fix any diagnostics.
+2. Finish whole-repo Phase 2 audit, file findings, implement and verify fixes, close issues, merge/push to main.
+3. Notify user when initial Gold passes checks, then start descriptive Phase 3 branch after the audit gate.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -57,6 +57,17 @@
 - Replay `76990162773186` SUCCESS. Bronze count remains exactly four; every daily and weekly price/metric still reconciles. Latest SUCCESS watermark: `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`.
 - Final code commit `dcc5389` passed locked CI on both Python versions (run `38099331383`). Nineteen local tests, Ruff and compilation pass.
 - Audit findings #1–#5 resolved with evidence in `docs/audits/phase-01.md`. Closing issues, committing this audit record, merging/pushing to main, then starting `phase-2-gold-analytics`.
+
+### 2026-10-10 — Phase 2 operations and analytics implementation
+
+- Phase 1 audit closure commit `104b681`; issues #1–#5 closed, phase branch pushed, main merged and pushed as `92e2e83`.
+- Started `phase-2-gold-analytics` per user naming preference.
+- Added deterministic eight-route / 8,395 scheduled-flight synthetic dataset for trailing 365 days to actual EIA as-of 2026-10-06. Cancellations are deterministic and excluded from operated fuel cost; all operations/positions explicitly synthetic.
+- Added immutable synthetic input staging, valid-time routes/flights/positions Silver, Gold date/month/route/scenario dimensions, monthly route scenario facts, and six versioned SQL analytics views.
+- Historical costs use as-of EIA marks with explicit observation date/age, no future data. Scenario hedges are hypothetical one-year forward fixed at window start. Three synthetic futures marks use matching jet/WTI/heating-oil prices; WTI converted from barrel to gallon.
+- Added live verifier for every monthly scenario row, linear hedge marks, fleet-share sum and 30-cell sensitivity grid. Risk query/schema prepared but no simulated rows fabricated.
+- Initial test run: 21 pass, one float-equality assertion corrected to tolerance comparison (240.00000000000003 vs 240); full rerun next.
+- Submitted Phase 2 run `1122134599329967`, immutable snapshot `f7a30adee7884b9c7e64bf738744f26837b31027aba92dc90a2fae0567847c46`. Cloud status and Gold readiness pending.
 
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 

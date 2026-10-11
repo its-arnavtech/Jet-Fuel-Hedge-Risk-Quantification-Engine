@@ -37,7 +37,7 @@ Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live
 
 ## Phase 2 — Operations and SQL analytics Gold
 
-Status: **not started; depends on Phase 1 gate**.
+Status: **implementation written; local/live checks and audit in progress**. Phase 1 merged to main as `92e2e83`.
 
 - [ ] Deterministic BTS-style synthetic routes, individual flights, and explicitly synthetic futures/swap hedge positions; schemas missing from PDD supplied.
 - [ ] Route validity dates, canceled-flight policy, flight uniqueness, monthly aggregation and cost-time alignment.
