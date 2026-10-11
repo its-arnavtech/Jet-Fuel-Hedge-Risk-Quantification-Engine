@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Finish Phase 1 validation: install project dependencies, test deployment helpers and notebook SQL, run live credential preflight and obtain EIA key.
-2. Audit entire repo; write findings to `docs/audits/phase-01.md` and file on GitHub using host-context CLI. Resolve and verify findings before moving to Phase 2.
-3. Databricks token is configured in `.env`; validate without printing secrets, bootstrap managed schemas/volume, and record live Bronze/Silver checks once actual EIA capture is available.
+1. Complete Phase 1 replay and latest CI verification; close issues #1–#5 with fix commits and actual deployment evidence.
+2. Update audit/plan status, commit closure evidence, merge/push Phase 1 to `main` as requested, then branch `phase-2-gold-analytics`.
+3. Implement synthetic operations and six corrected SQL analytics, deploy and validate initial Gold; notify user when that deployed Gold subset is Power BI-ready.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -51,6 +51,22 @@
 | GitHub connector repository access | 404 / search permission error |
 | Databricks live access | Not attempted; URL/token absent |
 | Local implementation tests | Pending |
+
+### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
+
+- Databricks run `176651287504745` terminated SUCCESS.
+- Verification via `scripts/verify_phase1.py` passed: all 4,213 daily rows, nine price/risk columns, and all 874 weekly rows agree with local pandas within rtol=1e-7 / atol=1e-9, including nulls.
+- Live quality: four Bronze page events, 4,213 daily rows, 874 weekly rows, zero quarantine rows, six flagged long-return gaps, latest source date 2026-10-06. Publication registry SUCCESS matches quality watermark `fd60c3bc-f5eb-44f2-94f9-61124937cb30`.
+- Fix commit `d30f254` pushed. Credential scan passed across 28 source/documentation files; no local keys included.
+- Submitted same-capture replay to verify checkpoint idempotence; latest locked CI and replay results pending. Phase 1 main merge waits for these checks.
+
+### 2026-10-10 — Replay audit finding and repair
+
+- Latest locked CI for `d30f254` passed (run `38099086716`).
+- Same-capture replay stalled in existing-file upload before job submission. Separate authenticated download matched bytes. Filed [#5](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/5).
+- Stopped only the stalled local deployment processes; no running Databricks job was interrupted. Added pre-upload existence/content check, immutable conflict rejection and bounded SDK settings using `Config`; disabled experimental Files client for these small captures.
+- First SDK constructor attempt rejected timeout keywords; corrected by passing Config. Fixed replay submitted successfully as run `76990162773186`.
+- Added three replay regressions (same content, conflict, missing file). Final tests/replay count check/CI and issue closure are next.
 
 ### 2026-10-10 — Live EIA capture and Phase 1 audit fixes
 

@@ -51,8 +51,33 @@ def workspace_client(settings: Settings):
     if not settings.host:
         raise ValueError("DATABRICKS_HOST is required")
     from databricks.sdk import WorkspaceClient
+    from databricks.sdk.core import Config
     # No token: allow SDK unified authentication (e.g. CLI OAuth). Never log credentials.
-    return WorkspaceClient(host=settings.host, token=settings.token or None)
+    return WorkspaceClient(config=Config(
+        host=settings.host, token=settings.token or None,
+        retry_timeout_seconds=60, http_timeout_seconds=60,
+        disable_experimental_files_api_client=True,
+    ))
+
+
+def upload_immutable(client, path: str, content: bytes) -> None:
+    from databricks.sdk.errors import NotFound, ResourceAlreadyExists
+
+    def verify_existing():
+        existing = client.files.download(path)
+        with existing.contents as stream:
+            if stream.read() != content:
+                raise ValueError("Remote capture conflicts with immutable local content")
+
+    try:
+        client.files.get_metadata(path)
+    except NotFound:
+        try:
+            client.files.upload(path, io.BytesIO(content), overwrite=False)
+        except ResourceAlreadyExists:
+            verify_existing()  # Another publisher won the race; still never overwrite.
+    else:
+        verify_existing()
 
 
 def deploy_phase1(settings: Settings, bronze_root: str | Path, notebook: str | Path,
@@ -76,13 +101,7 @@ def deploy_phase1(settings: Settings, bronze_root: str | Path, notebook: str | P
     client.files.create_directory(f"{volume}/captures")
     for capture_id, content in staged.items():
         path = f"{volume}/captures/{capture_id}.jsonl"
-        try:
-            client.files.upload(path, io.BytesIO(content), overwrite=False)
-        except ResourceAlreadyExists:
-            existing = client.files.download(path)
-            with existing.contents as stream:
-                if stream.read() != content:
-                    raise ValueError("Remote capture conflicts with immutable local content") from None
+        upload_immutable(client, path, content)
     folder = f"/Users/{user}/jet-fuel-hedge-engine"
     client.workspace.mkdirs(folder)
     remote = f"{folder}/phase1_pipeline"

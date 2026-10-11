@@ -30,7 +30,7 @@ Status: **in progress**.
 - [x] Silver: deduplicate revisions deterministically, align dates, validate units and positive jet fuel prices, preserve null proxy values, compute crack spread, log returns, actual calendar 90-day volatility and Pearson correlation.
 - [x] Downsample to a regular weekly series for EWM calibration; daily ingestion frequency must not become weekly annualization by accident.
 - [x] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration. Code written; live validation pending.
-- [ ] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks when credentials exist.
+- [x] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks. 4,213 daily and 874 weekly rows fully reconcile between local pandas and live Spark SQL; replay verification pending.
 - [ ] Whole-repo audit → GitHub issues → fixes → verified audit closure.
 
 Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live Unity Catalog counts/quality checks when accessible; all audit issues filed and resolved. Deployment validation stays pending until workspace access is supplied.
@@ -76,6 +76,7 @@ Status: **not started; depends on Phase 3 gate**.
 - [ ] Power BI handoff: verified workspace hostname, SQL warehouse HTTP path, catalog/schema and Gold tables; OAuth or supported workspace token auth, Import-first approach for quotas, refresh instructions.
 - [ ] Power Query starter, schema/relationships, DAX measure guidance; avoid summing percentiles or duplicating monthly consumption across scenarios.
 - [ ] README architecture, GBM derivation, metric definitions, installation/deployment, actual findings, provenance, troubleshooting and runbook.
+- [ ] Configure bounded daily source refresh/orchestration with a project secret scope (if supported); verify incremental revision replay and failure visibility. Preserve manual local capture/staging fallback for restricted outbound networking.
 - [ ] Five-minute demo script and screen-recording checklist; Loom video itself needs user recording/account access if unavailable.
 - [ ] Final whole-repo audit → GitHub issues → fixes → verified audit closure.
 - [ ] Completion report distinguishes locally tested, deployed, externally validated, and outstanding user actions. Mark complete only when required delivery work is finished.

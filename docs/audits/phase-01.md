@@ -63,4 +63,11 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 
 ## Closure evidence
 
-Pending GitHub issue URLs, fix commit, test results, real EIA row counts, Databricks run status/table checks, and main merge.
+### A5 — Existing-capture upload stalls on replay
+
+- Severity: medium.
+- Evidence: initial deployment and SQL reconciliation succeeded, but a second deployment stalled before job submission. Authenticated remote download immediately matched local bytes.
+- GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/5
+- Resolution: check/read identical captures before upload; reject conflicts; bound SDK requests/retries via SDK Config and use stable Files API. Added identical/conflicting/missing capture regressions. Fixed deployment submits normally; run `76990162773186` pending completion.
+
+Initial cloud run `176651287504745`: SUCCESS. Local/cloud reconciliation: all 4,213 daily and 874 weekly rows, price values, returns, calendar volatility/correlation, and nulls agree within rtol=1e-7 / atol=1e-9. Live quality watermark matches successful registry entry. Actual source range 2010-01-04 to 2026-10-06; four page events / 16,876 observations, zero quarantine rows, six long-return gaps flagged. Fix commit `d30f254` passed CI on Python 3.10/3.12 ([run](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38099086716)). A5 fix/replay/CI and main merge remain pending.

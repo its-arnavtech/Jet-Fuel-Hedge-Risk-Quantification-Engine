@@ -1,3 +1,4 @@
+import io
 import json
 from pathlib import Path
 import tempfile
@@ -6,11 +7,31 @@ import unittest
 from unittest.mock import Mock
 
 from fuel_hedge.bronze import capture
-from fuel_hedge.databricks import PROJECT_MARKER, SCHEMAS, ensure_project_schemas, stage_envelopes
+from fuel_hedge.databricks import (
+    PROJECT_MARKER, SCHEMAS, ensure_project_schemas, stage_envelopes, upload_immutable,
+)
 from fuel_hedge.eia import ENDPOINT
 
 
 class StagingTests(unittest.TestCase):
+    def test_existing_immutable_capture_reused_or_rejected_without_upload(self):
+        client = SimpleNamespace(files=Mock())
+        client.files.download.return_value = SimpleNamespace(contents=io.BytesIO(b"same"))
+        upload_immutable(client, "/Volumes/test/capture.jsonl", b"same")
+        client.files.upload.assert_not_called()
+        client.files.download.return_value = SimpleNamespace(contents=io.BytesIO(b"different"))
+        with self.assertRaisesRegex(ValueError, "conflicts"):
+            upload_immutable(client, "/Volumes/test/capture.jsonl", b"same")
+        client.files.upload.assert_not_called()
+
+    def test_missing_capture_uploaded_once_without_overwrite(self):
+        from databricks.sdk.errors import NotFound
+        client = SimpleNamespace(files=Mock())
+        client.files.get_metadata.side_effect = NotFound("missing")
+        upload_immutable(client, "/Volumes/test/capture.jsonl", b"new")
+        self.assertFalse(client.files.upload.call_args.kwargs["overwrite"])
+        self.assertEqual(client.files.upload.call_args.args[1].read(), b"new")
+
     def test_completed_capture_becomes_one_immutable_jsonl_file(self):
         class Client:
             def pages(self, start, end):
