@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "simulation_run_id": "e35d376c-398b-4bea-8823-4f085f036fd9",
+  "n_paths": 100000,
+  "cost_rows": 500000,
+  "fan_steps": 53,
+  "sample_paths_checked": 5,
+  "duration_seconds": 47.92204395600001,
+  "mlflow_run_id": "4c5cf414a2af4078a5ea0aa8c66186ef",
+  "source_pipeline_run_id": "1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d",
+  "calibration": {
+    "mu": 0.9291402579710721,
+    "sigma": 0.6050536840108929,
+    "decay": 0.94,
+    "n_returns": 52,
+    "calibration_start": "2025-10-03",
+    "calibration_end": "2026-10-02",
+    "weekly_log_mean": 0.014347986109682603,
+    "weekly_log_variance": 0.007040191548752949
+  },
+  "metrics": [
+    {
+      "hedge_ratio": 0.0,
+      "mean_cost_b": 10.82779623198081,
+      "p50_cost_b": 9.924484553422552,
+      "p95_cost_b": 19.28300019500247,
+      "var_95_b": 8.455203963021658,
+      "cvar_95_b": 23.45769623559273,
+      "n_paths": 100000,
+      "var_reduction_pct": 0.0
+    },
+    {
+      "hedge_ratio": 0.2,
+      "mean_cost_b": 10.017997100047651,
+      "p50_cost_b": 9.295347757201046,
+      "p95_cost_b": 16.78216027046498,
+      "var_95_b": 6.76416317041733,
+      "cvar_95_b": 20.121917102937193,
+      "n_paths": 100000,
+      "var_reduction_pct": 19.999999999999957
+    },
+    {
+      "hedge_ratio": 0.4,
+      "mean_cost_b": 9.208197968114495,
+      "p50_cost_b": 8.66621096097954,
+      "p95_cost_b": 14.281320345927492,
+      "var_95_b": 5.073122377812997,
+      "cvar_95_b": 16.786137970281647,
+      "n_paths": 100000,
+      "var_reduction_pct": 39.99999999999998
+    },
+    {
+      "hedge_ratio": 0.6,
+      "mean_cost_b": 8.398398836181338,
+      "p50_cost_b": 8.037074164758035,
+      "p95_cost_b": 11.780480421390001,
+      "var_95_b": 3.382081585208663,
+      "cvar_95_b": 13.450358837626109,
+      "n_paths": 100000,
+      "var_reduction_pct": 60.0
+    },
+    {
+      "hedge_ratio": 0.8,
+      "mean_cost_b": 7.588599704248181,
+      "p50_cost_b": 7.40793736853653,
+      "p95_cost_b": 9.279640496852512,
+      "var_95_b": 1.6910407926043307,
+      "cvar_95_b": 10.114579704970565,
+      "n_paths": 100000,
+      "var_reduction_pct": 80.00000000000001
+    }
+  ]
+}

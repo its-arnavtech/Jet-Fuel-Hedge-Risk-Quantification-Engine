@@ -38,3 +38,11 @@ Historical route marks use the last available observation **at or before each fl
 ## Readiness and refresh
 
 Before refresh, require newest `jet_fuel_silver.pipeline_runs` and `jet_fuel_gold.pipeline_runs` entries to be SUCCESS; Gold `analytics_quality.pipeline_run_id` must match latest Gold, and `source_pipeline_run_id` must match latest Silver. A new Silver publication requires Gold rebuild. Run `scripts/verify_phase2.py` for a complete reconciliation before handing off changed data. Refresh order: ingestion/Silver → operations/Gold → simulation risk → Power BI Import refresh. Never treat an old quality table as evidence for an interrupted newer run.
+# Verified simulation Gold — Phase 3
+
+The 100,000-path serverless run `386315486361989` passed independent NumPy/SQL reconciliation. Simulation ID `e35d376c-398b-4bea-8823-4f085f036fd9`, MLflow `4c5cf414a2af4078a5ea0aa8c66186ef`: 500,000 cost rows, five hedge ratios, 53 fan steps including S0, 47.92 seconds measured simulation/tracking work (job startup excluded).
+
+Import `latest_simulation_run` as a one-row run selector; filter `risk_metrics`, `price_fan`, `cost_histogram`, and `simulation_quality` to that ID. These tables retain history. Check that `source_pipeline_run_id` matches current successful Silver publication before refreshing analysis. A prior run can remain available while a new one fails; it must be labeled stale if source changed.
+
+`risk_metrics` grain: simulation ID × hedge ratio. `price_fan`: run × weekly step. `cost_histogram`: run × ratio × occupied bin; sum `path_count`, not bin boundaries. `simulation_quality`: one row per completed candidate run. Import aggregate Gold rather than all raw paths. Incremental VaR is P95 minus mean; CVaR is the mean at/above absolute P95. Both are USD billions, not percentages. The 80% hedge has exactly 80% incremental VaR reduction under this common-path affine model; this identity does not establish a real-world optimal hedge.
+

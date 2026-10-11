@@ -29,11 +29,11 @@ Status: **complete and audited**. Live deployment and idempotent replay succeede
 - [x] Immutable Bronze response events with fetch IDs, source metadata, hashes, timestamps; safe replay and ingestion checkpoints; raw payload retention.
 - [x] Silver: deduplicate revisions deterministically, align dates, validate units and positive jet fuel prices, preserve null proxy values, compute crack spread, log returns, actual calendar 90-day volatility and Pearson correlation.
 - [x] Downsample to a regular weekly series for EWM calibration; daily ingestion frequency must not become weekly annualization by accident.
-- [x] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration. Code written; live validation pending.
+- [x] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration. Live validation and replay passed.
 - [x] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks. 4,213 daily and 874 weekly rows fully reconcile between local pandas and live Spark SQL, including replay (Bronze stays at four events).
 - [x] Whole-repo audit → GitHub issues #1–#5 → fixes → verified audit closure.
 
-Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live Unity Catalog counts/quality checks when accessible; all audit issues filed and resolved. Deployment validation stays pending until workspace access is supplied.
+Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live Unity Catalog counts/quality checks when accessible; all audit issues filed and resolved. Deployment and replay passed.
 
 ## Phase 2 — Operations and SQL analytics Gold
 
@@ -52,19 +52,19 @@ Exit evidence: fixture-backed query results, local/live SQL tests, row counts, r
 
 ## Phase 3 — Distributed GBM, risk Gold, and experiment tracking
 
-Status: **not started; depends on Phase 2 gate**.
+Status: **complete and audited; #8�#9 closed, full 100K run and CI pass**. Phase 2 merged to main as `c6e3749`.
 
-- [ ] EWM lambda 0.94 on regular weekly log returns; annual variance and drift correction; latest chronological positive S0; record calibration window and sample count.
-- [ ] Deterministic Box–Muller normal generation; explicit base seed/path ID; batched Spark DataFrame/mapInPandas execution, supported on serverless, bounded per-worker memory.
-- [ ] 100,000 paths × 52 steps/year × horizon; same random paths for each hedge ratio; purchase averages across weekly purchase periods; annual gallons scale with horizon.
-- [ ] Forward `F0 = S0 * exp(r*T)` (simplified financing assumption, not a calibrated commodity forward curve); rates/consumption/horizon/hedges configurable.
-- [ ] Separate `silver.simulation_raw_paths` distributions, path quantile/fan summaries, run registry, and `gold.risk_metrics` aggregate table. Explicit run ID selection; never MAX(UUID).
-- [ ] Store mean, median, absolute P95 cost, incremental VaR = P95 − mean, CVaR = mean cost at/above absolute P95, and zero-safe VaR reduction versus unhedged.
-- [ ] MLflow parameters, seed, sample counts, provenance, duration, code version, output-table/run links, risk metrics; do not swallow tracking failures.
-- [ ] Cost histograms, price fan chart, hedge effectiveness comparison and scenario heat map in Databricks SQL.
-- [ ] Degenerate sigma, deterministic drift, monotonic affine hedge behavior, GBM moment checks, seed/partition invariance and NumPy/SQL risk reconciliation.
-- [ ] Run full 100K job on Free Edition; record observed runtime/quotas and actual evidence, not a four-worker claim.
-- [ ] Whole-repo audit → GitHub issues → fixes → verified audit closure.
+- [x] EWM lambda 0.94 on regular weekly log returns; annual variance and drift correction; latest chronological positive S0; record calibration window and sample count.
+- [x] Deterministic Box–Muller normal generation; explicit base seed/path ID; batched Spark DataFrame/mapInPandas execution, supported on serverless, bounded per-worker memory.
+- [x] 100,000 paths × 52 steps/year × horizon; same random paths for each hedge ratio; purchase averages across weekly purchase periods; annual gallons scale with horizon.
+- [x] Forward `F0 = S0 * exp(r*T)` (simplified financing assumption, not a calibrated commodity forward curve); rates/consumption/horizon/hedges configurable.
+- [x] Separate `silver.simulation_raw_paths` distributions, path quantile/fan summaries, run registry, and `gold.risk_metrics` aggregate table. Explicit run ID selection; never MAX(UUID).
+- [x] Store mean, median, absolute P95 cost, incremental VaR = P95 − mean, CVaR = mean cost at/above absolute P95, and zero-safe VaR reduction versus unhedged.
+- [x] MLflow parameters, seed, sample counts, provenance, duration, code version, output-table/run links, risk metrics; do not swallow tracking failures.
+- [x] Cost histograms, price fan chart, hedge effectiveness comparison and scenario heat map in Databricks SQL.
+- [x] Degenerate sigma, deterministic drift, monotonic affine hedge behavior, GBM moment checks, seed/partition invariance and NumPy/SQL risk reconciliation.
+- [x] Run full 100K job on Free Edition; record observed runtime/quotas and actual evidence, not a four-worker claim.
+- [x] Whole-repo audit → GitHub issues → fixes → verified audit closure.
 
 Exit evidence: reproducible full run, five ratio results and corresponding raw counts, MLflow run, math tests, SQL agreement, and live Gold verification.
 
@@ -101,8 +101,8 @@ Status: **not started; depends on Phase 3 gate**.
 
 ## External prerequisites and current blockers
 
-- Databricks workspace URL and token are configured in Git-ignored `.env`; live validation is next. SQL warehouse discovery pending.
-- EIA API key (free registration) for real price ingestion. A public sample/demo must never silently replace real data.
+- Databricks workspace credentials and warehouse are configured locally; all three phase deployments and live verification succeeded.
+- EIA key configured locally; actual history captured. Synthetic operations are explicitly labeled.
 - GitHub CLI works outside sandbox; incremental commits/pushes authorized. Connector remains inaccessible. Use host-context CLI for audit issues.
 - Native DOCX rendering is unavailable in this Windows runtime: no bundled LibreOffice supplied; text and OOXML contents were fully inspected. Source DOCX is unchanged; no generated DOCX is a deliverable.
 

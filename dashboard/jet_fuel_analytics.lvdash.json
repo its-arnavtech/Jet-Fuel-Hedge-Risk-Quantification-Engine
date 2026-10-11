@@ -20,6 +20,41 @@
       "queryLines": [
         "SELECT position_id,underlying,current_spot_gal,unrealized_pnl_usd,hedge_status,as_of_date FROM workspace.jet_fuel_gold.v_hedge_mtm\n"
       ]
+    },
+    {
+      "name": "risk_metrics",
+      "displayName": "Reference carrier risk USD billions",
+      "queryLines": [
+        "SELECT hedge_ratio,mean_cost_b,p95_cost_b,var_95_b,cvar_95_b,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run)\n"
+      ]
+    },
+    {
+      "name": "price_fan",
+      "displayName": "GBM price fan: 5 / 25 / 50 / 75 / 95 percentiles",
+      "queryLines": [
+        "SELECT time_years,p05_price_gal,p25_price_gal,p50_price_gal,p75_price_gal,p95_price_gal FROM workspace.jet_fuel_gold.price_fan WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) ORDER BY step\n"
+      ]
+    },
+    {
+      "name": "cost_histogram",
+      "displayName": "Unhedged cost histogram (latest successful run)",
+      "queryLines": [
+        "SELECT (bin_lower_cost_b+bin_upper_cost_b)/2 AS cost_b,path_count FROM workspace.jet_fuel_gold.cost_histogram WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) AND hedge_ratio=0 ORDER BY bin\n"
+      ]
+    },
+    {
+      "name": "hedge_effectiveness",
+      "displayName": "Incremental VaR reduction by hedge ratio",
+      "queryLines": [
+        "SELECT hedge_ratio,var_reduction_pct FROM workspace.jet_fuel_gold.risk_metrics WHERE simulation_run_id=(SELECT simulation_run_id FROM workspace.jet_fuel_gold.latest_simulation_run) ORDER BY hedge_ratio\n"
+      ]
+    },
+    {
+      "name": "sensitivity",
+      "displayName": "Reference carrier cost under spot-price shocks",
+      "queryLines": [
+        "SELECT hedge_ratio,price_change_pct,hedged_cost_b FROM workspace.jet_fuel_gold.v_hedge_sensitivity ORDER BY hedge_ratio,price_change_pct\n"
+      ]
     }
   ],
   "pages": [
@@ -234,6 +269,359 @@
             "x": 0,
             "y": 7,
             "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "risk_metrics_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "risk_metrics",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "hedge_ratio",
+                      "expression": "`hedge_ratio`"
+                    },
+                    {
+                      "name": "mean_cost_b",
+                      "expression": "`mean_cost_b`"
+                    },
+                    {
+                      "name": "p95_cost_b",
+                      "expression": "`p95_cost_b`"
+                    },
+                    {
+                      "name": "var_95_b",
+                      "expression": "`var_95_b`"
+                    },
+                    {
+                      "name": "cvar_95_b",
+                      "expression": "`cvar_95_b`"
+                    },
+                    {
+                      "name": "var_reduction_pct",
+                      "expression": "`var_reduction_pct`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "hedge_ratio",
+                    "displayName": "hedge ratio"
+                  },
+                  {
+                    "fieldName": "mean_cost_b",
+                    "displayName": "mean cost b"
+                  },
+                  {
+                    "fieldName": "p95_cost_b",
+                    "displayName": "p95 cost b"
+                  },
+                  {
+                    "fieldName": "var_95_b",
+                    "displayName": "var 95 b"
+                  },
+                  {
+                    "fieldName": "cvar_95_b",
+                    "displayName": "cvar 95 b"
+                  },
+                  {
+                    "fieldName": "var_reduction_pct",
+                    "displayName": "var reduction pct"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Reference carrier risk USD billions"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "price_fan_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "price_fan",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "time_years",
+                      "expression": "`time_years`"
+                    },
+                    {
+                      "name": "p05_price_gal",
+                      "expression": "`p05_price_gal`"
+                    },
+                    {
+                      "name": "p25_price_gal",
+                      "expression": "`p25_price_gal`"
+                    },
+                    {
+                      "name": "p50_price_gal",
+                      "expression": "`p50_price_gal`"
+                    },
+                    {
+                      "name": "p75_price_gal",
+                      "expression": "`p75_price_gal`"
+                    },
+                    {
+                      "name": "p95_price_gal",
+                      "expression": "`p95_price_gal`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "time_years",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "Years"
+                  }
+                },
+                "y": {
+                  "fields": [
+                    {
+                      "fieldName": "p05_price_gal",
+                      "displayName": "P05"
+                    },
+                    {
+                      "fieldName": "p25_price_gal",
+                      "displayName": "P25"
+                    },
+                    {
+                      "fieldName": "p50_price_gal",
+                      "displayName": "P50"
+                    },
+                    {
+                      "fieldName": "p75_price_gal",
+                      "displayName": "P75"
+                    },
+                    {
+                      "fieldName": "p95_price_gal",
+                      "displayName": "P95"
+                    }
+                  ],
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "USD / gallon"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "GBM price fan: 5 / 25 / 50 / 75 / 95 percentiles"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "cost_histogram_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "cost_histogram",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "cost_b",
+                      "expression": "`cost_b`"
+                    },
+                    {
+                      "name": "path_count",
+                      "expression": "`path_count`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "cost_b",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "USD billions"
+                  }
+                },
+                "y": {
+                  "fieldName": "path_count",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Unhedged cost histogram (latest successful run)"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 17,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "hedge_effectiveness_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "hedge_effectiveness",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "hedge_ratio",
+                      "expression": "`hedge_ratio`"
+                    },
+                    {
+                      "name": "var_reduction_pct",
+                      "expression": "`var_reduction_pct`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "hedge_ratio",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "var_reduction_pct",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "axis": {
+                    "title": "Reduction %"
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Incremental VaR reduction by hedge ratio"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 22,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "sensitivity_widget",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "sensitivity",
+                  "disaggregated": true,
+                  "fields": [
+                    {
+                      "name": "hedge_ratio",
+                      "expression": "`hedge_ratio`"
+                    },
+                    {
+                      "name": "price_change_pct",
+                      "expression": "`price_change_pct`"
+                    },
+                    {
+                      "name": "hedged_cost_b",
+                      "expression": "`hedged_cost_b`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "heatmap",
+              "encodings": {
+                "x": {
+                  "fieldName": "price_change_pct",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "hedge_ratio",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "color": {
+                  "fieldName": "hedged_cost_b",
+                  "scale": {
+                    "type": "quantitative",
+                    "colorRamp": {
+                      "mode": "scheme",
+                      "scheme": "viridis"
+                    }
+                  }
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Reference carrier cost under spot-price shocks"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 22,
+            "width": 6,
             "height": 5
           }
         }

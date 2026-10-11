@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 2 complete and audited; merging to main, then Phase 3**. Initial Gold is deployed and Power BI-ready; user notified. Simulation risk remains pending Phase 3.
+- Current phase: **Phase 3 GBM/risk implementation and live checks** on `phase-3-gbm-risk`. Phase 2 audited/merged (`c6e3749`), initial Gold Power BI-ready. First full run failed at MLflow setup; repaired rerun `386315486361989` running. Risk readiness not yet verified.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Close Phase 2 issues #6–#7 with fix commit `5c1ce3f`, commit closure docs, merge/push main, branch `phase-3-gbm-risk`.
-2. Implement EWM calibration, deterministic partition-invariant GBM, full 100K distributed run, risk Gold, MLflow and charts; then whole-repo audit/issues/fixes gate.
-3. Update the existing dashboard ID with risk datasets and extend Power BI handoff when risk Gold is verified.
+1. Check repaired full Phase 3 cloud run `386315486361989`; fix any diagnostics, then run `scripts/verify_phase3.py` for full NumPy/SQL/MLflow reconciliation.
+2. Whole-repo Phase 3 audit → file GitHub findings → fix/verify → close → merge main. Add risk/fan/histogram/sensitivity visuals to existing dashboard and charts.
+3. Extend Power BI handoff for verified risk, then start Phase 4 packaging and daily refresh after audit gate.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -87,6 +87,16 @@
 - Notified user that initial Gold is Power BI-ready, with hostname/path/catalog/schema and synthetic-operation caveat. `docs/POWER_BI.md` updated with actual counts.
 - Issues #6–#7 ready for verified closure; merge to main and Phase 3 next.
 
+### 2026-10-10 — Phase 3 mathematical engine and distributed job
+
+- Closed #6–#7, closure commit `e663d2d`, merged/pushed Phase 2 main `c6e3749`; started `phase-3-gbm-risk`.
+- Added standalone NumPy/pandas calibration/GBM/risk module: unbiased weighted EWM variance with lambda .94, annual arithmetic drift correction, consecutive weekly validation and 365-day lookback; S0 from latest daily price.
+- Deterministic PCG64/SeedSequence(base seed,path ID) Box–Muller paths independent of partition/batch ordering; shared purchase prices across ratios. Future weekly purchase averages exclude S0; annual gallons scale with horizon.
+- Added seven numerical tests: partition/seed invariance, normal/GBM moments, deterministic drift/horizon, affine hedge tail reduction, exact quantile/CVaR/zero-variance, EWM and invalid input. All 29 project tests pass, plus Ruff and compilation.
+- Added serverless mapInPandas notebook bounded to 512-path batches, separate raw price paths and cost distributions, exact SQL risk/fan/histogram aggregates, source/run registries and MLflow parameters/metrics/artifacts.
+- Submitted full 100,000-path cloud run `540887869694032` with seed 20261010. No four-worker hardware claim; serverless controls resources.
+- Added verifier reproducing all 100K paths locally, comparing all risk metrics, five complete sample paths, every fan quantile/step, histogram counts, calibration and MLflow FINISHED status. Live result pending.
+
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 
 - Databricks run `176651287504745` terminated SUCCESS.
@@ -129,3 +139,14 @@
 ## Changelog maintenance contract
 
 Append dated entries after meaningful implementation/checks, include exact commands, failed attempts, actual issue URLs and fixed files. Keep Current state, Next actions and Blockers accurate. Every phase audit records coverage, findings, GitHub status and closure evidence. A successor must be able to resume without chat history.
+
+### 2026-10-10 � Phase 3 verified risk and audit fixes
+
+- First full run failed at MLflow registry resolution; filed #8 and #9 before fixes. Explicit public registry URI resolves serverless compatibility. Run-keyed fan/histogram/quality history retained; SUCCESS follows tracking completion. Source hash and library versions logged.
+- Repaired run `386315486361989` SUCCESS. Verifier passes all 100K paths, 500K costs, five risk rows, five complete sample paths and all 53 fan steps; MLflow FINISHED `4c5cf414a2af4078a5ea0aa8c66186ef`. Simulation ID `e35d376c-398b-4bea-8823-4f085f036fd9`; duration 47.92 seconds excluding startup.
+- Existing dashboard updated with eight validated datasets; exported verified four-panel chart. Interactive browser console declines automated control, so rendering is unverified and no UI bypass attempted.
+- Risk Gold readiness delivered to user. All 29 tests, repository-wide Ruff and compilation pass. Audit closure CI/commit/main merge next, then Phase 4.
+
+### 2026-10-10 � Phase 3 gate closed
+
+- Fix commit `5a4e935`, locked CI `38100947593` passed both Python versions. Issues #8�#9 closed with live and numerical evidence. Merge/push to main next; begin `phase-4-portfolio-powerbi` only after merge.
