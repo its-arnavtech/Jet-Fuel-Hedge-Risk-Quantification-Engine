@@ -1,0 +1,12 @@
+{
+  "provenance": "EIA API v2 petroleum/pri/spt daily response captured 2026-10-10; selected observations from 2010-01-04; metadata reduced and no credentials retained",
+  "response": {
+    "total": "4",
+    "data": [
+      {"period": "2010-01-04", "series": "EER_EPJK_PF4_RGC_DPG", "value": "2.165", "units": "$/GAL", "series-description": "U.S. Gulf Coast Kerosene-Type Jet Fuel Spot Price FOB (Dollars per Gallon)"},
+      {"period": "2010-01-04", "series": "RWTC", "value": "81.52", "units": "$/BBL"},
+      {"period": "2010-01-04", "series": "RBRTE", "value": "79.05", "units": "$/BBL"},
+      {"period": "2010-01-04", "series": "EER_EPD2F_PF4_Y35NY_DPG", "value": "2.179", "units": "$/GAL"}
+    ]
+  }
+}
