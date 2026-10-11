@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 2 complete and audited; merging to main, then Phase 3**. Initial Gold is deployed and Power BI-ready; user notified. Simulation risk remains pending Phase 3.
+- Current phase: **Phase 3 GBM/risk implementation and live checks** on `phase-3-gbm-risk`. Phase 2 audited/merged (`c6e3749`), initial Gold Power BI-ready. Full 100K job running; risk readiness not yet verified.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. Close Phase 2 issues #6–#7 with fix commit `5c1ce3f`, commit closure docs, merge/push main, branch `phase-3-gbm-risk`.
-2. Implement EWM calibration, deterministic partition-invariant GBM, full 100K distributed run, risk Gold, MLflow and charts; then whole-repo audit/issues/fixes gate.
-3. Update the existing dashboard ID with risk datasets and extend Power BI handoff when risk Gold is verified.
+1. Check full Phase 3 cloud run `540887869694032`; fix any diagnostics, then run `scripts/verify_phase3.py` for full NumPy/SQL/MLflow reconciliation.
+2. Whole-repo Phase 3 audit → file GitHub findings → fix/verify → close → merge main. Add risk/fan/histogram/sensitivity visuals to existing dashboard and charts.
+3. Extend Power BI handoff for verified risk, then start Phase 4 packaging and daily refresh after audit gate.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
 
 ## Blockers requiring external input
@@ -86,6 +86,16 @@
 - Fix commit `5c1ce3f` passes CI (run `38100003329`), 22 local tests, Ruff and compilation.
 - Notified user that initial Gold is Power BI-ready, with hostname/path/catalog/schema and synthetic-operation caveat. `docs/POWER_BI.md` updated with actual counts.
 - Issues #6–#7 ready for verified closure; merge to main and Phase 3 next.
+
+### 2026-10-10 — Phase 3 mathematical engine and distributed job
+
+- Closed #6–#7, closure commit `e663d2d`, merged/pushed Phase 2 main `c6e3749`; started `phase-3-gbm-risk`.
+- Added standalone NumPy/pandas calibration/GBM/risk module: unbiased weighted EWM variance with lambda .94, annual arithmetic drift correction, consecutive weekly validation and 365-day lookback; S0 from latest daily price.
+- Deterministic PCG64/SeedSequence(base seed,path ID) Box–Muller paths independent of partition/batch ordering; shared purchase prices across ratios. Future weekly purchase averages exclude S0; annual gallons scale with horizon.
+- Added seven numerical tests: partition/seed invariance, normal/GBM moments, deterministic drift/horizon, affine hedge tail reduction, exact quantile/CVaR/zero-variance, EWM and invalid input. All 29 project tests pass, plus Ruff and compilation.
+- Added serverless mapInPandas notebook bounded to 512-path batches, separate raw price paths and cost distributions, exact SQL risk/fan/histogram aggregates, source/run registries and MLflow parameters/metrics/artifacts.
+- Submitted full 100,000-path cloud run `540887869694032` with seed 20261010. No four-worker hardware claim; serverless controls resources.
+- Added verifier reproducing all 100K paths locally, comparing all risk metrics, five complete sample paths, every fan quantile/step, histogram counts, calibration and MLflow FINISHED status. Live result pending.
 
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 

@@ -52,7 +52,7 @@ Exit evidence: fixture-backed query results, local/live SQL tests, row counts, r
 
 ## Phase 3 — Distributed GBM, risk Gold, and experiment tracking
 
-Status: **not started; depends on Phase 2 gate**.
+Status: **implementation written; full 100K cloud run submitted and checks in progress**. Phase 2 merged to main as `c6e3749`.
 
 - [ ] EWM lambda 0.94 on regular weekly log returns; annual variance and drift correction; latest chronological positive S0; record calibration window and sample count.
 - [ ] Deterministic Box–Muller normal generation; explicit base seed/path ID; batched Spark DataFrame/mapInPandas execution, supported on serverless, bounded per-worker memory.
