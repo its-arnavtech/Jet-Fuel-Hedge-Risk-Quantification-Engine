@@ -39,6 +39,7 @@ def main(argv=None) -> int:
             (output / "quality.json").write_text(json.dumps({
                 "daily_rows": len(prices), "weekly_rows": len(weekly),
                 "quarantined_rows": len(quarantine), "source": "EIA", "is_synthetic": False,
+                "long_return_gaps": int(prices.long_return_gap.sum()),
                 "min_date": str(prices.price_date.min().date()),
                 "max_date": str(prices.price_date.max().date()),
             }, indent=2), encoding="utf-8")

@@ -16,7 +16,7 @@ The PDD is a portfolio specification, not evidence for its company-specific clai
 3. Finish a phase's implementation and checks; audit the **whole repository** (requirements, data correctness, math, SQL, security, compatibility, reproducibility, documentation).
 4. Record actionable findings with reproduction, severity, expected behavior, fix, and validation. File them as GitHub issues in `its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine`, store the real URLs, fix them, and verify again. Never fabricate an issue URL or mark unavailable integration checks passed.
 5. Do not begin the next phase until the audit is complete and its findings are resolved. If GitHub access is unavailable, preserve ready-to-file findings and fixes locally, but leave the phase gate pending.
-6. Use branches prefixed `codex/`. Never add credentials or private response payloads to Git, logs, exceptions, notebooks, or reports. Preserve the source DOCX.
+6. User preference: use descriptive feature/phase branch names, e.g. `phase-1-ingestion-silver`, and merge/push to `main` after the phase audit and fixes pass. Commit/push meaningful milestones while working. Never add credentials or private response payloads to Git, logs, exceptions, notebooks, or reports. Preserve the source DOCX.
 
 ## Phase 1 — Requirements, foundation, ingestion, and Silver
 

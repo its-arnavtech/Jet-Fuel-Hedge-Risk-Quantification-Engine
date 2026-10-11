@@ -9,6 +9,27 @@ from pathlib import Path
 from .bronze import canonical_json, read_completed
 from .config import Settings
 
+PROJECT_MARKER = "Jet Fuel Hedge Risk Quantification Engine managed schema v1"
+SCHEMAS = ("jet_fuel_bronze", "jet_fuel_silver", "jet_fuel_gold")
+
+
+def ensure_project_schemas(client, catalog: str) -> None:
+    from databricks.sdk.errors import NotFound, ResourceAlreadyExists
+    for schema in SCHEMAS:
+        name = f"{catalog}.{schema}"
+        try:
+            existing = client.schemas.get(name)
+        except NotFound:
+            try:
+                client.schemas.create(name=schema, catalog_name=catalog, comment=PROJECT_MARKER)
+            except ResourceAlreadyExists:
+                existing = client.schemas.get(name)
+                if existing.comment != PROJECT_MARKER:
+                    raise ValueError(f"Refusing to use unowned project schema {name}") from None
+        else:
+            if existing.comment != PROJECT_MARKER:
+                raise ValueError(f"Refusing to use unowned project schema {name}")
+
 
 def stage_envelopes(bronze_root: str | Path) -> dict[str, bytes]:
     """One immutable JSONL file per complete capture prevents publishing partial captures."""
@@ -45,17 +66,13 @@ def deploy_phase1(settings: Settings, bronze_root: str | Path, notebook: str | P
     user = client.current_user.me().user_name
     if not user:
         raise ValueError("Databricks identity has no workspace user name")
-    for schema in ["bronze", "silver", "gold"]:
-        try:
-            client.schemas.create(name=schema, catalog_name=settings.catalog)
-        except ResourceAlreadyExists:
-            pass
+    ensure_project_schemas(client, settings.catalog)
     try:
-        client.volumes.create(catalog_name=settings.catalog, schema_name="bronze",
+        client.volumes.create(catalog_name=settings.catalog, schema_name="jet_fuel_bronze",
                               name="landing", volume_type=VolumeType.MANAGED)
     except ResourceAlreadyExists:
         pass
-    volume = f"/Volumes/{settings.catalog}/bronze/landing"
+    volume = f"/Volumes/{settings.catalog}/jet_fuel_bronze/landing"
     client.files.create_directory(f"{volume}/captures")
     for capture_id, content in staged.items():
         path = f"{volume}/captures/{capture_id}.jsonl"

@@ -154,6 +154,24 @@ class BronzeTests(unittest.TestCase):
 
 
 class SilverTests(unittest.TestCase):
+    def test_verified_eia_unit_contract(self):
+        fixture = Path(__file__).resolve().parents[1] / "data/fixtures/eia_spot_contract.json"
+        payload = json.loads(fixture.read_text())
+        prices, quarantine = build_silver([event(payload["response"]["data"])])
+        self.assertTrue(quarantine.empty)
+        self.assertEqual(prices.iloc[0].jet_fuel_gal, 2.165)
+        self.assertEqual(prices.iloc[0].wti_spot_bbl, 81.52)
+
+    def test_long_gap_suppresses_volatility_until_outside_window(self):
+        dates = pd.bdate_range("2024-01-01", "2024-09-30")
+        dates = dates[~dates.to_series().between("2024-03-01", "2024-03-22").values]
+        prices, _ = build_silver([event([
+            row(str(dt.date()), value=str(2 + i / 100)) for i, dt in enumerate(dates)
+        ])])
+        self.assertTrue(prices.loc[prices.price_date == "2024-03-25", "long_return_gap"].iloc[0])
+        self.assertTrue(prices.loc[prices.price_date == "2024-04-01", "rolling_vol_90d"].isna().iloc[0])
+        self.assertFalse(prices.iloc[-1:].rolling_vol_90d.isna().iloc[0])
+
     def test_units_latest_revision_sparse_proxy_and_crack(self):
         first = event([row(), row(series="RWTC", value="84"), row("2025-01-06")])
         revised = event([row(value="3.0"), row("2025-01-06", series="RWTC", units="cents")],

@@ -20,10 +20,15 @@ class Series:
 
 
 SERIES = {
-    "EER_EPJK_PF4_RGC_DPG": Series("jet_fuel_gal", "Dollars per Gallon", "US Gulf Coast"),
-    "RWTC": Series("wti_spot_bbl", "Dollars per Barrel", "Cushing Oklahoma"),
-    "RBRTE": Series("brent_spot_bbl", "Dollars per Barrel", "Europe Brent"),
-    "EER_EPD2F_PF4_Y35NY_DPG": Series("heating_oil_gal", "Dollars per Gallon", "New York Harbor"),
+    "EER_EPJK_PF4_RGC_DPG": Series("jet_fuel_gal", "$/GAL", "US Gulf Coast"),
+    "RWTC": Series("wti_spot_bbl", "$/BBL", "Cushing Oklahoma"),
+    "RBRTE": Series("brent_spot_bbl", "$/BBL", "Europe Brent"),
+    "EER_EPD2F_PF4_Y35NY_DPG": Series("heating_oil_gal", "$/GAL", "New York Harbor"),
+}
+
+UNIT_ALIASES = {
+    "$/GAL": {"$/GAL", "Dollars per Gallon"},
+    "$/BBL": {"$/BBL", "Dollars per Barrel"},
 }
 
 

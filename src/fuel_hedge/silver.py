@@ -6,7 +6,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from .eia import SERIES
+from .eia import SERIES, UNIT_ALIASES
 
 
 def build_silver(events: list[dict]) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -38,7 +38,7 @@ def build_silver(events: list[dict]) -> tuple[pd.DataFrame, pd.DataFrame]:
     valid = []
     for item in obs.to_dict("records"):
         expected = SERIES[item["series"]]
-        if item.get("units") != expected.units:
+        if item.get("units") not in UNIT_ALIASES[expected.units]:
             rejected.append({**item, "reason": "unit_mismatch"})
             continue
         try:
@@ -64,7 +64,9 @@ def build_silver(events: list[dict]) -> tuple[pd.DataFrame, pd.DataFrame]:
     prices["log_return"] = np.log(prices.jet_fuel_gal / prices.jet_fuel_gal.shift())
     # A trading-day annualization assumption; preserve calendar gaps for quality reporting.
     prices["return_gap_days"] = prices.index.to_series().diff().dt.days
+    prices["long_return_gap"] = prices.return_gap_days > 4
     prices["rolling_vol_90d"] = prices.log_return.rolling("90D", min_periods=20).std(ddof=1) * np.sqrt(252)
+    prices.loc[prices.long_return_gap.rolling("90D").max().astype(bool), "rolling_vol_90d"] = np.nan
     prices["rolling_corr_90d"] = prices.wti_spot_bbl.rolling("90D", min_periods=20).corr(prices.jet_fuel_gal)
     prices["source"] = "EIA"
     prices["is_synthetic"] = False

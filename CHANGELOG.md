@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 1 in progress**. No phase is declared complete; no Gold data is deployed.
+- Current phase: **Phase 1 audit and live verification**. No phase is declared complete; no Gold data is deployed.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -28,8 +28,7 @@
 
 ## Blockers requiring external input
 
-- Databricks URL and token are now configured. Warehouse ID/permissions and live authentication not yet checked.
-- EIA API key for real ingestion.
+- No credential blocker remains: Databricks and EIA keys are configured locally and live authentication/ingestion succeeded.
 - GitHub access restored: the CLI works outside the Windows sandbox. Use escalated `gh`/Git network calls; connector remains inaccessible.
 
 ### 2026-10-10 — Phase 1 implementation underway
@@ -52,6 +51,20 @@
 | GitHub connector repository access | 404 / search permission error |
 | Databricks live access | Not attempted; URL/token absent |
 | Local implementation tests | Pending |
+
+### 2026-10-10 — Live EIA capture and Phase 1 audit fixes
+
+- User requested incremental commits/pushes and audited-phase merges to main with descriptive branch names. Renamed current branch to `phase-1-ingestion-silver` and pushed it; previous `codex/pdd-implementation` branch contains the initial milestones and is superseded.
+- Pushed Phase 1 implementation baseline `13bf91e`. GitHub Actions passed on Python 3.10/3.12 for that baseline: run `38098719232` on phase branch.
+- Databricks authentication succeeded. Discovered `workspace` catalog and serverless starter warehouse `e4f1304cb2d303ea`, HTTP path `/sql/1.0/warehouses/e4f1304cb2d303ea`. Saved warehouse ID locally.
+- EIA actual ingestion (2010-01-01 through 2026-10-09) captured four pages / 16,876 observations. Latest available source date is 2026-10-06.
+- Live API units are `$/GAL` and `$/BBL`; initial descriptive-only validation rejected all rows. Filed issue #4, corrected local/cloud contracts, added a credential-free real-response fixture.
+- Local transformation now produces 4,213 daily rows, 874 complete weekly samples, zero quarantined observations, and six long-return gaps flagged. Daily volatility is suppressed across long gaps; prices are not imputed.
+- Whole-repo audit filed [#1](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/1), [#2](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/2), [#3](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/3), [#4](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/4). Fixes written; closure waits for live validation and fix commit.
+- Dedicated `jet_fuel_bronze`, `jet_fuel_silver`, `jet_fuel_gold` schemas require project ownership marker. Silver candidates are validated before publication; STARTED/SUCCESS registry guards interrupted multi-table updates.
+- All 17 local tests pass; Ruff and compilation pass. Added dependency lock and locked CI setup (latest changes not yet pushed/CI-verified).
+- Submitted Databricks run `176651287504745`, task run `419058721053701`; still RUNNING at last check. Run URL: https://dbc-236f6036-39b4.cloud.databricks.com/?o=7474649671460509#job/216704330708562/run/176651287504745
+- `scripts/verify_phase1.py` will reconcile every daily/weekly row and calendar metric between local and cloud SQL, and verify publication status/watermark.
 
 ### 2026-10-10 — Phase 1 local checks and deployment code
 
