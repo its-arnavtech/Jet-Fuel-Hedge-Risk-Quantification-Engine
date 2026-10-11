@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 3 GBM/risk implementation and live checks** on `phase-3-gbm-risk`. Phase 2 audited/merged (`c6e3749`), initial Gold Power BI-ready. Full 100K job running; risk readiness not yet verified.
+- Current phase: **Phase 3 GBM/risk implementation and live checks** on `phase-3-gbm-risk`. Phase 2 audited/merged (`c6e3749`), initial Gold Power BI-ready. First full run failed at MLflow setup; repaired rerun `386315486361989` running. Risk readiness not yet verified.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,7 +21,7 @@
 
 ## Next actions
 
-1. Check full Phase 3 cloud run `540887869694032`; fix any diagnostics, then run `scripts/verify_phase3.py` for full NumPy/SQL/MLflow reconciliation.
+1. Check repaired full Phase 3 cloud run `386315486361989`; fix any diagnostics, then run `scripts/verify_phase3.py` for full NumPy/SQL/MLflow reconciliation.
 2. Whole-repo Phase 3 audit → file GitHub findings → fix/verify → close → merge main. Add risk/fan/histogram/sensitivity visuals to existing dashboard and charts.
 3. Extend Power BI handoff for verified risk, then start Phase 4 packaging and daily refresh after audit gate.
 4. Do not mark deployment, audit filing, or Power BI readiness complete based on local tests alone.
@@ -139,3 +139,10 @@
 ## Changelog maintenance contract
 
 Append dated entries after meaningful implementation/checks, include exact commands, failed attempts, actual issue URLs and fixed files. Keep Current state, Next actions and Blockers accurate. Every phase audit records coverage, findings, GitHub status and closure evidence. A successor must be able to resume without chat history.
+
+### 2026-10-10 � Phase 3 verified risk and audit fixes
+
+- First full run failed at MLflow registry resolution; filed #8 and #9 before fixes. Explicit public registry URI resolves serverless compatibility. Run-keyed fan/histogram/quality history retained; SUCCESS follows tracking completion. Source hash and library versions logged.
+- Repaired run `386315486361989` SUCCESS. Verifier passes all 100K paths, 500K costs, five risk rows, five complete sample paths and all 53 fan steps; MLflow FINISHED `4c5cf414a2af4078a5ea0aa8c66186ef`. Simulation ID `e35d376c-398b-4bea-8823-4f085f036fd9`; duration 47.92 seconds excluding startup.
+- Existing dashboard updated with eight validated datasets; exported verified four-panel chart. Interactive browser console declines automated control, so rendering is unverified and no UI bypass attempted.
+- Risk Gold readiness delivered to user. All 29 tests, repository-wide Ruff and compilation pass. Audit closure CI/commit/main merge next, then Phase 4.

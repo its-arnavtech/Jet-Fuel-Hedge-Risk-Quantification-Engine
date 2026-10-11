@@ -19,7 +19,7 @@ def main():
     gold=f'{settings.catalog}.jet_fuel_gold'
     silver=f'{settings.catalog}.jet_fuel_silver'
     run=query(client,settings.warehouse_id,f'SELECT * FROM {gold}.latest_simulation_run').iloc[0]
-    quality=query(client,settings.warehouse_id,f'SELECT * FROM {gold}.simulation_quality').iloc[0]
+    quality=query(client,settings.warehouse_id,f"SELECT * FROM {gold}.simulation_quality WHERE simulation_run_id='{run.simulation_run_id}'").iloc[0]
     source=query(client,settings.warehouse_id,f'SELECT * FROM {silver}.pipeline_runs ORDER BY started_at DESC LIMIT 1').iloc[0]
     if (run.status!='SUCCESS' or quality.simulation_run_id!=run.simulation_run_id
             or source.status!='SUCCESS' or run.source_pipeline_run_id!=source.pipeline_run_id):
@@ -42,7 +42,7 @@ def main():
     samples=query(client,settings.warehouse_id,f"""SELECT path_id,price_path FROM {silver}.simulated_price_paths
        WHERE simulation_run_id='{run.simulation_run_id}' AND path_id IN (0,1,17,999,{config.n_paths-1}) ORDER BY path_id""")
     for row in samples.to_dict('records'):
-        np.testing.assert_allclose(np.array(json.loads(row['price_path'])),paths[int(row['path_id'])],rtol=1e-12,atol=1e-12)
+        np.testing.assert_allclose(np.array(json.loads(row['price_path']),dtype=float),paths[int(row['path_id'])],rtol=1e-12,atol=1e-12)
     fan=query(client,settings.warehouse_id,f"SELECT * FROM {gold}.price_fan WHERE simulation_run_id='{run.simulation_run_id}' ORDER BY step")
     for q,column in [(.05,'p05_price_gal'),(.25,'p25_price_gal'),(.5,'p50_price_gal'),(.75,'p75_price_gal'),(.95,'p95_price_gal')]:
         np.testing.assert_allclose(pd.to_numeric(fan[column]),np.quantile(paths,q,axis=0),rtol=1e-9,atol=1e-10)
@@ -52,7 +52,7 @@ def main():
     if int(quality.cost_rows)!=config.n_paths*len(config.hedge_ratios):
         raise ValueError('Raw distribution row count mismatch')
     mlflow_run=client.experiments.get_run(run.mlflow_run_id).run
-    if mlflow_run.info.status.value!='FINISHED':
+    if getattr(mlflow_run.info.status,'value',mlflow_run.info.status)!='FINISHED':
         raise ValueError('MLflow run is not finished')
     evidence={'passed':True,'simulation_run_id':run.simulation_run_id,'n_paths':config.n_paths,
               'cost_rows':int(quality.cost_rows),'fan_steps':len(fan),

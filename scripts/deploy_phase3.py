@@ -2,6 +2,7 @@
 
 import argparse
 import base64
+import hashlib
 import json
 from pathlib import Path
 
@@ -24,6 +25,7 @@ def main():
     source=(root/'notebooks/phase3_risk.py').read_text()
     source=source.replace('# INJECT_SIMULATION_MODULE',(root/'src/fuel_hedge/simulation.py').read_text())
     source=source.replace('# INJECT_RISK_SQL','spark.sql('+repr((root/'sql/04_risk_metrics.sql').read_text())+')')
+    source_hash=hashlib.sha256(source.encode()).hexdigest()
     remote=f'/Users/{client.current_user.me().user_name}/jet-fuel-hedge-engine/phase3_risk'
     client.workspace.import_(path=remote,content=base64.b64encode(source.encode()).decode(),
                              format=workspace.ImportFormat.SOURCE,language=workspace.Language.PYTHON,
@@ -32,7 +34,8 @@ def main():
         tasks=[jobs.SubmitTask(task_key='gbm_risk',timeout_seconds=5400,
            notebook_task=jobs.NotebookTask(notebook_path=remote,source=jobs.Source.WORKSPACE,
              base_parameters={'catalog':settings.catalog,'n_paths':str(args.n_paths),
-                              'seed':str(args.seed),'horizon_years':str(args.horizon_years)}))])
+                              'seed':str(args.seed),'horizon_years':str(args.horizon_years),
+                              'source_sha256':source_hash}))])
     print(json.dumps({'run_id':run.run_id,'n_paths':args.n_paths,'seed':args.seed},indent=2))
 
 

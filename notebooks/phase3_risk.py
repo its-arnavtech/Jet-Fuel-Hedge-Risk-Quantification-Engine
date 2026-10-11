@@ -15,12 +15,11 @@ import mlflow
 import numpy as np
 import pandas as pd
 
-from pyspark.sql import functions as F
-
 dbutils.widgets.text('catalog','workspace')
 dbutils.widgets.text('n_paths','100000')
 dbutils.widgets.text('seed','20261010')
 dbutils.widgets.text('horizon_years','1.0')
+dbutils.widgets.text('source_sha256','unknown')
 catalog=dbutils.widgets.get('catalog')
 if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*',catalog):
     raise ValueError('Invalid catalog')
@@ -53,6 +52,7 @@ config=SimulationConfig(s0=float(latest_price.jet_fuel_gal),mu=calibration['mu']
 run_id=str(uuid4())
 user=spark.sql('SELECT current_user() AS user').first().user
 mlflow.set_tracking_uri('databricks')
+mlflow.set_registry_uri('databricks-uc')
 mlflow.set_experiment(f'/Users/{user}/jet-fuel-hedge-engine/gbm')
 started=time.monotonic()
 
@@ -69,6 +69,8 @@ with mlflow.start_run(run_name=f'jet_fuel_gbm_{config.n_paths}_paths') as tracke
     mlflow_id=tracked.info.run_id
     params={**config.__dict__,**calibration,'s0_as_of':str(latest_price.price_date),
             'source_pipeline_run_id':source.pipeline_run_id,'simulation_run_id':run_id,
+            'source_sha256':dbutils.widgets.get('source_sha256'),
+            'numpy_version':np.__version__,'mlflow_version':mlflow.__version__,
             'normal_sampler':'Box-Muller/NumPy-PCG64/SeedSequence(base_seed,path_id)',
             'purchase_average':'future_weekly_periods_excluding_S0'}
     mlflow.log_params({k:json.dumps(v) if isinstance(v,(tuple,list)) else v for k,v in params.items()})
@@ -115,7 +117,7 @@ with mlflow.start_run(run_name=f'jet_fuel_gbm_{config.n_paths}_paths') as tracke
       current_timestamp() AS created_ts
       FROM jet_fuel_gold.v_risk_metrics m JOIN jet_fuel_silver.simulation_runs r
       USING(simulation_run_id) WHERE r.status='SUCCESS' OR r.simulation_run_id='{run_id}'""")
-    spark.sql(f"""CREATE OR REPLACE TABLE jet_fuel_gold.price_fan USING DELTA AS
+    fan_sql=f"""
       SELECT '{run_id}' AS simulation_run_id,step,step/52.0 AS time_years,
       percentile_cont(.05) WITHIN GROUP(ORDER BY price) AS p05_price_gal,
       percentile_cont(.25) WITHIN GROUP(ORDER BY price) AS p25_price_gal,
@@ -124,8 +126,10 @@ with mlflow.start_run(run_name=f'jet_fuel_gbm_{config.n_paths}_paths') as tracke
       percentile_cont(.95) WITHIN GROUP(ORDER BY price) AS p95_price_gal
       FROM jet_fuel_silver.simulated_price_paths
       LATERAL VIEW posexplode(price_path) points AS step,price
-      WHERE simulation_run_id='{run_id}' GROUP BY step""")
-    spark.sql(f"""CREATE OR REPLACE TABLE jet_fuel_gold.cost_histogram USING DELTA AS
+      WHERE simulation_run_id='{run_id}' GROUP BY step"""
+    spark.sql(f'CREATE TABLE IF NOT EXISTS jet_fuel_gold.price_fan USING DELTA AS {fan_sql} LIMIT 0')
+    spark.sql(f'INSERT INTO jet_fuel_gold.price_fan {fan_sql}')
+    histogram_sql=f"""
       WITH bounds AS (
        SELECT hedge_ratio,min(simulated_total_cost_b) AS lo,max(simulated_total_cost_b) AS hi
        FROM jet_fuel_silver.simulation_raw_paths WHERE simulation_run_id='{run_id}' GROUP BY hedge_ratio
@@ -136,7 +140,9 @@ with mlflow.start_run(run_name=f'jet_fuel_gbm_{config.n_paths}_paths') as tracke
        WHERE p.simulation_run_id='{run_id}'
       ) SELECT '{run_id}' AS simulation_run_id,hedge_ratio,bin,
         lo+(hi-lo)*bin/50.0 AS bin_lower_cost_b,lo+(hi-lo)*(bin+1)/50.0 AS bin_upper_cost_b,
-        count(*) AS path_count FROM binned GROUP BY hedge_ratio,bin,lo,hi""")
+        count(*) AS path_count FROM binned GROUP BY hedge_ratio,bin,lo,hi"""
+    spark.sql(f'CREATE TABLE IF NOT EXISTS jet_fuel_gold.cost_histogram USING DELTA AS {histogram_sql} LIMIT 0')
+    spark.sql(f'INSERT INTO jet_fuel_gold.cost_histogram {histogram_sql}')
     risk=spark.sql(f"SELECT * FROM jet_fuel_gold.risk_metrics WHERE simulation_run_id='{run_id}' ORDER BY hedge_ratio").toPandas()
     if len(risk)!=len(config.hedge_ratios) or not (risk.n_paths==config.n_paths).all():
         raise ValueError('Risk ratio/count mismatch')
@@ -151,15 +157,22 @@ with mlflow.start_run(run_name=f'jet_fuel_gbm_{config.n_paths}_paths') as tracke
     duration=time.monotonic()-started
     mlflow.log_metric('duration_seconds',duration)
     mlflow.log_table(risk,'risk_metrics.json')
-    spark.sql(f"""UPDATE jet_fuel_silver.simulation_runs SET status='SUCCESS',
-      completed_at=current_timestamp(),duration_seconds={duration} WHERE simulation_run_id='{run_id}'""")
-    spark.sql('''CREATE OR REPLACE VIEW jet_fuel_gold.latest_simulation_run AS
-      SELECT * FROM jet_fuel_silver.simulation_runs WHERE status='SUCCESS'
-      QUALIFY row_number() OVER(ORDER BY completed_at DESC,started_at DESC)=1''')
-    spark.sql(f"""CREATE OR REPLACE TABLE jet_fuel_gold.simulation_quality USING DELTA AS
+    quality_sql=f"""
       SELECT '{run_id}' AS simulation_run_id,'{source.pipeline_run_id}' AS source_pipeline_run_id,
       current_timestamp() AS checked_at,{config.n_paths} AS n_paths,{duration} AS duration_seconds,
       (SELECT count(*) FROM jet_fuel_silver.simulation_raw_paths WHERE simulation_run_id='{run_id}') AS cost_rows,
-      (SELECT count(*) FROM jet_fuel_gold.price_fan) AS fan_steps,
-      '{mlflow_id}' AS mlflow_run_id""")
+      (SELECT count(*) FROM jet_fuel_gold.price_fan WHERE simulation_run_id='{run_id}') AS fan_steps,
+      '{mlflow_id}' AS mlflow_run_id"""
+    spark.sql(f'CREATE TABLE IF NOT EXISTS jet_fuel_gold.simulation_quality USING DELTA AS {quality_sql} LIMIT 0')
+    spark.sql(f'INSERT INTO jet_fuel_gold.simulation_quality {quality_sql}')
     display(risk)
+
+# Tracking must finish successfully before the registry publishes this run.
+source_now=spark.sql('SELECT * FROM jet_fuel_silver.pipeline_runs ORDER BY started_at DESC LIMIT 1').first()
+if source_now.status!='SUCCESS' or source_now.pipeline_run_id!=source.pipeline_run_id:
+    raise ValueError('Silver changed before simulation publication')
+spark.sql(f"""UPDATE jet_fuel_silver.simulation_runs SET status='SUCCESS',
+  completed_at=current_timestamp(),duration_seconds={duration} WHERE simulation_run_id='{run_id}'""")
+spark.sql('''CREATE OR REPLACE VIEW jet_fuel_gold.latest_simulation_run AS
+  SELECT * FROM jet_fuel_silver.simulation_runs WHERE status='SUCCESS'
+  QUALIFY row_number() OVER(ORDER BY completed_at DESC,started_at DESC)=1''')
