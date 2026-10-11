@@ -4,7 +4,7 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 
 ## Status
 
-**Audit in progress. Phase 1 gate not passed.** Twelve unit tests, Ruff and compilation pass; live ingestion/deployment and additional deployment-helper tests pending. Findings below are ready to file and must be resolved before Phase 2. No findings are inferred solely from unavailable credentials or sandbox restrictions.
+**Audit passed. Phase 1 gate complete.** All five findings resolved in `d30f254` and `dcc5389`. Nineteen tests, Ruff, compilation and CI pass. Initial live deployment and replay succeed; all prices and metrics reconcile with local calculations. No findings are inferred solely from unavailable credentials or sandbox restrictions.
 
 ## Findings
 
@@ -16,7 +16,7 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 - Expected: dedicated project schemas with explicit ownership and no replacement of unrelated data.
 - Fix plan: use `jet_fuel_bronze`, `jet_fuel_silver`, `jet_fuel_gold`; verify schema ownership marker before use; update paths, runbook and tests.
 - GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/1
-- Resolution: dedicated schemas and ownership marker implemented/tested; cloud validation pending.
+- Resolution: dedicated schemas and ownership rejection regression pass; live deployment uses only project schemas. Closed.
 
 ### A2 — Silver publication occurs before weekly quality validation
 
@@ -26,7 +26,7 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 - Expected: validate candidate daily/weekly data before publication; retain a persistent run status/watermark so consumers can detect interrupted publication.
 - Fix plan: build candidate temporary views, validate gaps/counts first, add run-status registry and associate quality results with successful run IDs. Require downstream phases to check latest run success.
 - GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/2
-- Resolution: candidate validation before publication and persistent status/watermark implemented; cloud validation pending.
+- Resolution: candidate validation precedes publication; persistent registry SUCCESS matches live quality watermark, including replay. Closed.
 
 ### A3 — Daily volatility is published across long missing-observation gaps
 
@@ -36,7 +36,7 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 - Expected: expose gaps and suppress the trading-day volatility estimate while a long gap is in the window; retain prices without imputation and keep weekly calibration gap rejection.
 - Fix plan: null rolling daily volatility whenever any return gap exceeds four calendar days in the window; add quality counts and matched local/SQL tests. Four days allows common weekend/holiday closures; longer closures conservatively suppress the estimate.
 - GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/3
-- Resolution: long-gap suppression and quality counts implemented; regression passes, cloud reconciliation pending.
+- Resolution: long-gap regression passes; live six-gap count and all rolling estimates/nulls reconcile with local pandas. Closed.
 
 ### A4 — Live EIA unit codes were rejected by descriptive-only validation
 
@@ -44,7 +44,7 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 - Reproduction/evidence: live capture returned 16,876 observations in `$/GAL` and `$/BBL`; initial local Silver raised `No valid EIA observations remain`.
 - Expected: accept actual EIA unit codes with exact equivalence, reject incompatible units.
 - GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/4
-- Resolution: exact codes and descriptive equivalents supported in local/cloud contracts; actual-response fixture and regression added. Local actual data: 4,213 daily and 874 weekly rows, zero quarantined. Cloud validation pending.
+- Resolution: exact codes and descriptive equivalents supported; real-response regression passes. Live/local actual data: 4,213 daily and 874 weekly rows, zero quarantine; full reconciliation passed. Closed.
 
 ## Coverage
 
@@ -68,6 +68,6 @@ Audit date: 2026-10-10. Implementation baseline: `13bf91e`. Scope: every tracked
 - Severity: medium.
 - Evidence: initial deployment and SQL reconciliation succeeded, but a second deployment stalled before job submission. Authenticated remote download immediately matched local bytes.
 - GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/5
-- Resolution: check/read identical captures before upload; reject conflicts; bound SDK requests/retries via SDK Config and use stable Files API. Added identical/conflicting/missing capture regressions. Fixed deployment submits normally; run `76990162773186` pending completion.
+- Resolution: pre-upload existence/content verification, conflict rejection, bounded SDK Config, stable Files API. Regressions pass. Replay run `76990162773186` SUCCESS; Bronze stays at four events and all Silver values still reconcile. Closed.
 
-Initial cloud run `176651287504745`: SUCCESS. Local/cloud reconciliation: all 4,213 daily and 874 weekly rows, price values, returns, calendar volatility/correlation, and nulls agree within rtol=1e-7 / atol=1e-9. Live quality watermark matches successful registry entry. Actual source range 2010-01-04 to 2026-10-06; four page events / 16,876 observations, zero quarantine rows, six long-return gaps flagged. Fix commit `d30f254` passed CI on Python 3.10/3.12 ([run](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38099086716)). A5 fix/replay/CI and main merge remain pending.
+Initial run `176651287504745` and replay `76990162773186`: SUCCESS. All 4,213 daily and 874 weekly rows, prices, returns, calendar volatility/correlation, and nulls agree within rtol=1e-7 / atol=1e-9. Replay quality watermark `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d` matches SUCCESS registry. Source range 2010-01-04 to 2026-10-06; four page events / 16,876 observations, zero quarantine, six long gaps flagged. `dcc5389` passes locked CI on Python 3.10/3.12 ([run](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38099331383)). Nineteen local tests, Ruff and compile checks pass; credential scan passed. Main merge is the release bookkeeping step after this audit closure.

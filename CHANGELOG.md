@@ -3,7 +3,7 @@
 ## Current state — 2026-10-10
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 1 audit and live verification**. No phase is declared complete; no Gold data is deployed.
+- Current phase: **Phase 1 complete and audited; merging to main, then Phase 2**. No Gold data is deployed yet.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -47,10 +47,16 @@
 | Git working tree before changes | Clean |
 | Entire PDD extraction and OOXML notes | Complete |
 | Repo instructions | No AGENTS.md found in repository/checked ancestor locations |
-| GitHub CLI authentication | Invalid token |
+| GitHub CLI authentication | Works in host context; sandbox-specific failure diagnosed |
 | GitHub connector repository access | 404 / search permission error |
-| Databricks live access | Not attempted; URL/token absent |
-| Local implementation tests | Pending |
+| Databricks live access | Initial and replay jobs SUCCESS; full local/cloud reconciliation |
+| Local implementation tests | 19 passing; Ruff and compilation passing; locked CI passing |
+
+### 2026-10-10 — Phase 1 audit closure
+
+- Replay `76990162773186` SUCCESS. Bronze count remains exactly four; every daily and weekly price/metric still reconciles. Latest SUCCESS watermark: `1d9c0ac4-ff20-4fb6-8d9c-d784316f4d0d`.
+- Final code commit `dcc5389` passed locked CI on both Python versions (run `38099331383`). Nineteen local tests, Ruff and compilation pass.
+- Audit findings #1–#5 resolved with evidence in `docs/audits/phase-01.md`. Closing issues, committing this audit record, merging/pushing to main, then starting `phase-2-gold-analytics`.
 
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 

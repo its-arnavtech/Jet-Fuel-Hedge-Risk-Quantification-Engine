@@ -20,7 +20,7 @@ The PDD is a portfolio specification, not evidence for its company-specific clai
 
 ## Phase 1 — Requirements, foundation, ingestion, and Silver
 
-Status: **in progress**.
+Status: **complete and audited**. Live deployment and idempotent replay succeeded; 19 tests and CI pass; issues #1–#5 resolved. Main merge recorded in changelog.
 
 - [x] Read the entire PDD and establish requirements, phase gates, handoff docs, and a correction log.
 - [x] Verify current Free Edition, serverless, authentication, and Power BI constraints against primary documentation.
@@ -30,8 +30,8 @@ Status: **in progress**.
 - [x] Silver: deduplicate revisions deterministically, align dates, validate units and positive jet fuel prices, preserve null proxy values, compute crack spread, log returns, actual calendar 90-day volatility and Pearson correlation.
 - [x] Downsample to a regular weekly series for EWM calibration; daily ingestion frequency must not become weekly annualization by accident.
 - [x] Databricks bootstrap and driver-side staging to a managed Unity Catalog volume; bounded `availableNow` streaming; catalog/schema validation; no RDD APIs or fixed cluster configuration. Code written; live validation pending.
-- [x] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks. 4,213 daily and 874 weekly rows fully reconcile between local pandas and live Spark SQL; replay verification pending.
-- [ ] Whole-repo audit → GitHub issues → fixes → verified audit closure.
+- [x] Validate local behavior, error paths, idempotence/revisions, sparse dates, unit conversions and calendars; run live Phase 1 checks. 4,213 daily and 874 weekly rows fully reconcile between local pandas and live Spark SQL, including replay (Bronze stays at four events).
+- [x] Whole-repo audit → GitHub issues #1–#5 → fixes → verified audit closure.
 
 Exit evidence: tests/CI commands; immutable Bronze and reproducible Silver; live Unity Catalog counts/quality checks when accessible; all audit issues filed and resolved. Deployment validation stays pending until workspace access is supplied.
 
