@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from fuel_hedge.config import Settings, load_env
+from fuel_hedge.dashboard import dashboard_definition
 from fuel_hedge.databricks import workspace_client
 from fuel_hedge.operations import HEDGE_RATIOS, linear_hedge_mark, synthetic_operations
 from verify_phase1 import query
@@ -27,6 +28,10 @@ def main():
                 f'SELECT * FROM {gold}.pipeline_runs ORDER BY started_at DESC LIMIT 1')
     if run.iloc[0].status!='SUCCESS' or run.iloc[0].pipeline_run_id!=quality.iloc[0].pipeline_run_id:
         raise ValueError('Gold publication is not ready')
+    source = query(client,settings.warehouse_id,
+                   f'SELECT * FROM {settings.catalog}.jet_fuel_silver.pipeline_runs ORDER BY started_at DESC LIMIT 1')
+    if source.iloc[0].status!='SUCCESS' or source.iloc[0].pipeline_run_id!=quality.iloc[0].source_pipeline_run_id:
+        raise ValueError('Gold is stale relative to the current Silver publication')
     prices = pd.read_csv('artifacts/silver/fuel_prices.csv',parse_dates=['price_date'])
     data = synthetic_operations(date.fromisoformat(str(prices.price_date.max().date())))
     flights = data['flights'].loc[lambda f: ~f.cancelled].copy()
@@ -60,6 +65,25 @@ def main():
                                  position['contract_gallons'],position['locked_price_gal'],spots)
         actual = float(mtm.loc[mtm.position_id==position['position_id'],'unrealized_pnl_usd'].iloc[0])
         np.testing.assert_allclose(actual,mark)
+    # Exercise the actual view SELECT on adversarial positions without changing production tables.
+    sql = Path('sql/03_hedge_mtm.sql').read_text().split(' AS\n',1)[1].rstrip(';\n')
+    fixture = """WITH test_positions AS (SELECT * FROM VALUES
+      ('valid',DATE'2026-01-01','futures','JET_FUEL',100L,2.0D,DATE'2027-01-01'),
+      ('null_instrument',DATE'2026-01-01',NULL,'JET_FUEL',100L,2.0D,DATE'2027-01-01'),
+      ('null_underlying',DATE'2026-01-01','futures',NULL,100L,2.0D,DATE'2027-01-01'),
+      ('null_notional',DATE'2026-01-01','futures','JET_FUEL',NULL,2.0D,DATE'2027-01-01'),
+      ('option',DATE'2026-01-01','call_option','JET_FUEL',100L,2.0D,DATE'2027-01-01'),
+      ('infinite_locked',DATE'2026-01-01','futures','JET_FUEL',100L,cast('Infinity' AS DOUBLE),DATE'2027-01-01')
+      AS p(position_id,position_date,instrument_type,underlying,contract_gallons,locked_price_gal,expiry_dt)),"""
+    tested = fixture + sql.replace('WITH latest AS','latest AS',1).replace('jet_fuel_silver.hedge_positions','test_positions').replace('jet_fuel_silver.fuel_prices',f'{settings.catalog}.jet_fuel_silver.fuel_prices')
+    bad_marks = query(client,settings.warehouse_id,tested)
+    expected_methods = {'valid':'LINEAR_SPOT_PROXY','null_instrument':'UNSUPPORTED_INSTRUMENT',
+                        'null_underlying':'UNSUPPORTED_UNDERLYING','null_notional':'INVALID_POSITION',
+                        'option':'UNSUPPORTED_INSTRUMENT','infinite_locked':'INVALID_POSITION'}
+    if bad_marks.set_index('position_id').valuation_method.to_dict()!=expected_methods:
+        raise ValueError('Adversarial SQL position validation failed')
+    if bad_marks.loc[bad_marks.position_id!='valid','unrealized_pnl_usd'].notna().any():
+        raise ValueError('Invalid positions produced a valuation')
     fleet = query(client,settings.warehouse_id,f'SELECT * FROM {gold}.v_fleet_summary')
     np.testing.assert_allclose(pd.to_numeric(fleet.fleet_share_pct).sum(),100)
     sensitivity = query(client,settings.warehouse_id,f'SELECT * FROM {gold}.v_hedge_sensitivity')
@@ -69,9 +93,14 @@ def main():
     risk = query(client,settings.warehouse_id,f'SELECT * FROM {gold}.v_risk_metrics')
     if args.expect_no_risk and len(risk):
         raise ValueError('Unexpected simulation results before Phase 3')
+    for dataset in dashboard_definition(settings.catalog)['datasets']:
+        if query(client,settings.warehouse_id,''.join(dataset['queryLines'])).empty:
+            raise ValueError('Empty initial dashboard dataset: '+dataset['name'])
     evidence = {'passed':True,'route_scenario_rows_reconciled':len(cloud),
                 'hedge_marks_reconciled':len(mtm),'sensitivity_rows':len(sensitivity),
-                'risk_rows_observed':len(risk),'quality':quality.to_dict('records')[0]}
+                'risk_rows_observed':len(risk),'adversarial_marks_checked':len(bad_marks),
+                'dashboard_datasets_checked':3,
+                'quality':quality.to_dict('records')[0]}
     Path('artifacts/phase2_verification.json').write_text(json.dumps(evidence,indent=2))
     print(json.dumps(evidence,indent=2))
 

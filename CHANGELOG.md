@@ -69,6 +69,16 @@
 - Initial test run: 21 pass, one float-equality assertion corrected to tolerance comparison (240.00000000000003 vs 240); full rerun next.
 - Submitted Phase 2 run `1122134599329967`, immutable snapshot `f7a30adee7884b9c7e64bf738744f26837b31027aba92dc90a2fae0567847c46`. Cloud status and Gold readiness pending.
 
+### 2026-10-10 — Phase 2 audit fixes and initial dashboard
+
+- Pushed implementation baseline `052f194` to `phase-2-gold-analytics`.
+- Initial Gold run `1122134599329967` SUCCESS.
+- Filed audit [#6](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/6) for NULL/nonfinite hedge valuation inputs, [#7](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/7) for missing upstream publication lineage. Fixes implemented in SQL, Gold notebook/deployment and verifier.
+- Audit-fix run `498442545839233` SUCCESS. Full live reconciliation/adversarial position checks and dashboard dataset queries running.
+- Published initial AI/BI dashboard `01f1c50e22881d6ea243de94f87b3f46`: https://dbc-236f6036-39b4.cloud.databricks.com/dashboardsv3/01f1c50e22881d6ea243de94f87b3f46 . Three datasets: EIA trend, synthetic route ranking, synthetic position marks. Future updates must reuse this ID (`artifacts/dashboard.json` or `--dashboard-id`).
+- Added `docs/POWER_BI.md` with verified connection settings, model grains/relationships, synthetic flags, cost/P&L meanings and publication readiness checks.
+- 22 local tests pass; Ruff/compile checks pass. Audit closure, latest CI and main merge pending.
+
 ### 2026-10-10 — Phase 1 deployment success and full SQL reconciliation
 
 - Databricks run `176651287504745` terminated SUCCESS.

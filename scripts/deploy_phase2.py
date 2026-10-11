@@ -35,7 +35,8 @@ def main():
     source += '''
 # COMMAND ----------
 spark.sql(f"""CREATE OR REPLACE TABLE jet_fuel_gold.analytics_quality USING DELTA AS
-SELECT '{gold_run_id}' AS pipeline_run_id,current_timestamp() AS checked_at,
+SELECT '{gold_run_id}' AS pipeline_run_id,'{source_pipeline_run_id}' AS source_pipeline_run_id,
+ current_timestamp() AS checked_at,
  (SELECT count(*) FROM jet_fuel_silver.routes) AS routes,
  (SELECT count(*) FROM jet_fuel_silver.flights) AS scheduled_flights,
  (SELECT count(*) FROM jet_fuel_silver.flights WHERE NOT cancelled) AS operated_flights,
@@ -48,6 +49,11 @@ SELECT '{gold_run_id}' AS pipeline_run_id,current_timestamp() AS checked_at,
 q=spark.table('jet_fuel_gold.analytics_quality').first()
 if q.operated_flights != q.gold_operated_flights or q.sensitivity_rows != 30:
     raise ValueError('Gold consumption/scenario reconciliation failed')
+source_latest=spark.sql('SELECT * FROM jet_fuel_silver.pipeline_runs ORDER BY started_at DESC LIMIT 1').first()
+source_quality=spark.table('jet_fuel_silver.ingestion_quality').first()
+if (source_latest.status!='SUCCESS' or source_latest.pipeline_run_id!=source_pipeline_run_id
+        or source_quality.pipeline_run_id!=source_pipeline_run_id):
+    raise ValueError('Silver source changed during Gold publication; rerun Gold')
 spark.sql(f"UPDATE jet_fuel_gold.pipeline_runs SET status='SUCCESS',completed_at=current_timestamp() WHERE pipeline_run_id='{gold_run_id}'")
 display(spark.table('jet_fuel_gold.analytics_quality'))
 '''

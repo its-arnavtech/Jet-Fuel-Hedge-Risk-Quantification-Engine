@@ -24,6 +24,7 @@ latest = spark.sql("SELECT * FROM jet_fuel_silver.pipeline_runs ORDER BY started
 quality = spark.table("jet_fuel_silver.ingestion_quality").first()
 if latest.status != "SUCCESS" or latest.pipeline_run_id != quality.pipeline_run_id:
     raise ValueError("Silver publication is not ready")
+source_pipeline_run_id = latest.pipeline_run_id
 gold_run_id = str(uuid4())
 spark.sql("""CREATE TABLE IF NOT EXISTS jet_fuel_gold.pipeline_runs
 (pipeline_run_id STRING, started_at TIMESTAMP, completed_at TIMESTAMP, status STRING) USING DELTA""")
