@@ -146,3 +146,7 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Repaired run `386315486361989` SUCCESS. Verifier passes all 100K paths, 500K costs, five risk rows, five complete sample paths and all 53 fan steps; MLflow FINISHED `4c5cf414a2af4078a5ea0aa8c66186ef`. Simulation ID `e35d376c-398b-4bea-8823-4f085f036fd9`; duration 47.92 seconds excluding startup.
 - Existing dashboard updated with eight validated datasets; exported verified four-panel chart. Interactive browser console declines automated control, so rendering is unverified and no UI bypass attempted.
 - Risk Gold readiness delivered to user. All 29 tests, repository-wide Ruff and compilation pass. Audit closure CI/commit/main merge next, then Phase 4.
+
+### 2026-10-10 — Phase 3 gate closed
+
+- Fix commit `5a4e935`, locked CI `38100947593` passed both Python versions. Issues #8–#9 closed with live and numerical evidence. Merge/push to main next; begin `phase-4-portfolio-powerbi` only after merge.

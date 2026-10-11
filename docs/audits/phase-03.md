@@ -1,6 +1,6 @@
 # Phase 3 repository audit
 
-Status: implementation and live audit passed; closure CI pending. Coverage: PDD mathematics, all Python/SQL/notebooks, tests and CI, credentials, deployment, medallion lineage, dashboard queries and handoff docs.
+Status: passed; issues #8–#9 closed. Coverage: PDD mathematics, all Python/SQL/notebooks, tests and CI, credentials, deployment, medallion lineage, dashboard queries and handoff docs.
 
 | Finding | GitHub | Fix / evidence |
 | --- | --- | --- |
@@ -16,3 +16,5 @@ Status: implementation and live audit passed; closure CI pending. Coverage: PDD 
 - Eight published dashboard dataset queries pass (250, 8, 3, 5, 53, 47, 5, 30 rows). Static four-panel chart exported from verified data and visually inspected. Browser console reports automated-control restriction, so interactive rendering inspection is explicitly unverified; SDK definition publication and SQL checks pass.
 - Reviewed existing ingestion, revisions, immutable files, schema ownership, SQL units/null handling, synthetic labels, lineage, docs and CI. No additional actionable findings in this pass. Prior summaries preserved by run; consumers select successful registry run, track source watermark and exclude STARTED candidates.
 - Credentials remain ignored; no secrets in tracked source. Plan/changelog/Power BI guidance updated.
+
+Closure commit `5a4e935`; locked CI [38100947593](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/38100947593) passed on Python 3.10/3.12. Phase gate closed; main merge follows.
