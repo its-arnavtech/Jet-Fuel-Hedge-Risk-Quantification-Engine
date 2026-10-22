@@ -92,6 +92,7 @@ def measures():
     measure("Route Savings M", "IF(HASONEVALUE('Hedge Scenario'[scenario_id]),SUM('Route Costs'[hedge_savings_usd])/1000000)", "Backtest", "0.00")
     measure("Route Total Savings M", "CALCULATE([Route Savings M],REMOVEFILTERS(dim_route),REMOVEFILTERS(dim_month))", "Backtest", "0.00")
     measure("Route Count", "COUNTROWS(ALL(dim_route))", "Backtest", "0")
+    measure("Selected Hedge Ratio", "SELECTEDVALUE('Hedge Scenario'[hedge_ratio])", "Backtest", "0.0%")
     measure("Route Cost M", "DIVIDE([Fuel Cost USD],1000000)", "Backtest", "0.00")
     measure("Route Unhedged M", "DIVIDE([Unhedged Cost USD],1000000)", "Backtest", "0.00")
     measure("B767 Share", 'DIVIDE(SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]),SUMX(ALL(dim_route),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]))', "Backtest", "0.0%")
@@ -503,10 +504,10 @@ def main():
     semantic_model()
     report()
     columns = [name for name in MEASURES if name.startswith("Title ")]
-    query = 'EVALUATE ROW(\n'+',\n'.join('    "'+name+'",['+name+']' for name in columns)+'\n)\n'
+    query = 'EVALUATE CALCULATETABLE(ROW(\n'+',\n'.join('    "'+name+'",['+name+']' for name in columns)+'\n),TREATAS({"H080"},\'Hedge Scenario\'[scenario_id]))\n'
     save(ROOT/"powerbi/tests/headlines.dax", query)
     numeric = [name for name, (_, folder, fmt) in MEASURES.items() if fmt and folder != "Status"]
-    save(ROOT/"powerbi/tests/headline_numbers.dax", 'EVALUATE ROW(\n'+',\n'.join('    "'+name+'",['+name+']' for name in numeric)+'\n)\n')
+    save(ROOT/"powerbi/tests/headline_numbers.dax", 'EVALUATE CALCULATETABLE(ROW(\n'+',\n'.join('    "'+name+'",['+name+']' for name in numeric)+'\n),TREATAS({"H080"},\'Hedge Scenario\'[scenario_id]))\n')
     print(f"Generated five-page PBIP with {len(MEASURES)} measures")
 
 

@@ -1,7 +1,7 @@
 {
-  "offline": true,
-  "source": "local development extracts",
-  "price_as_of": "2026-10-06",
+  "offline": false,
+  "source": "live SQL Silver/Gold",
+  "price_as_of": "2026-10-20",
   "visual_files": [
     "dashboard\\plots\\insights\\1_1.png",
     "dashboard\\plots\\insights\\1_2.png",

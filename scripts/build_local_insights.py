@@ -31,7 +31,14 @@ def local_operations(daily):
     fact = fact.merge(pd.DataFrame({"hedge_ratio": [0., .2, .4, .6, .8]}), how="cross")
     fact["hedged_cost_usd"] = fact.hedge_ratio*locked*fact.monthly_gallons+(1-fact.hedge_ratio)*fact.unhedged_cost_usd
     fact["hedge_savings_usd"] = fact.unhedged_cost_usd-fact.hedged_cost_usd
-    return fact, ops["routes"]
+    marks = ops["hedge_positions"][["underlying", "locked_price_gal"]].copy()
+    latest = daily.iloc[-1]
+    spots = dict(JET_FUEL=float(latest.jet_fuel_gal), WTI=float(latest.wti_spot_bbl)/42,
+                 HEATING_OIL=float(latest.heating_oil_gal))
+    marks["current_spot_gal"] = marks.underlying.map(spots)
+    marks["pnl_per_gallon"] = marks.current_spot_gal-marks.locked_price_gal
+    marks["hedge_status"] = np.where(marks.pnl_per_gallon > 0, "IN_THE_MONEY", np.where(marks.pnl_per_gallon < 0, "OUT_OF_MONEY", "AT_THE_MONEY"))
+    return fact, ops["routes"], marks
 
 
 def main():
@@ -58,9 +65,15 @@ def main():
         if i % 50 == 0:
             print(f"Offline walk-forward {i+1}/{len(inputs)}; {time.monotonic()-begun:.1f}s", flush=True)
     pd.concat(results).to_csv(out/"forecast_backtest.csv", index=False)
-    routes, dim = local_operations(daily)
+    routes, dim, marks = local_operations(daily)
     routes.to_csv(out/"route_fuel_costs.csv", index=False)
     dim.to_csv(out/"dim_route.csv", index=False)
+    marks.to_csv(out/"hedge_mtm.csv", index=False)
+    sensitivity = pd.DataFrame([dict(hedge_ratio=h, price_change_pct=p,
+        unhedged_cost_b=1.5*float(daily.iloc[-1].jet_fuel_gal)*(1+p/100),
+        hedged_cost_b=1.5*float(daily.iloc[-1].jet_fuel_gal)*(h*np.exp(.04)+(1-h)*(1+p/100)))
+        for h in [0., .2, .4, .6, .8] for p in [-30, -15, 0, 15, 30, 50]])
+    sensitivity.to_csv(out/"hedge_sensitivity.csv", index=False)
     calibration = calibrate(weekly)
     config = SimulationConfig(s0=float(daily.iloc[-1].jet_fuel_gal), mu=calibration["mu"], sigma=calibration["sigma"])
     # Actual local simulation for histogram bins, never reconstruct counts from illustrative curves.

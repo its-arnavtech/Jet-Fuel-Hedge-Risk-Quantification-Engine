@@ -1,4 +1,4 @@
-EVALUATE ROW(
+EVALUATE CALCULATETABLE(ROW(
     "Title 1.1",[Title 1.1],
     "Title 1.2",[Title 1.2],
     "Title 2.1",[Title 2.1],
@@ -14,4 +14,4 @@ EVALUATE ROW(
     "Title 5.1",[Title 5.1],
     "Title 5.2",[Title 5.2],
     "Title 5.3",[Title 5.3]
-)
+),TREATAS({"H080"},'Hedge Scenario'[scenario_id]))

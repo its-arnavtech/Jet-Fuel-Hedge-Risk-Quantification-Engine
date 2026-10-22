@@ -63,7 +63,7 @@ The credential-free GoldTable function remains the sole Databricks data-access p
 | return_tail_frequency_current | Threshold 2/3/4; observed/normal tail frequencies, skew and excess kurtosis |
 | insights_runs; insights_quality | Append-only publication registry and seven positive per-table count expectations |
 
-All facts carry insight/source IDs, created timestamp and a source flag. Historical prices/validation are not synthetic operations. Reference-carrier costs are assumptions about volume; route/position views are explicitly synthetic fixtures. The full-history calibration chart has 822 calibrations, while only 770 can have a complete realized year; see DECISIONS #21 for the disclosed departure from the supplied completed-window benchmark.
+All facts carry insight/source IDs, created timestamp and a source flag. Historical prices/validation are not synthetic operations. Reference-carrier costs are assumptions about volume; route/position views are explicitly synthetic fixtures. At the verified 2026-10-20 source date, the full-history calibration chart has 824 calibrations, while only 772 have a complete realized year; see DECISIONS #21 for the disclosed departure from the supplied completed-window benchmark.
 
 The five 1280×720 pages contain 15 narrative units (some contain two chart/table panels):
 
@@ -73,7 +73,7 @@ The five 1280×720 pages contain 15 narrative units (some contain two chart/tabl
 4. How much to trust GBM: calibration extremes, walk-forward band coverage/below-P05 regimes, actual fan bands and observed fat tails.
 5. Read model hedge decisions correctly: 0%/80% overlaid histogram/tail rules, model-vs-history mean change and signed sensitivity heatmap. VaR-reduction identity is a note, never a chart.
 
-Three layered units use the certified Deneb AppSource visual. Desktop must allow the certified visual to load. Their exact embedded Vega-Lite specs are schema-validated and can be compiled/rendered with `scripts/render_powerbi_specs.py`; those previews are **not Desktop screenshots**. All headline/subtitle numbers and alt text bind to DAX measures over current views. Titles use signed changes or comparator branches, so refresh cannot silently preserve a reversed empirical claim. `powerbi/tests/headlines.dax` and `headline_numbers.dax` are query-view tests; `headline_numbers.sql` checks the warehouse equivalents against independent Python evidence with `scripts/verify_powerbi_contract.py --live`. SQL checks do not execute DAX.
+Four layered units use the certified Deneb AppSource visual: guarded waterfall bridge, calibration/IQR, fan and histogram. Desktop must allow the certified visual to load. Their exact embedded Vega-Lite specs are schema-validated and can be compiled/rendered with `scripts/render_powerbi_specs.py`; those previews are **not Desktop screenshots**. All headline/subtitle numbers and alt text bind to DAX measures over current views. Titles use signed changes or comparator branches, so refresh cannot silently preserve a reversed empirical claim. `powerbi/tests/headlines.dax` and `headline_numbers.dax` are query-view tests; `headline_numbers.sql` checks the warehouse equivalents against independent Python evidence with `scripts/verify_powerbi_contract.py --live`. SQL checks do not execute DAX.
 
 ## Refresh and verification sequence
 
@@ -95,7 +95,7 @@ Offline development is explicit: `scripts/build_local_insights.py`, `scripts/ver
 
 ## Desktop handoff and native validation checklist
 
-Power BI Desktop Store version 2.159.883.0 is installed. Native control approval timed out before project open during the initial attempt. **No Desktop report open, authentication, Import refresh, DAX execution or five-page screenshots have been claimed.** Follow these steps if native access remains unavailable:
+Power BI Desktop Store version 2.159.883.0 opened the PBIP, and the user authenticated in its connector dialog. Initial Import failed with “The key didn't match any rows in the table.” GoldTable now matches unique catalog/schema names without the incorrect Kind key. Applying external changes and retrying Import remains pending: the native helper rejects clicks inside the child WebView as a different process. An initial read-only DAX attempt also confirmed the open model had not loaded the new Bridge High measure. **No successful Import refresh, DAX reconciliation or refreshed five-page screenshots are claimed yet.** Follow these steps to finish native validation:
 
 1. Finish live publication and require all three readiness flags; run the verifiers above.
 2. Open `powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip` in Desktop. Enable supported project/developer settings if your installation requests them. Resolve any parser error before continuing; do not discard model source.

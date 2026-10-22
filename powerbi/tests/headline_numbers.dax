@@ -1,4 +1,4 @@
-EVALUATE ROW(
+EVALUATE CALCULATETABLE(ROW(
     "Market Date",[Market Date],
     "Latest Jet",[Latest Jet],
     "Prior Jet",[Prior Jet],
@@ -50,6 +50,7 @@ EVALUATE ROW(
     "Route Savings M",[Route Savings M],
     "Route Total Savings M",[Route Total Savings M],
     "Route Count",[Route Count],
+    "Selected Hedge Ratio",[Selected Hedge Ratio],
     "Route Cost M",[Route Cost M],
     "Route Unhedged M",[Route Unhedged M],
     "B767 Share",[B767 Share],
@@ -101,4 +102,4 @@ EVALUATE ROW(
     "Effective Benchmark",[Effective Benchmark],
     "Historical P95 Price",[Historical P95 Price],
     "Forward Price",[Forward Price]
-)
+),TREATAS({"H080"},'Hedge Scenario'[scenario_id]))

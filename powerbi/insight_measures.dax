@@ -197,6 +197,9 @@ CALCULATE([Route Savings M],REMOVEFILTERS(dim_route),REMOVEFILTERS(dim_month))
 Route Count =
 COUNTROWS(ALL(dim_route))
 
+Selected Hedge Ratio =
+SELECTEDVALUE('Hedge Scenario'[hedge_ratio])
+
 Route Cost M =
 DIVIDE([Fuel Cost USD],1000000)
 

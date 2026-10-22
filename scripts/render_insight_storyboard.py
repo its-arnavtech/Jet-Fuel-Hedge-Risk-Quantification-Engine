@@ -32,14 +32,17 @@ def main():
         for col in ["price_date", "week_ending", "window_start", "cost_month"]:
             if col in frame:
                 frame[col] = pd.to_datetime(frame[col])
-        return frame
+        order = [col for col in ["price_date", "week_ending", "window_start", "cost_month", "step", "threshold"] if col in frame]
+        return frame.sort_values(order).reset_index(drop=True) if order else frame
     market, corr, annual, bt, history, forecast, tails = [load(n) for n in [
         "market_decomposition", "proxy_return_correlation", "proxy_effectiveness_annual",
         "hedge_backtest_windows", "calibration_history", "forecast_backtest", "return_tail_frequency"]]
     routes = load("route_fuel_costs")
     risk = pd.read_csv("artifacts/risk_metrics.csv") if args.offline else load("risk_metrics")
-    fan = pd.read_csv("artifacts/price_fan.csv") if args.offline else load("price_fan")
+    fan = (pd.read_csv("artifacts/price_fan.csv") if args.offline else load("price_fan")).sort_values("step")
     hist = load("cost_histogram")
+    marks = load("hedge_mtm")
+    sensitivity = load("hedge_sensitivity")
     plt.rcParams.update({"font.size": 10, "axes.spines.top": False, "axes.spines.right": False,
                          "axes.grid": True, "grid.alpha": .16, "axes.titlelocation": "left",
                          "text.parse_math": False})
@@ -66,6 +69,7 @@ def main():
     finish(fig, "1.1")
     current = market.iloc[-1]
     prior = market[market.price_date <= current.price_date-pd.DateOffset(years=1)].iloc[-1]
+    np.testing.assert_allclose(prior.jet_fuel_gal+f["wti_change"]+f["crack_change"], current.jet_fuel_gal, atol=1e-9, rtol=0)
     fig, ax = start(f"Crack ${f['crack']:.3f}/gal is {f['crack_multiple']:.1f}× its prior-years mean; jet ranks at {f['jet_rank']:.1%} of full history")
     heights = [prior.jet_fuel_gal, f["wti_change"], f["crack_change"], current.jet_fuel_gal]
     bottoms = [0, prior.jet_fuel_gal, prior.jet_fuel_gal+f["wti_change"], 0]
@@ -100,10 +104,9 @@ def main():
     axes[0].set(xlabel="Trailing-year change, $/gal")
     axes[0].legend()
     axes[1].axis("off")
-    marks = [("JET_FUEL", 2.8, current.jet_fuel_gal), ("WTI", 1.7, current.wti_gal), ("HEATING_OIL", 2.6, current.heating_oil_gal)]
-    table = axes[1].table(cellText=[[name, f"{locked:.3f}", f"{mark:.3f}", f"{mark-locked:+.3f}"] for name, locked, mark in marks], colLabels=["Underlying", "Locked", "Mark", "P&L/gal"], loc="center", cellLoc="left")
+    table = axes[1].table(cellText=[[row.underlying, f"{row.locked_price_gal:.3f}", f"{row.current_spot_gal:.3f}", f"{row.pnl_per_gallon:+.3f}", row.hedge_status] for row in marks.itertuples()], colLabels=["Underlying", "Locked", "Mark", "P&L/gal", "Status"], loc="center", cellLoc="left", colWidths=[.25, .13, .13, .15, .34])
     table.auto_set_font_size(False)
-    table.set_fontsize(9)
+    table.set_fontsize(8)
     table.scale(1, 1.8)
     axes[1].set_title("Synthetic fixture | Linear spot proxies", fontsize=11)
     finish(fig, "2.3")
@@ -212,8 +215,9 @@ def main():
     finish(fig, "5.2")
     f = numbers["F11"]
     fig, ax = start(f"Hedge break-even {f['break_even']:.1%}; 80% cover at −30%: ${f['minus30_cost_b']:+.2f}B, at +50%: ${f['plus50_cost_b']:+.2f}B", "Reference carrier, 1.5B gal/yr")
-    ratios, shocks = np.array([0., .2, .4, .6, .8]), np.array([-.3, -.15, 0, .15, .3, .5])
-    values = 1.5*current.jet_fuel_gal*ratios[:, None]*(np.exp(.04)-(1+shocks[None, :]))
+    sensitivity["difference"] = sensitivity.hedged_cost_b-sensitivity.unhedged_cost_b
+    grid = sensitivity.pivot(index="hedge_ratio", columns="price_change_pct", values="difference").sort_index().sort_index(axis=1)
+    ratios, shocks, values = grid.index.to_numpy(), grid.columns.to_numpy()/100, grid.to_numpy()
     limit = np.max(abs(values))
     ax.imshow(values, cmap="RdBu_r", norm=TwoSlopeNorm(0, -limit, limit), aspect="auto")
     for y in range(5):

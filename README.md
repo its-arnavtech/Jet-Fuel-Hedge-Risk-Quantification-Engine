@@ -44,19 +44,19 @@ EWM annual arithmetic drift is 0.92914 and volatility 0.60505, using 52 weekly r
 
 ## What we learned — refreshed measures, not fixed forecasts
 
-Phase 5 supplies a five-page [Power BI Project](powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip), [15 insight storyboards](dashboard/plots/insights) and an independent [verification workflow](docs/POWER_BI.md). The report recomputes its titles from guarded current facts. The following findings describe the 2026-10-06 development extract; current live verification and source/run IDs supersede these numbers after refresh. Routes and positions are synthetic; annual budget costs use a separate 1.5B-gallon reference carrier. GBM is not a forecast.
+Phase 5 supplies a five-page [Power BI Project](powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip), [15 insight storyboards](dashboard/plots/insights) and an independent [verification workflow](docs/POWER_BI.md). The report recomputes its titles from guarded current facts. These findings describe verified live Gold through **2026-10-20**; [verification evidence](docs/evidence/phase5_verification.json) records source/run IDs. Routes and positions are synthetic; annual budget costs use a separate 1.5B-gallon reference carrier. GBM is not a forecast.
 
-- F1: crack expansion supplied 63.9% of the +$2.224/gal trailing-year jet move; the crack was about 4× its prior-years mean.
-- F2: WTI's price-level correlation was 0.941, while paired daily-return correlation was 0.496; heating oil's was 0.912.
+- F1: crack expansion supplied 53.5% of the +$2.539/gal trailing-year jet move; the crack was about 4× its prior-years mean.
+- F2: WTI's price-level correlation was 0.911, while paired daily-return correlation was 0.375; heating oil's was 0.897.
 - F3: heating oil out-tracked WTI in 15 of 17 years; WTI reached weekly-return R²≥0.80 in one year.
-- F4: WTI-equivalent rose $0.804/gal versus jet's $2.224; heating oil rose $2.348.
-- F5: the forward beat spot in 41.5% of 822 windows. At 80% cover, historical P95 budget overrun fell $1.21B→$0.34B, with +$0.09B/year mean cost.
-- F6: the latest complete saving ranked at 98.3% of rolling windows; the fixture's unusually profitable year is not a typical-year expectation.
-- F7: current drift ranked at 94.3% of all 822 valid calibrations. Only 770 have completed forward outcomes; the supplied narrower benchmark gives different ranks/medians (DECISIONS #21).
-- F8: EWM-drift bands covered 74.5% of realized purchase averages versus nominal 90%; 25.2% of high-drift outcomes fell below P05. Zero/risk-free drift covered about 84%/83%.
+- F4: WTI-equivalent rose $1.180/gal versus jet's $2.539; heating oil rose $2.742.
+- F5: the forward beat spot in 41.6% of 824 windows. At 80% cover, historical P95 budget overrun fell $1.22B→$0.34B, with +$0.08B/year mean cost.
+- F6: the latest complete saving ranked at 98.5% of rolling windows; the fixture's unusually profitable year is not a typical-year expectation.
+- F7: current drift ranked at 95.0% of all 824 valid calibrations. Only 772 have completed forward outcomes; the supplied narrower benchmark gives different ranks/medians (DECISIONS #21).
+- F8: EWM-drift bands covered 74.4% of realized purchase averages versus nominal 90%; 25.2% of high-drift outcomes fell below P05. Zero/risk-free drift covered about 84%/83%.
 - F9: three-sigma weekly moves occurred 5.5× the normal-implied rate; excess kurtosis was 7.9.
-- F10: 80% cover lowered model mean cost $3.24B but raised historical mean cost $0.09B. The model's drift–carry gap drives its apparent saving.
-- F11: simplified forward carry creates a 4.1% break-even price rise; an 80% hedge adds $1.78B under a −30% shock and saves $2.39B under +50%.
+- F10: 80% cover lowered model mean cost $3.68B but raised historical mean cost $0.08B. The model's drift–carry gap drives its apparent saving.
+- F11: simplified forward carry creates a 4.1% break-even price rise; an 80% hedge adds $1.89B under a −30% shock and saves $2.55B under +50%.
 - F12: three daily B767 departures consumed 45.3% of the synthetic fixture's scheduled gallons.
 
 [Publication and interpretation decisions](docs/DECISIONS.md) define inclusive return windows, missing-price/week handling, full-sample ranks, overlapping-window dependence and nonadditive measures. Do not sum percentile/risk/correlation rows or present affine VaR reduction as an empirical discovery.
@@ -102,7 +102,7 @@ uv run ruff check .
 uv run python -m compileall -q src scripts notebooks
 ```
 
-Twenty-nine tests cover revisions, units, calendars, integrity/replay, synthetic grains/marks, EWM, GBM moments, seed invariance, deterministic drift, horizons and tails. Locked CI runs Python 3.10/3.12. Live verifiers check all Silver rows, all route costs, adversarial position inputs and reporting guards.
+Thirty-eight tests cover revisions, units, calendars, integrity/replay, synthetic grains/marks, EWM, GBM moments, seed invariance, deterministic drift, horizons, historical alignment and tails. Locked CI runs Python 3.10/3.12. Live verifiers check all Silver rows, all route costs, every insight cell, adversarial position inputs and reporting guards.
 
 ## Reporting and operation
 

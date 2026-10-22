@@ -35,6 +35,7 @@ def fetch_schema(url):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--live", action="store_true")
+    parser.add_argument("--desktop-results", help="Read actual ADOMD query output and compare headline inputs with live Python evidence")
     args = parser.parse_args()
     measures()
     validations = []
@@ -112,6 +113,43 @@ def main():
                 value = value[key]
             np.testing.assert_allclose(float(row["value"]), value, atol=1e-9, rtol=0)
         evidence["sql_headline_numbers_checked"] = len(result)
+    if args.desktop_results:
+        import numpy as np
+        desktop = json.loads(Path(args.desktop_results).read_text(encoding="utf-8-sig"))
+        if not desktop["dax_executed"] or not desktop["ready"]:
+            raise ValueError("Desktop model must be refreshed and Ready before numeric verification")
+        f = json.loads(Path("docs/evidence/phase5_verification.json").read_text(encoding="utf-8"))["findings"]
+        values = desktop["numbers"][0]
+        expected = {
+            "Change Jet": f["F1"]["jet_change"], "Change WTI": f["F1"]["wti_change"],
+            "Change Crack": f["F1"]["crack_change"], "Crack Share": f["F1"]["crack_share"],
+            "Latest Crack": f["F1"]["crack"], "Crack Multiple": f["F1"]["crack_multiple"], "Jet Rank": f["F1"]["jet_rank"],
+            "Latest Price Level Correlation": f["F2"]["price_level"], "Latest WTI Return Correlation": f["F2"]["returns_wti"],
+            "Latest HO Return Correlation": f["F2"]["returns_ho"], "HO Wins Years": f["F3"]["ho_wins"],
+            "Years Compared": f["F3"]["years"], "WTI Years Effective": f["F3"]["wti_effective"],
+            "Change HO": f["F4"]["ho_change"], "WTI Offset": f["F4"]["wti_change"]/f["F4"]["jet_change"],
+            "Windows": f["F5"]["windows"], "Win Share": f["F5"]["win_rate"], "Mean Savings Gal": f["F5"]["mean_savings"],
+            "Historical P95 0": f["F5"]["p95_unhedged"], "Historical P95 80": f["F5"]["p95_80"],
+            "Historical Hedge Cost B": f["F5"]["expected_hedge_cost_b"], "Latest Window Rank": f["F6"]["latest_rank"],
+            "Route Total Savings M": f["F12"]["route_savings_80_m"], "B767 Share": f["F12"]["b767_gallon_share"],
+            "B767 Departures": f["F12"]["b767_departures"], "Current mu": f["F7"]["mu"], "Current sigma": f["F7"]["sigma"],
+            "Current mu_pct_rank": f["F7"]["mu_rank"], "Calibration Count": f["F7"]["calibrations"], "Median Mu": f["F7"]["median_mu"],
+            "EWM Band Coverage": f["F8"]["EWM"]["coverage"], "EWM High Drift Below P05": f["F8"]["EWM"]["high_drift_below"],
+            "Terminal Median": f["F10"]["terminal_median"], "Historical P95 Move": f["F10"]["historical_p95_move"],
+            "Three Sigma Ratio": f["F9"]["ratio"], "Tail Kurtosis": f["F9"]["excess_kurtosis"],
+            "Mean Cost B 0": f["F10"]["mean_cost_b"], "Mean Versus Run Rate": f["F10"]["mean_vs_spot"],
+            "Spot Run Rate B": f["F10"]["spot_run_rate_b"], "CVaR95 B 0": f["F10"]["cvar_unhedged"], "CVaR95 B 80": f["F10"]["cvar_80"],
+            "Simulation Hedge Cost B": f["F10"]["simulation_hedge_change_b"], "Break Even": f["F11"]["break_even"],
+            "Shock -30 Difference": f["F11"]["minus30_cost_b"], "Shock 50 Difference": f["F11"]["plus50_cost_b"], "Selected Hedge Ratio": .8,
+        }
+        for name, number in expected.items():
+            if values.get(name) is None:
+                raise ValueError("Missing Desktop headline number: "+name)
+            np.testing.assert_allclose(float(values[name]), number, atol=1e-9, rtol=0, err_msg=name)
+        if not all(str(value).strip() and "Unavailable" not in str(value) for value in desktop["headlines"][0].values()):
+            raise ValueError("At least one Desktop headline is unavailable")
+        evidence["dax_executed"] = True
+        evidence["desktop_headline_inputs_reconciled"] = len(expected)
     out = Path("docs/evidence/powerbi_contract.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(evidence, indent=2), encoding="utf-8")

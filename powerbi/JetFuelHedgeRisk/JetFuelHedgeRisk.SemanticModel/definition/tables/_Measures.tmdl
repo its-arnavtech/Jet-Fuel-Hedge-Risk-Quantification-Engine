@@ -323,6 +323,11 @@ table _Measures
 		displayFolder: Backtest
 		formatString: 0
 
+	measure 'Selected Hedge Ratio' =
+			SELECTEDVALUE('Hedge Scenario'[hedge_ratio])
+		displayFolder: Backtest
+		formatString: 0.0%
+
 	measure 'Route Cost M' =
 			DIVIDE([Fuel Cost USD],1000000)
 		displayFolder: Backtest

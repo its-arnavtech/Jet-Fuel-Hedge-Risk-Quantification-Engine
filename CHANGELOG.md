@@ -1,6 +1,6 @@
 # Implementation changelog and handoff
 
-## Current state — 2026-10-21
+## Current state — 2026-10-22
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
 - Current phase: **Phase 5 implementation in progress on `phase-5-powerbi-insights`; Phases 1–4 remain complete**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
@@ -21,8 +21,8 @@
 
 ## Next actions
 
-1. Complete current Phase 5 live reconciliation and native Import validation; see docs/audits/phase-05.md.
-2. Verify all 15 storyboards and headline SQL equivalents, close #12–#17 with evidence, push incremental commits and require both CI Python versions before main merge.
+1. Complete native Import validation after the user applies external changes; see docs/audits/phase-05.md. Live insight/reporting reconciliation and all 50 warehouse headline checks pass.
+2. Close verified #12–#18 findings with evidence, push incremental commits and require both CI Python versions before main merge. All 15 live Gold storyboards and four embedded-spec previews were inspected.
 3. Keep Desktop credential entry with the user; authenticate only in the connector dialog. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md.
 
 ## Blockers requiring external input
@@ -202,3 +202,13 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Disclosed expected-value deviations: SQL full-sample minimum-tie ranks give crack 99.52% (supplied approximate 99.3%); annual Brent R² 0.57895 under explicit missing/nonpositive-week rejection; all 822 calibration ranks give μ 94.3% / σ 83.7% and median μ 9.1%, whereas the supplied 770 completed-outcome subset differs. EWM MC coverage 74.55%, within 0.5 pp of supplied 74.2%; high-drift miss rate 25.18% matches.
 - Filed visual QA [#15](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/15): corrected a development Windows ANSI transcode, added mojibake rejection, disabled matplotlib math parsing of currency labels, wrapped long titles to canvas. First renderer attempt failed at currency mathtext; rerender passed 15 units. Three exact PBIR layered specs compile using vl-convert; an aggregated-rule alias collision was found visually and fixed with unique aliases.
 - Added certified Deneb bindings for real bands/histogram layers following its published PBIR guide, without vendoring executable code. Added CVD preview and redundant series labels/markers/dashes. Local checks now 38 tests + Ruff/compile pass. Model source has 152 measures and published-schema/binding validation; actual Desktop parsing/open is being attempted after native access became available.
+
+### 2026-10-22 — Live verification and native Import audit
+
+- Milestone 35b0875 pushed; CI 39724208760 passed Python 3.10 and 3.12. All seven tasks in full managed refresh 906039088188452 succeeded; live source advanced to 2026-10-20. Reporting verifier passed all three readiness flags, existing five adversaries and new insight success/STARTED/stale-source/count-mismatch fixtures.
+- Live verification caught SQL/Arrow near-ties in converted crack ranks: filed #17, canonicalized only rank comparison keys to ROUND(12), added near-tie test, published append-only run 886166288914563 SUCCESS. Insight ID 22993b90-badc-4225-93d2-c95bee21dd48; Silver b88ebc88-6f08-4ee2-a72f-59a9a47ca873. Updated managed task source hash 59811b6cc52df95a7a77a6bb6e8bfb22a5f739db609d651d99f419fc16619231; preserved enabled 18:00 America/Chicago schedule.
+- Exact commands: `uv run python scripts/verify_phase5.py` passes all seven facts/every deterministic and MC cell at 1e-9, 772 forecast windows x three drift models. It exports actual Gold MTM/sensitivity along with other verified plot extracts; dynamic population note now uses actual counts. `uv run python scripts/verify_powerbi_contract.py --live` reconciles all 50 warehouse headline numbers and validates 35 Microsoft JSON files, 174 bindings and four Vega-Lite specifications. SQL is not DAX execution.
+- `uv run python scripts/render_insight_storyboard.py` initially exposed unordered SQL results: wrong latest bridge endpoint and zigzag time series. Filed #18, added chronological/step/threshold sorting and exact bridge assertion. Rerendered all 15 final Gold plots and opened every image; bridge reconciles $2.093 + $1.180 + $1.359 = $4.632/gal. `uv run python scripts/render_powerbi_specs.py` compiled four exact Gold specification previews; opened each and the CVD preview. These are explicitly not Desktop screenshots.
+- Desktop 2.159.883.0 opened the project; user authenticated in its Databricks dialog. Initial Import failed with navigator key mismatch (#16). GoldTable removes incorrect Kind keys and uniquely matches names. Native helper refuses Close/Apply clicks because the child is msedgewebview2.exe rather than PBIDesktop.exe; after one reactivation/fresh-state retry, handed those steps to the user. No authentication automation or security/ACL change.
+- Added read-only official ADOMD query helper `scripts/query_desktop_dax.ps1`. First attempt failed because the open model had not applied external changes and lacked Bridge High. No runtime pass/evidence file is claimed. Await user Apply external changes/Refresh; then execute/reconcile actual DAX and inspect five refreshed pages.
+- Generator now emits 157 measures with default-H080 query contracts and Selected Hedge Ratio. Exact commands with workspace-local TEMP/TMP/UV_CACHE_DIR: `uv run python -m unittest discover -s tests -v` (38 pass), `uv run ruff check .`, `uv run python -m compileall -q src scripts notebooks`, `uv run python scripts/check_repository.py` all pass; UTF-8/configured-credential scan covers 158 text/180 publishable files. `scripts/verify_tmdl.ps1 -AssemblyFolder .tmp/tom` parses 22 tables/six one-way relationships. README live findings, decision addendum, release/audit/plan and Desktop handoff reflect actual evidence.

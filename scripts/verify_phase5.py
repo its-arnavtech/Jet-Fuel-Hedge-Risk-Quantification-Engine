@@ -137,8 +137,16 @@ def main():
         if len(ready) != 1 or not all(ready.iloc[0][c] == "true" for c in ["analytics_ready", "risk_ready", "insights_ready"]):
             raise ValueError("All reporting flags must be ready")
         source_id = ready.iloc[0].source_pipeline_run_id
+        insight_publication = sql(f"SELECT * FROM {gold}.insights_publication_ready")
+        if len(insight_publication) != 1 or insight_publication.iloc[0].insights_ready != "true":
+            raise ValueError("Insight registry is not ready")
         daily, weekly = sql(f"SELECT * FROM {silver}.fuel_prices"), sql(f"SELECT * FROM {silver}.weekly_fuel_prices")
         actual = {n: sql(f"SELECT * FROM {gold}.{n}_current") for n in KEYS}
+        for name, frame in actual.items():
+            if (frame.empty or not frame.insights_run_id.eq(insight_publication.iloc[0].insights_run_id).all()
+                    or not frame.source_pipeline_run_id.eq(source_id).all()
+                    or frame.created_ts.isna().any() or not frame.is_synthetic.eq("false").all()):
+                raise ValueError("Invalid insight lineage/source flags: "+name)
         risk, fan = sql(f"SELECT * FROM {gold}.risk_metrics_current"), sql(f"SELECT * FROM {gold}.price_fan_current")
         routes, dim = sql(f"SELECT * FROM {gold}.route_fuel_costs_current"), sql(f"SELECT * FROM {gold}.dim_route")
         for frame in [risk, fan, routes, dim]:
@@ -176,6 +184,7 @@ def main():
     if not args.offline:
         after = sql(f"SELECT * FROM {gold}.reporting_readiness")
         pd.testing.assert_frame_equal(ready, after)
+        pd.testing.assert_frame_equal(insight_publication, sql(f"SELECT * FROM {gold}.insights_publication_ready"))
         folder = Path("artifacts/insights_gold")
         folder.mkdir(parents=True, exist_ok=True)
         for n, f in actual.items():
@@ -183,11 +192,14 @@ def main():
         for n, f in [("route_fuel_costs", routes), ("dim_route", dim), ("risk_metrics", risk), ("price_fan", fan)]:
             f.to_csv(folder/f"{n}.csv", index=False)
         sql(f"SELECT * FROM {gold}.cost_histogram_current").to_csv(folder/"cost_histogram.csv", index=False)
+        sql(f"SELECT * FROM {gold}.v_hedge_mtm").to_csv(folder/"hedge_mtm.csv", index=False)
+        sql(f"SELECT * FROM {gold}.v_hedge_sensitivity").to_csv(folder/"hedge_sensitivity.csv", index=False)
     evidence = dict(checked_at=datetime.now(timezone.utc).isoformat(), passed=True,
         live_verified=not args.offline, source="local development extracts" if args.offline else "live SQL Silver/Gold",
         source_pipeline_run_id=source_id, price_as_of=str(daily.price_date.max()),
+        insights_run_id=None if args.offline else insight_publication.iloc[0].insights_run_id,
         deterministic_tolerance=1e-9, mc_value_tolerance=1e-9, checks=checks, findings=numbers,
-        expected_value_deviations={"F7": "Ranks/counts use all 822 valid historical calibrations; 770 have completed forward outcomes. Full-history current mu rank differs from a completed-window-only reference."})
+        expected_value_deviations={"F7": f"Ranks/counts use all {len(expected['calibration_history'])} valid historical calibrations; {len(inputs)} have completed forward outcomes. Full-history current mu rank differs from a completed-window-only reference."})
     path = Path("docs/evidence/phase5_offline_verification.json" if args.offline else "docs/evidence/phase5_verification.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(evidence, indent=2, default=str, allow_nan=False), encoding="utf-8")

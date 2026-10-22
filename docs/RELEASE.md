@@ -1,14 +1,14 @@
-# Phase 5 release status — 2026-10-21
+# Phase 5 release status — 2026-10-22
 
 Phase 5 is under final live/audit verification on `phase-5-powerbi-insights`. The implementation adds seven run-keyed historical insight facts, guarded current views, additive insights_ready, a sequential refresh task and a five-page PBIP/TMDL/PBIR report. Production simulation defaults and prior history are preserved.
 
-Local independent evidence: docs/evidence/phase5_offline_verification.json reconciles 4,213 decomposition/correlation dates, 54 proxy-year/full-sample rows, 4,110 hedge windows, 822 calibrations, 2,310 forecast rows and three tail thresholds. Every deterministic and Monte Carlo value agrees within 1e-9. Current development source date is 2026-10-06. This is not live Gold evidence.
+Live independent evidence: docs/evidence/phase5_verification.json reconciles 4,223 decomposition/correlation dates, 54 proxy-year/full-sample rows, 4,120 hedge windows, 824 calibrations, 2,316 forecast rows and three tail thresholds through 2026-10-20. Every deterministic and Monte Carlo cell agrees within 1e-9, including all 772 complete forecast windows. Current calibration matches production risk. All 50 warehouse headline numbers reconcile independently.
 
-Microsoft schemas validate the project, all pages/visuals/theme and three embedded layered specifications; the official Microsoft TOM serializer parses 22 tables and six one-way relationships. Exact layered specifications compile to labelled previews; 15 matplotlib narrative units are rendered and visually audited. DAX runtime/Power BI rendering are separate checks. Native app control approval timed out before opening the project; Desktop authentication, refresh, DAX tests and screenshots remain the explicit handoff in POWER_BI.md. No Desktop screenshot has been fabricated.
+Microsoft schemas validate the project, all pages/visuals/theme and four embedded layered specifications; the official Microsoft TOM serializer parses 22 tables and six one-way relationships. Exact layered specifications compile to labelled previews; all 15 matplotlib narrative units were rendered from verified Gold and visually inspected. Desktop opened the PBIP, and the user authenticated. Initial Import found a navigator key mismatch; applying the generated fix and retrying is pending manual action because native input rejects the child WebView. DAX runtime/reconciliation and refreshed page screenshots remain separate unfinished checks in POWER_BI.md.
 
-First standalone live run 809389860354170 succeeded in 285.986 seconds end to end. The corrected inclusive-RANGE source is deployed in seven-task managed refresh 906039088188452; final live reconciliation and CI/merge evidence follow in CHANGELOG.md and audits/phase-05.md. Initial compute-disabled attempts are recorded there. Daily schedule remains enabled at 18:00 America/Chicago, one concurrent run.
+First standalone live run 809389860354170 succeeded in 285.986 seconds end to end. All seven tasks in managed refresh 906039088188452 succeeded. Canonical tie handling was then published by successful append-only run 886166288914563 and independently verified. The managed job now uses that corrected source. Daily schedule remains enabled at 18:00 America/Chicago, one concurrent run. Reporting readiness and all adversarial fixtures pass.
 
-Audit findings #12–#15 are tracked with actual URLs and evidence in the Phase 5 audit. Do not mark the phase gate closed until final live checks, both CI Python versions and issue closure are recorded.
+Audit findings #12–#18 are tracked with actual URLs and evidence in the Phase 5 audit. Milestone CI 39724208760 passed both Python 3.10/3.12; changed-source CI, native retry and audit closure remain before main merge.
 
 ---
 

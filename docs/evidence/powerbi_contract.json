@@ -43,5 +43,6 @@
   "titles": 15,
   "tmdl_parsed": false,
   "dax_executed": false,
-  "desktop_rendered": false
+  "desktop_rendered": false,
+  "sql_headline_numbers_checked": 50
 }

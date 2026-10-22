@@ -14,6 +14,7 @@ Read the complete Phase 5 request and all required baseline docs, every SQL defi
 | Visual QA exposes ANSI text corruption and clipped title | [#15](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/15) | Explicit UTF-8, mojibake scan, currency math parsing disabled, title wrapping, all 15 PNGs inspected/re-rendered; exact layered spec previews compiled |
 | Native Import rejects navigator Kind keys | [#16](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/16) | GoldTable uniquely matches configured names; native retry pending. Original report opened and user authenticated through Desktop; no credentials copied into source |
 | Float near-ties change crack rank across Arrow/SQL transport | [#17](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/17) | Canonical 12-decimal rank keys preserve raw prices and minimum-tie percentile semantics; near-tie test and new append-only live run 886166288914563 |
+| Storyboards assume chronological SQL result order | [#18](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/18) | Sort all date/step/threshold keys explicitly; exact bridge assertion; rerendered and inspected all 15 live Gold plots |
 
 ## Numerical and publication checks
 
@@ -30,4 +31,8 @@ Matplotlib storyboards and exact embedded-spec previews have conspicuous offline
 
 Power BI Desktop 2.159.883.0 opened the PBIP. The user authenticated in the credential dialog. Initial Import found a real navigator mismatch; a generated fix plus guarded bridge is available via Apply external changes. The native helper rejects clicks into a child WebView as a non-target process, so the user is applying changes/refreshing manually. No refreshed five-page screenshot or DAX evaluation pass is claimed yet. The exact failure and handoff are tracked; no authentication automation or filesystem-permission bypass was attempted.
 
-Remaining closure gates: newest live fact reconciliation after canonical tie fix; native connector retry/page inspection or explicit permitted handoff; headline warehouse contract; final plot inspection; CI on Python 3.10/3.12; issue closure with actual evidence; main merge/push.
+Live canonical-tie verification passes: 4,223 decomposition rows, 4,223 correlations, 54 annual/ALL proxy rows, 4,120 historical hedge rows, 824 calibrations, 2,316 forecast rows (772 windows × three drift models), and three tail thresholds. Every deterministic and Monte Carlo cell reconciles to 1e-9. Current μ/σ match production simulation to 1e-9. Source Silver b88ebc88-6f08-4ee2-a72f-59a9a47ca873; insight run 22993b90-badc-4225-93d2-c95bee21dd48; observation date 2026-10-20. Evidence: docs/evidence/phase5_verification.json. All 50 warehouse headline equivalents reconcile; docs/evidence/powerbi_contract.json records this separately from DAX runtime.
+
+All 15 final Gold storyboards and four exact embedded-spec previews were opened and inspected after correcting unordered exports. The bridge now ends at $4.632/gal, and the time-series plots use chronological dates. Readable titles, badges, table marks/status, signed heatmap, band layers and reference rules were checked. CVD preview inspected independently.
+
+Milestone 35b0875 passed CI 39724208760 on Python 3.10 and 3.12. Remaining closure gates: native connector retry/page inspection or explicit permitted handoff; final changed-source CI on both Python versions; issue closure with actual evidence; main merge/push.
