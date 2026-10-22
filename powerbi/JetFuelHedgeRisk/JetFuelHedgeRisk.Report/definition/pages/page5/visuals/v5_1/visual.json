@@ -1,0 +1,378 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "v5_1",
+  "position": {
+    "x": 20,
+    "y": 112,
+    "width": 790,
+    "height": 290,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cost_histogram_current"
+                    }
+                  },
+                  "Property": "bin_lower_cost_b"
+                }
+              },
+              "queryRef": "cost_histogram_current.bin_lower_cost_b",
+              "nativeQueryRef": "bin_lower_cost_b"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cost_histogram_current"
+                    }
+                  },
+                  "Property": "bin_upper_cost_b"
+                }
+              },
+              "queryRef": "cost_histogram_current.bin_upper_cost_b",
+              "nativeQueryRef": "bin_upper_cost_b"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "cost_histogram_current"
+                    }
+                  },
+                  "Property": "hedge_ratio"
+                }
+              },
+              "queryRef": "cost_histogram_current.hedge_ratio",
+              "nativeQueryRef": "hedge_ratio"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Histogram Paths"
+                }
+              },
+              "queryRef": "_Measures.Histogram Paths",
+              "nativeQueryRef": "Histogram Paths"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Spot Run Rate B"
+                }
+              },
+              "queryRef": "_Measures.Spot Run Rate B",
+              "nativeQueryRef": "Spot Run Rate B"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Mean Cost B 0"
+                }
+              },
+              "queryRef": "_Measures.Mean Cost B 0",
+              "nativeQueryRef": "Mean Cost B 0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "P95 Cost B 0"
+                }
+              },
+              "queryRef": "_Measures.P95 Cost B 0",
+              "nativeQueryRef": "P95 Cost B 0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "CVaR95 B 0"
+                }
+              },
+              "queryRef": "_Measures.CVaR95 B 0",
+              "nativeQueryRef": "CVaR95 B 0"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Mean Cost B 80"
+                }
+              },
+              "queryRef": "_Measures.Mean Cost B 80",
+              "nativeQueryRef": "Mean Cost B 80"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "P95 Cost B 80"
+                }
+              },
+              "queryRef": "_Measures.P95 Cost B 80",
+              "nativeQueryRef": "P95 Cost B 80"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "CVaR95 B 80"
+                }
+              },
+              "queryRef": "_Measures.CVaR95 B 80",
+              "nativeQueryRef": "CVaR95 B 80"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Readiness"
+                }
+              },
+              "queryRef": "_Measures.Readiness",
+              "nativeQueryRef": "Readiness"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 5.1"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Subtitle 5.1"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 5.1"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"transform\":[{\"filter\":\"datum.hedge_ratio == 0 || datum.hedge_ratio == 0.8\"}],\"layer\":[{\"mark\":{\"type\":\"bar\",\"opacity\":0.4,\"binSpacing\":0},\"encoding\":{\"x\":{\"field\":\"bin_lower_cost_b\",\"type\":\"quantitative\",\"bin\":\"binned\",\"title\":\"Annual cost, $B\"},\"x2\":{\"field\":\"bin_upper_cost_b\"},\"y\":{\"field\":\"Histogram Paths\",\"type\":\"quantitative\",\"title\":\"Paths per bin\"},\"color\":{\"field\":\"Coverage\",\"type\":\"nominal\",\"scale\":{\"domain\":[\"0% cover\",\"80% cover\",\"Spot run-rate\"],\"range\":[\"#B85C38\",\"#1F4E79\",\"#333333\"]},\"legend\":{\"orient\":\"bottom\",\"title\":null}},\"tooltip\":[{\"field\":\"hedge_ratio\",\"type\":\"quantitative\",\"format\":\".0%\"},{\"field\":\"bin_lower_cost_b\",\"type\":\"quantitative\",\"format\":\".2f\"},{\"field\":\"Histogram Paths\",\"type\":\"quantitative\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"},{\"calculate\":\"format(datum.hedge_ratio,''.0%'') + '' cover''\",\"as\":\"Coverage\"}]},{\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"},{\"aggregate\":[{\"op\":\"max\",\"field\":\"Spot Run Rate B\",\"as\":\"stat_Spot Run Rate B\"},{\"op\":\"max\",\"field\":\"Mean Cost B 0\",\"as\":\"stat_Mean Cost B 0\"},{\"op\":\"max\",\"field\":\"P95 Cost B 0\",\"as\":\"stat_P95 Cost B 0\"},{\"op\":\"max\",\"field\":\"CVaR95 B 0\",\"as\":\"stat_CVaR95 B 0\"},{\"op\":\"max\",\"field\":\"Mean Cost B 80\",\"as\":\"stat_Mean Cost B 80\"},{\"op\":\"max\",\"field\":\"P95 Cost B 80\",\"as\":\"stat_P95 Cost B 80\"},{\"op\":\"max\",\"field\":\"CVaR95 B 80\",\"as\":\"stat_CVaR95 B 80\"}]},{\"fold\":[\"stat_Spot Run Rate B\",\"stat_Mean Cost B 0\",\"stat_P95 Cost B 0\",\"stat_CVaR95 B 0\",\"stat_Mean Cost B 80\",\"stat_P95 Cost B 80\",\"stat_CVaR95 B 80\"],\"as\":[\"Key\",\"Cost\"]},{\"calculate\":\"replace(datum.Key,''stat_'','''')\",\"as\":\"Rule\"},{\"calculate\":\"datum.Rule == ''Spot Run Rate B'' ? ''Spot run-rate'' : substring(datum.Rule,length(datum.Rule)-2) == ''80'' ? ''80% cover'' : ''0% cover''\",\"as\":\"Coverage\"},{\"calculate\":\"datum.Rule == ''Spot Run Rate B'' ? ''Spot run-rate'' : indexof(datum.Rule,''Mean'') == 0 ? ''Mean'' : indexof(datum.Rule,''P95'') == 0 ? ''P95'' : ''CVaR95''\",\"as\":\"Statistic\"}],\"mark\":{\"type\":\"rule\"},\"encoding\":{\"x\":{\"field\":\"Cost\",\"type\":\"quantitative\"},\"color\":{\"field\":\"Coverage\",\"type\":\"nominal\",\"scale\":{\"domain\":[\"0% cover\",\"80% cover\",\"Spot run-rate\"],\"range\":[\"#B85C38\",\"#1F4E79\",\"#333333\"]},\"legend\":{\"orient\":\"bottom\",\"title\":null}},\"strokeDash\":{\"field\":\"Statistic\",\"type\":\"nominal\",\"scale\":{\"domain\":[\"Mean\",\"P95\",\"CVaR95\",\"Spot run-rate\"],\"range\":[[1,0],[5,3],[2,2],[3,2,1,2]]},\"legend\":{\"orient\":\"bottom\",\"title\":null}},\"tooltip\":[{\"field\":\"Rule\",\"type\":\"nominal\"},{\"field\":\"Cost\",\"type\":\"quantitative\",\"format\":\".2f\"}]}},{\"data\":{\"values\":[{\"message\":\"Unavailable \\u2014 complete current-source publication\"}]},\"transform\":[{\"filter\":\"length(data(''dataset'')) == 0 || data(''dataset'')[0].Readiness != ''Ready''\"}],\"mark\":{\"type\":\"text\",\"align\":\"center\",\"color\":\"#707070\",\"fontSize\":13},\"encoding\":{\"x\":{\"value\":240},\"y\":{\"value\":100},\"text\":{\"field\":\"message\"}}}],\"$schema\":\"https://vega.github.io/schema/vega-lite/v5.json\",\"data\":{\"name\":\"dataset\"},\"width\":\"container\",\"height\":\"container\",\"autosize\":{\"type\":\"fit\",\"contains\":\"padding\"},\"config\":{\"font\":\"Segoe UI\",\"axis\":{\"labelFontSize\":10,\"titleFontSize\":11},\"view\":{\"stroke\":null}}}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -14,7 +14,8 @@ SELECT s.pipeline_run_id AS source_pipeline_run_id,a.pipeline_run_id AS analytic
  AND a.status='SUCCESS' AND aq.pipeline_run_id=a.pipeline_run_id
  AND aq.source_pipeline_run_id=s.pipeline_run_id AND r.source_pipeline_run_id=s.pipeline_run_id
  AND q.simulation_run_id=r.simulation_run_id AND q.cost_rows=r.n_paths*5
- AND q.fan_steps=cast(round(r.horizon_years*52) AS INT)+1) AS risk_ready
+ AND q.fan_steps=cast(round(r.horizon_years*52) AS INT)+1) AS risk_ready,
+ coalesce((SELECT insights_ready FROM jet_fuel_gold.insights_publication_ready),false) AS insights_ready
 FROM source s CROSS JOIN analytics a
 CROSS JOIN jet_fuel_silver.ingestion_quality sq CROSS JOIN jet_fuel_gold.analytics_quality aq
 LEFT JOIN jet_fuel_gold.latest_simulation_run r ON true

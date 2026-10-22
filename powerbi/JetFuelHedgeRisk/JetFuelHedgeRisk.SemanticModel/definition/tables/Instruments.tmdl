@@ -1,0 +1,17 @@
+table 'Instruments'
+
+	column 'Instrument'
+		sortByColumn: Ordinal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Instrument]
+
+	column 'Ordinal'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: [Ordinal]
+
+	partition 'Instruments' = calculated
+		mode: import
+		source =
+			DATATABLE("Instrument",STRING,"Ordinal",INTEGER,{{"Jet",0},{"HO",1},{"WTI",2}})

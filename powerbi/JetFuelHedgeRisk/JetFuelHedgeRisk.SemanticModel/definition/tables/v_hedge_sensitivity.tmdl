@@ -1,0 +1,29 @@
+table 'v_hedge_sensitivity'
+
+	column 'hedge_ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_ratio
+		formatString: 0.0%
+
+	column 'price_change_pct'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: price_change_pct
+
+	column 'hedged_cost_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedged_cost_b
+		formatString: 0.00
+
+	column 'unhedged_cost_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: unhedged_cost_b
+		formatString: 0.00
+
+	partition 'v_hedge_sensitivity' = m
+		mode: import
+		source =
+			let Ready=GoldTable("reporting_readiness"), Data=GoldTable("v_hedge_sensitivity") in if (try Ready{0}[analytics_ready] otherwise false) then Data else Table.FirstN(Data,0)

@@ -1,0 +1,266 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "v3_2",
+  "position": {
+    "x": 830,
+    "y": 112,
+    "width": 430,
+    "height": 270,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "hedge_backtest_windows_current"
+                    }
+                  },
+                  "Property": "hedge_ratio"
+                }
+              },
+              "queryRef": "hedge_backtest_windows_current.hedge_ratio",
+              "nativeQueryRef": "hedge_ratio"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Mean Overrun B"
+                }
+              },
+              "queryRef": "_Measures.Mean Overrun B",
+              "nativeQueryRef": "Mean Overrun B"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "P95 Overrun B"
+                }
+              },
+              "queryRef": "_Measures.P95 Overrun B",
+              "nativeQueryRef": "P95 Overrun B"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Readiness"
+                }
+              },
+              "queryRef": "_Measures.Readiness",
+              "nativeQueryRef": "Readiness"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 3.2"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Subtitle 3.2"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 3.2"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"encoding\":{\"x\":{\"field\":\"Mean Overrun B\",\"type\":\"quantitative\",\"title\":\"Mean budget overrun, $B\",\"scale\":{\"zero\":false}},\"y\":{\"field\":\"P95 Overrun B\",\"type\":\"quantitative\",\"title\":\"P95 budget overrun, $B\",\"scale\":{\"zero\":false}}},\"layer\":[{\"mark\":{\"type\":\"point\",\"filled\":true,\"size\":100,\"stroke\":\"#172B3A\"},\"encoding\":{\"color\":{\"field\":\"hedge_ratio\",\"type\":\"quantitative\",\"scale\":{\"domain\":[0,0.8],\"range\":[\"#DCEAF4\",\"#08519C\"]},\"legend\":null},\"tooltip\":[{\"field\":\"hedge_ratio\",\"type\":\"quantitative\",\"format\":\".0%\"},{\"field\":\"Mean Overrun B\",\"type\":\"quantitative\",\"format\":\".3f\"},{\"field\":\"P95 Overrun B\",\"type\":\"quantitative\",\"format\":\".3f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"text\",\"dy\":-13},\"encoding\":{\"text\":{\"field\":\"hedge_ratio\",\"type\":\"quantitative\",\"format\":\".0%\"}},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"data\":{\"values\":[{\"message\":\"Unavailable \\u2014 complete current-source publication\"}]},\"transform\":[{\"filter\":\"length(data(''dataset'')) == 0 || data(''dataset'')[0].Readiness != ''Ready''\"}],\"mark\":{\"type\":\"text\",\"align\":\"center\",\"color\":\"#707070\",\"fontSize\":13},\"encoding\":{\"x\":{\"value\":240},\"y\":{\"value\":100},\"text\":{\"field\":\"message\"}}}],\"$schema\":\"https://vega.github.io/schema/vega-lite/v5.json\",\"data\":{\"name\":\"dataset\"},\"width\":\"container\",\"height\":\"container\",\"autosize\":{\"type\":\"fit\",\"contains\":\"padding\"},\"config\":{\"font\":\"Segoe UI\",\"axis\":{\"labelFontSize\":10,\"titleFontSize\":11},\"view\":{\"stroke\":null}}}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

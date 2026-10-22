@@ -61,19 +61,20 @@ The simulation uses the public MLflow registry URI `databricks-uc` explicitly, a
 
 ## Daily managed refresh
 
-Managed job ID: `1025825966695931`. Six **sequential** tasks, maximum one concurrent run:
+Managed job ID: `1025825966695931`. Seven **sequential** tasks, maximum one concurrent run:
 
 1. `refresh_capture`: full actual EIA recapture from 2010 to previous UTC day, using secret scope `jet-fuel-hedge-engine`, key `eia-api-key`. Responses redact the key. Complete capture is assembled before same-volume publication; temporary files stay outside the stream source.
 2. `phase1_pipeline`: bounded Bronze stream and revision-aware Silver.
-3. `refresh_operations`: explicitly synthetic fixtures anchored to latest Silver date, immutable content-addressed snapshot.
-4. `phase2_gold`: six analytics views, dimensions, monthly scenarios and reconciliation.
-5. `phase3_risk`: 100K distributed paths, exact aggregates and MLflow.
-6. `reporting_contract`: current-source readiness and guarded reporting views.
+3. `phase5_insights`: independent historical evidence and 10K-path/window/model walk-forward validation. Append-only run/quality history; current views fail closed on STARTED/source/count mismatches.
+4. `refresh_operations`: explicitly synthetic fixtures anchored to latest Silver date, immutable content-addressed snapshot.
+5. `phase2_gold`: six analytics views, dimensions, monthly scenarios and reconciliation.
+6. `phase3_risk`: 100K distributed paths, exact aggregates and MLflow.
+7. `reporting_contract`: current-source readiness and guarded reporting views.
 
 ```powershell
 # Initial deployment/test: schedule defaults PAUSED.
 uv run python scripts/deploy_refresh_job.py --run-now
-# Only after all six tasks and verifiers pass:
+# Only after all seven tasks and verifiers pass:
 uv run python scripts/deploy_refresh_job.py --enable-schedule
 # Pause without deleting data or job history:
 uv run python scripts/deploy_refresh_job.py
@@ -106,3 +107,14 @@ Text IO is explicitly UTF-8 for cross-platform handoff. The repository scan vali
 - Databricks and MLflow SDKs are optional project dependencies; local unit tests require only NumPy/pandas.
 - Do not use the PDD's RDD API, cache/persist, fixed cluster, identity partition expression or infinite streaming trigger on Free Edition.
 - Phase 2 must wait for the Phase 1 audit issue/fix gate. Power BI readiness must wait for actual Gold deployment and quality checks.
+
+
+## Phase 5 insight/report validation
+
+Run `scripts/deploy_phase5.py`, wait for the printed job SUCCESS, then `scripts/verify_phase5.py`. It reads live Silver through SQL and independently verifies every column of all seven current insight tables, including 10K-path quantiles and simulation calibration equality. It writes docs/evidence/phase5_verification.json only after success. Never use the explicit --offline evidence as proof of live publication. Old result files should be checked against their source/run IDs and verification timestamp.
+
+Run `scripts/verify_reporting.py` for the existing publication/source adversaries plus stale insight source, STARTED insight and actual/expected count mismatch. It runs fixtures against the actual view SELECT without mutating production tables. Then `scripts/verify_powerbi_contract.py --live` checks the warehouse equivalents of headline numbers. TMDL parsing uses `scripts/verify_tmdl.ps1 -AssemblyFolder <official TOM library folder>`; the development check used Microsoft.AnalysisServices 19.118.3 from NuGet. Desktop Store binaries may be protected; do not change their permissions.
+
+Rebuild with `scripts/build_powerbi.py`, validate every PBIP JSON and embedded Vega-Lite spec, then render the 15 matplotlib units and the exact layered PBIR specs. `scripts/render_insight_storyboard.py` defaults to verified Gold extracts; --offline is explicit. `scripts/render_powerbi_specs.py` compiles the real three layered specs, not approximations. Keep compiled-spec previews separate from native Desktop screenshots. Native authentication, refresh, DAX query execution and screenshot handoff are in POWER_BI.md.
+
+If compute is temporarily disabled, keep append-only history, guards and source hashes intact. An imported notebook is not a successful run. The initial Phase 5 attempt hit this condition and required workspace compute restoration; no credentials were changed or printed. Do not deploy concurrently with the managed refresh. New Phase 5 source does not change production simulation calibration/defaults.

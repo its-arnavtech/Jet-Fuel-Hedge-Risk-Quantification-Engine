@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.159.json",
+  "name": "Jet fuel evidence",
+  "dataColors": [
+    "#1F4E79",
+    "#B85C38",
+    "#2E8B57",
+    "#7A6C9E",
+    "#E0A100"
+  ],
+  "background": "#F3F5F7",
+  "foreground": "#172B3A",
+  "tableAccent": "#1F4E79",
+  "textClasses": {
+    "title": {
+      "fontFace": "Segoe UI",
+      "fontSize": 13
+    },
+    "label": {
+      "fontFace": "Segoe UI",
+      "fontSize": 10
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "labels": [
+          {
+            "show": true
+          }
+        ],
+        "legend": [
+          {
+            "show": true
+          }
+        ],
+        "lineStyles": [
+          {
+            "showMarker": false
+          }
+        ]
+      }
+    }
+  }
+}

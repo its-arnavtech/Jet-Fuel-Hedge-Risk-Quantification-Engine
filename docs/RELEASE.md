@@ -1,3 +1,17 @@
+# Phase 5 release status — 2026-10-22
+
+The five-page insight-driven Power BI report is implemented and verified against live Gold through **2026-10-20**. It contains exactly 15 narrative units, 171 measures, 22 source tables, six one-way relationships and eight certified Deneb units. Seven additive, run-keyed insight facts and guarded current views publish through the sequential managed refresh. Production simulation defaults and prior history are preserved.
+
+Actual Desktop Import succeeded in Power BI 2.159.883.0. All five final native pages were inspected and captured in [Desktop evidence](evidence/powerbi/verification.json); the images show the source date, Ready state and simulation completion. The 80% single-select scenario default, latest-month annotation, benchmark rules, fan bands, tail-frequency labels and signed zero-centred sensitivity grid were checked. These screenshots are separate from all 15 inspected matplotlib storyboards and eight compiled Vega previews.
+
+Independent live verification reconciles 4,223 decomposition/correlation dates, 54 annual/full-sample proxy rows, 4,120 hedge windows, 824 calibrations, 2,316 forecast rows (772 complete windows × three models), and three tail thresholds. Every deterministic and Monte Carlo cell agrees within 1e-9. All 50 warehouse headline inputs reconcile; actual ADOMD reconciles 46 headline inputs, 157 grain values, the latest-month annotation and scenario-selection guards. Monetary sums use the report's displayed $M unit at absolute tolerance 1e-9. Official Microsoft TOM parses the current model; published schemas validate 36 JSON files, 182 bindings and all eight layered specifications.
+
+Managed run **906039088188452** succeeded for all seven sequential tasks; canonical rank handling was published in append-only run **886166288914563** and verified independently. Daily scheduling remains enabled at **18:00 America/Chicago**, one concurrent run. Current-source readiness and all reporting adversarial fixtures pass. [Evidence and audit](audits/phase-05.md) record source/run IDs and resolved implementation findings #12–#20.
+
+All 40 local tests, Ruff, compilation and credential/UTF-8 checks pass. Final implementation commit **1133f99** passed [CI 39777250175](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/39777250175) on Python 3.10 and 3.12. All audit findings #12–#20 are closed with committed evidence; the audited Phase 5 branch is complete for integration into main. The [Power BI guide](POWER_BI.md) supplies the future refresh/revalidation checklist. Historical Phase 1–4 release notes below describe their original handoff and are superseded by this Phase 5 Desktop verification.
+
+---
+
 # Implementation release and handoff — 2026-10-10
 
 All four implementation phases completed, each with a whole-repository audit, GitHub findings and fixes before advancing. Source PDD preserved. Phase branches use descriptive names; each audited phase is merged/pushed to main.

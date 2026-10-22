@@ -1,0 +1,807 @@
+table _Measures
+	column Value
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("Value",1)
+
+	measure 'Analytics Ready' =
+			SELECTEDVALUE(reporting_readiness[analytics_ready],FALSE())
+		displayFolder: Status
+
+	measure 'Risk Ready' =
+			SELECTEDVALUE(reporting_readiness[risk_ready],FALSE())
+		displayFolder: Status
+
+	measure 'Insights Ready' =
+			SELECTEDVALUE(reporting_readiness[insights_ready],FALSE())
+		displayFolder: Status
+
+	measure 'Readiness' =
+			IF(COUNTROWS(reporting_readiness)<>1,"Unavailable",IF([Analytics Ready]&&[Risk Ready]&&[Insights Ready],"Ready","Stale"))
+		displayFolder: Status
+
+	measure 'Header' =
+			"Price as of " & IF(ISBLANK(SELECTEDVALUE(reporting_readiness[price_as_of])),"unavailable",FORMAT(SELECTEDVALUE(reporting_readiness[price_as_of]),"yyyy-MM-dd")) & "  |  " & [Readiness] & "  |  Simulation completed " & IF(ISBLANK(SELECTEDVALUE(reporting_readiness[simulation_completed_at])),"unavailable",FORMAT(SELECTEDVALUE(reporting_readiness[simulation_completed_at]),"yyyy-MM-dd HH:mm"))
+		displayFolder: Status
+
+	measure 'Simulation Run' =
+			SELECTEDVALUE(reporting_readiness[simulation_run_id],"Unavailable")
+		displayFolder: Status
+
+	measure 'Scenario Selector' =
+			"Synthetic fixture scenario"
+		displayFolder: Status
+
+	measure 'Fuel Cost USD' =
+			IF(HASONEVALUE('Route Costs'[scenario_id]), SUM('Route Costs'[hedged_cost_usd]), BLANK())
+		displayFolder: Backtest
+
+	measure 'Unhedged Cost USD' =
+			CALCULATE(SUM('Route Costs'[unhedged_cost_usd]), REMOVEFILTERS('Route Costs'[scenario_id]),
+			    REMOVEFILTERS('Route Costs'[hedge_ratio]), REMOVEFILTERS('Hedge Scenario'), 'Route Costs'[hedge_ratio] = 0)
+		displayFolder: Backtest
+
+	measure 'Fuel Gallons' =
+			CALCULATE(SUM('Route Costs'[monthly_gallons]), REMOVEFILTERS('Route Costs'[scenario_id]),
+			    REMOVEFILTERS('Route Costs'[hedge_ratio]), REMOVEFILTERS('Hedge Scenario'), 'Route Costs'[hedge_ratio] = 0)
+		displayFolder: Backtest
+
+	measure 'Mean Cost B' =
+			SELECTEDVALUE('Risk Metrics'[mean_cost_b])
+		displayFolder: Simulation
+
+	measure 'P95 Cost B' =
+			SELECTEDVALUE('Risk Metrics'[p95_cost_b])
+		displayFolder: Simulation
+
+	measure 'Incremental VaR95 B' =
+			SELECTEDVALUE('Risk Metrics'[var_95_b])
+		displayFolder: Simulation
+
+	measure 'CVaR95 B' =
+			SELECTEDVALUE('Risk Metrics'[cvar_95_b])
+		displayFolder: Simulation
+
+	measure 'VaR Reduction' =
+			DIVIDE(SELECTEDVALUE('Risk Metrics'[var_reduction_pct]), 100)
+		displayFolder: Simulation
+
+	measure 'Market Date' =
+			CALCULATE(MAX(market_decomposition_current[price_date]),REMOVEFILTERS())
+		displayFolder: Market
+		formatString: yyyy-MM-dd
+
+	measure 'Latest Jet' =
+			VAR d=[Market Date] RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[jet_fuel_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=d)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Prior Jet' =
+			VAR d=[Market Date] VAR p=MAXX(FILTER(ALL(market_decomposition_current),market_decomposition_current[price_date]<=EDATE(d,-12)),market_decomposition_current[price_date]) RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[jet_fuel_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=p)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Change Jet' =
+			IF([Insights Ready],[Latest Jet]-[Prior Jet])
+		displayFolder: Market
+		formatString: +0.000;-0.000;0.000
+
+	measure 'Latest WTI' =
+			VAR d=[Market Date] RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[wti_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=d)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Prior WTI' =
+			VAR d=[Market Date] VAR p=MAXX(FILTER(ALL(market_decomposition_current),market_decomposition_current[price_date]<=EDATE(d,-12)),market_decomposition_current[price_date]) RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[wti_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=p)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Change WTI' =
+			IF([Insights Ready],[Latest WTI]-[Prior WTI])
+		displayFolder: Market
+		formatString: +0.000;-0.000;0.000
+
+	measure 'Latest HO' =
+			VAR d=[Market Date] RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[heating_oil_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=d)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Prior HO' =
+			VAR d=[Market Date] VAR p=MAXX(FILTER(ALL(market_decomposition_current),market_decomposition_current[price_date]<=EDATE(d,-12)),market_decomposition_current[price_date]) RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[heating_oil_gal]),REMOVEFILTERS(),market_decomposition_current[price_date]=p)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Change HO' =
+			IF([Insights Ready],[Latest HO]-[Prior HO])
+		displayFolder: Market
+		formatString: +0.000;-0.000;0.000
+
+	measure 'Latest Crack' =
+			VAR d=[Market Date] RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[crack_spread]),REMOVEFILTERS(),market_decomposition_current[price_date]=d)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Prior Crack' =
+			VAR d=[Market Date] VAR p=MAXX(FILTER(ALL(market_decomposition_current),market_decomposition_current[price_date]<=EDATE(d,-12)),market_decomposition_current[price_date]) RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[crack_spread]),REMOVEFILTERS(),market_decomposition_current[price_date]=p)
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Change Crack' =
+			IF([Insights Ready],[Latest Crack]-[Prior Crack])
+		displayFolder: Market
+		formatString: +0.000;-0.000;0.000
+
+	measure 'WTI Monthly' =
+			AVERAGE(market_decomposition_current[wti_gal])
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Crack Monthly' =
+			AVERAGE(market_decomposition_current[crack_spread])
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Latest Monthly Jet' =
+			VAR d=[Market Date] RETURN AVERAGEX(FILTER(ALL(market_decomposition_current),YEAR(market_decomposition_current[price_date])=YEAR(d)&&MONTH(market_decomposition_current[price_date])=MONTH(d)),market_decomposition_current[jet_fuel_gal])
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Latest Month Annotation' =
+			IF([Insights Ready],"Latest month $" & FORMAT([Latest Monthly Jet],"0.000") & "/gal")
+		displayFolder: Headlines
+
+	measure 'Crack Historical Mean' =
+			VAR y=YEAR([Market Date]) RETURN AVERAGEX(FILTER(ALL(market_decomposition_current),YEAR(market_decomposition_current[price_date])<y),market_decomposition_current[crack_spread])
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Crack Share' =
+			DIVIDE([Change Crack],[Change Jet])
+		displayFolder: Market
+		formatString: 0.0%
+
+	measure 'WTI Offset' =
+			DIVIDE([Change WTI],[Change Jet])
+		displayFolder: Market
+		formatString: 0.0%
+
+	measure 'Crack Multiple' =
+			DIVIDE([Latest Crack],[Crack Historical Mean])
+		displayFolder: Market
+		formatString: 0.0
+
+	measure 'Jet Rank' =
+			VAR d=[Market Date] RETURN CALCULATE(SELECTEDVALUE(market_decomposition_current[jet_pct_rank_full_history]),REMOVEFILTERS(),market_decomposition_current[price_date]=d)
+		displayFolder: Market
+		formatString: 0.0%
+
+	measure 'Waterfall Value' =
+			IF([Insights Ready],SWITCH(SELECTEDVALUE('Market Steps'[Step]),"Start",[Prior Jet],"WTI change",[Change WTI],"Crack change",[Change Crack],"Latest",[Latest Jet]))
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Bridge Low' =
+			IF([Insights Ready],SWITCH(SELECTEDVALUE('Market Steps'[Step]),"Start",0,"Latest",0,"WTI change",MIN([Prior Jet],[Prior Jet]+[Change WTI]),"Crack change",MIN([Prior Jet]+[Change WTI],[Latest Jet])))
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Bridge High' =
+			IF([Insights Ready],SWITCH(SELECTEDVALUE('Market Steps'[Step]),"Start",[Prior Jet],"Latest",[Latest Jet],"WTI change",MAX([Prior Jet],[Prior Jet]+[Change WTI]),"Crack change",MAX([Prior Jet]+[Change WTI],[Latest Jet])))
+		displayFolder: Market
+		formatString: 0.000
+
+	measure 'Bridge Label' =
+			IF([Insights Ready],IF(SELECTEDVALUE('Market Steps'[Step]) IN {"Start","Latest"},FORMAT([Waterfall Value],"$0.000"),FORMAT([Waterfall Value],"+$0.000;-$0.000;$0.000")))
+		displayFolder: Market
+
+	measure 'Bridge Color' =
+			SWITCH(SELECTEDVALUE('Market Steps'[Step]),"WTI change","#B85C38","Crack change","#E0A100","#1F4E79")
+		displayFolder: Market
+
+	measure 'Change Per Gallon' =
+			SWITCH(SELECTEDVALUE('Instruments'[Instrument]),"Jet",[Change Jet],"HO",[Change HO],"WTI",[Change WTI])
+		displayFolder: Market
+		formatString: +0.000;-0.000;0.000
+
+	measure 'Price Level Correlation' =
+			IF(MAX(proxy_return_correlation_current[price_date])>EDATE([Market Date],-36),SELECTEDVALUE(proxy_return_correlation_current[price_level_corr_jet_wti_90d]))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'Latest Price Level Correlation' =
+			VAR d=MAXX(ALL(proxy_return_correlation_current),proxy_return_correlation_current[price_date]) RETURN CALCULATE([Price Level Correlation],REMOVEFILTERS(),proxy_return_correlation_current[price_date]=d)
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'WTI Return Correlation' =
+			IF(MAX(proxy_return_correlation_current[price_date])>EDATE([Market Date],-36),SELECTEDVALUE(proxy_return_correlation_current[ret_corr_jet_wti_90d]))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'Latest WTI Return Correlation' =
+			VAR d=MAXX(ALL(proxy_return_correlation_current),proxy_return_correlation_current[price_date]) RETURN CALCULATE([WTI Return Correlation],REMOVEFILTERS(),proxy_return_correlation_current[price_date]=d)
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'HO Return Correlation' =
+			IF(MAX(proxy_return_correlation_current[price_date])>EDATE([Market Date],-36),SELECTEDVALUE(proxy_return_correlation_current[ret_corr_jet_ho_90d]))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'Latest HO Return Correlation' =
+			VAR d=MAXX(ALL(proxy_return_correlation_current),proxy_return_correlation_current[price_date]) RETURN CALCULATE([HO Return Correlation],REMOVEFILTERS(),proxy_return_correlation_current[price_date]=d)
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'Proxy R2' =
+			IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",SELECTEDVALUE(proxy_effectiveness_annual_current[r2]))
+		displayFolder: Proxy
+		formatString: 0.0%
+
+	measure 'Proxy Beta' =
+			SELECTEDVALUE(proxy_effectiveness_annual_current[min_var_beta])
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'HO R2' =
+			CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="HO")
+		displayFolder: Proxy
+		formatString: 0.0%
+
+	measure 'HO Beta' =
+			IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="HO"))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'WTI R2' =
+			CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="WTI")
+		displayFolder: Proxy
+		formatString: 0.0%
+
+	measure 'WTI Beta' =
+			IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="WTI"))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'BRENT R2' =
+			CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="BRENT")
+		displayFolder: Proxy
+		formatString: 0.0%
+
+	measure 'BRENT Beta' =
+			IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="BRENT"))
+		displayFolder: Proxy
+		formatString: 0.000
+
+	measure 'Years Compared' =
+			COUNTROWS(FILTER(ALL(proxy_effectiveness_annual_current[year]),proxy_effectiveness_annual_current[year]<>"ALL"))
+		displayFolder: Proxy
+		formatString: 0
+
+	measure 'HO Wins Years' =
+			VAR years=FILTER(ALL(proxy_effectiveness_annual_current[year]),proxy_effectiveness_annual_current[year]<>"ALL") RETURN IF([Insights Ready],COUNTROWS(FILTER(years,
+			        CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="HO")>CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="WTI")))+0)
+		displayFolder: Proxy
+		formatString: 0
+
+	measure 'WTI Years Effective' =
+			IF([Insights Ready],COUNTROWS(FILTER(ALL(proxy_effectiveness_annual_current),proxy_effectiveness_annual_current[year]<>"ALL"&&proxy_effectiveness_annual_current[proxy]="WTI"&&proxy_effectiveness_annual_current[r2]>=0.8))+0)
+		displayFolder: Proxy
+		formatString: 0
+
+	measure 'Windows' =
+			COUNTROWS(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0))
+		displayFolder: Backtest
+		formatString: 0
+
+	measure 'Win Share' =
+			DIVIDE(COUNTROWS(FILTER(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),hedge_backtest_windows_current[hedge_won]))+0,[Windows])
+		displayFolder: Backtest
+		formatString: 0.0%
+
+	measure 'Mean Savings Gal' =
+			AVERAGEX(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),hedge_backtest_windows_current[savings_per_gal])
+		displayFolder: Backtest
+		formatString: +$0.000;-$0.000;$0.000
+
+	measure 'Latest Window Rank' =
+			CALCULATE(SELECTEDVALUE(hedge_backtest_windows_current[window_pct_rank]),REMOVEFILTERS(),hedge_backtest_windows_current[hedge_ratio]=0,hedge_backtest_windows_current[is_latest_complete]=TRUE())
+		displayFolder: Backtest
+		formatString: 0.0%
+
+	measure 'Window Savings' =
+			CALCULATE(SELECTEDVALUE(hedge_backtest_windows_current[savings_per_gal]),hedge_backtest_windows_current[hedge_ratio]=0)
+		displayFolder: Backtest
+		formatString: +0.000;-0.000;0.000
+
+	measure 'Mean Overrun B' =
+			IF(HASONEVALUE(hedge_backtest_windows_current[hedge_ratio]),AVERAGE(hedge_backtest_windows_current[budget_overrun_b]))
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'P95 Overrun B' =
+			IF(HASONEVALUE(hedge_backtest_windows_current[hedge_ratio]),PERCENTILEX.INC(hedge_backtest_windows_current,hedge_backtest_windows_current[budget_overrun_b],0.95))
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Historical Mean 0' =
+			CALCULATE([Mean Overrun B],REMOVEFILTERS(),hedge_backtest_windows_current[hedge_ratio]=0.0)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Historical P95 0' =
+			CALCULATE([P95 Overrun B],REMOVEFILTERS(),hedge_backtest_windows_current[hedge_ratio]=0.0)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Historical Mean 80' =
+			CALCULATE([Mean Overrun B],REMOVEFILTERS(),hedge_backtest_windows_current[hedge_ratio]=0.8)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Historical P95 80' =
+			CALCULATE([P95 Overrun B],REMOVEFILTERS(),hedge_backtest_windows_current[hedge_ratio]=0.8)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Historical Hedge Cost B' =
+			IF([Insights Ready],[Historical Mean 80]-[Historical Mean 0])
+		displayFolder: Backtest
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Historical P95 Move' =
+			PERCENTILEX.INC(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),DIVIDE(hedge_backtest_windows_current[realized_avg],hedge_backtest_windows_current[s0])-1,0.95)
+		displayFolder: Backtest
+		formatString: 0.0%
+
+	measure 'Route Savings M' =
+			IF(HASONEVALUE('Hedge Scenario'[scenario_id]),SUM('Route Costs'[hedge_savings_usd])/1000000)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Route Total Savings M' =
+			CALCULATE([Route Savings M],REMOVEFILTERS(dim_route),REMOVEFILTERS(dim_month))
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Route Count' =
+			COUNTROWS(ALL(dim_route))
+		displayFolder: Backtest
+		formatString: 0
+
+	measure 'Selected Hedge Ratio' =
+			SELECTEDVALUE('Hedge Scenario'[hedge_ratio])
+		displayFolder: Backtest
+		formatString: 0.0%
+
+	measure 'Route Cost M' =
+			DIVIDE([Fuel Cost USD],1000000)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'Route Unhedged M' =
+			DIVIDE([Unhedged Cost USD],1000000)
+		displayFolder: Backtest
+		formatString: 0.00
+
+	measure 'B767 Share' =
+			DIVIDE(SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]),SUMX(ALL(dim_route),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]))
+		displayFolder: Backtest
+		formatString: 0.0%
+
+	measure 'B767 Departures' =
+			SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[daily_frequencies])
+		displayFolder: Backtest
+		formatString: 0
+
+	measure 'Route Concentration Title' =
+			"B767s use " & FORMAT([B767 Share],"0.0%") & " of scheduled gallons"
+		displayFolder: Headlines
+
+	measure 'Route Concentration Subtitle' =
+			"Synthetic fixture | Hedge savings by route, $M"
+		displayFolder: Headlines
+
+	measure 'Current mu' =
+			CALCULATE(SELECTEDVALUE(calibration_history_current[mu]),REMOVEFILTERS(),calibration_history_current[is_current]=TRUE())
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Current sigma' =
+			CALCULATE(SELECTEDVALUE(calibration_history_current[sigma]),REMOVEFILTERS(),calibration_history_current[is_current]=TRUE())
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Current mu_pct_rank' =
+			CALCULATE(SELECTEDVALUE(calibration_history_current[mu_pct_rank]),REMOVEFILTERS(),calibration_history_current[is_current]=TRUE())
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Current sigma_pct_rank' =
+			CALCULATE(SELECTEDVALUE(calibration_history_current[sigma_pct_rank]),REMOVEFILTERS(),calibration_history_current[is_current]=TRUE())
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Calibration Count' =
+			COUNTROWS(ALL(calibration_history_current))
+		displayFolder: Simulation
+		formatString: 0
+
+	measure 'Median Mu' =
+			MEDIANX(ALL(calibration_history_current),calibration_history_current[mu])
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'MU' =
+			SELECTEDVALUE(calibration_history_current[mu])
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'SIGMA' =
+			SELECTEDVALUE(calibration_history_current[sigma])
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Mu IQR Low' =
+			PERCENTILEX.INC(ALL(calibration_history_current),calibration_history_current[mu],0.25)
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Mu IQR High' =
+			PERCENTILEX.INC(ALL(calibration_history_current),calibration_history_current[mu],0.75)
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Band Coverage' =
+			DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[inside_band]))+0,COUNTROWS(forecast_backtest_current))
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Below P05' =
+			DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[below_p05]))+0,COUNTROWS(forecast_backtest_current))
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'High Drift Below P05' =
+			CALCULATE([Below P05],forecast_backtest_current[high_drift]=TRUE())
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Log RMSE' =
+			SQRT(AVERAGEX(forecast_backtest_current,forecast_backtest_current[log_err_p50]^2))
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'EWM Band Coverage' =
+			CALCULATE([Band Coverage],REMOVEFILTERS(),forecast_backtest_current[drift_model]="EWM")
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'EWM High Drift Below P05' =
+			CALCULATE([High Drift Below P05],REMOVEFILTERS(),forecast_backtest_current[drift_model]="EWM")
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Fan P05' =
+			SELECTEDVALUE(price_fan_current[p05_price_gal])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Fan P25' =
+			SELECTEDVALUE(price_fan_current[p25_price_gal])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Fan Median' =
+			SELECTEDVALUE(price_fan_current[p50_price_gal])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Fan P75' =
+			SELECTEDVALUE(price_fan_current[p75_price_gal])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Fan P95' =
+			SELECTEDVALUE(price_fan_current[p95_price_gal])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Terminal Median' =
+			VAR t=MAXX(ALL(price_fan_current),price_fan_current[step]) RETURN CALCULATE([Fan Median],REMOVEFILTERS(),price_fan_current[step]=t)
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Mean Cost B 0' =
+			CALCULATE([Mean Cost B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.0)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'Mean Cost B 80' =
+			CALCULATE([Mean Cost B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.8)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'P95 Cost B 0' =
+			CALCULATE([P95 Cost B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.0)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'P95 Cost B 80' =
+			CALCULATE([P95 Cost B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.8)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'CVaR95 B 0' =
+			CALCULATE([CVaR95 B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.0)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'CVaR95 B 80' =
+			CALCULATE([CVaR95 B],REMOVEFILTERS(),'Risk Metrics'[hedge_ratio]=0.8)
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'Spot Run Rate B' =
+			[Latest Jet]*1.5
+		displayFolder: Simulation
+		formatString: 0.00
+
+	measure 'Simulation Hedge Cost B' =
+			IF([Risk Ready],[Mean Cost B 80]-[Mean Cost B 0])
+		displayFolder: Simulation
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Mean Versus Run Rate' =
+			IF([Risk Ready]&&[Insights Ready],DIVIDE([Mean Cost B 0],[Spot Run Rate B])-1)
+		displayFolder: Simulation
+		formatString: +0.0%;-0.0%;0.0%
+
+	measure 'Model History Cost' =
+			IF([Readiness]="Ready",SWITCH(SELECTEDVALUE('Cost Basis'[Basis]),"Simulation",[Simulation Hedge Cost B],"History",[Historical Hedge Cost B]))
+		displayFolder: Simulation
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Histogram Paths' =
+			IF(SELECTEDVALUE(cost_histogram_current[hedge_ratio]) IN {0,0.8},SUM(cost_histogram_current[path_count]))
+		displayFolder: Simulation
+		formatString: #,0
+
+	measure 'Observed Tail' =
+			SELECTEDVALUE(return_tail_frequency_current[observed_share])
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Normal Tail' =
+			SELECTEDVALUE(return_tail_frequency_current[normal_share])
+		displayFolder: Simulation
+		formatString: 0.0%
+
+	measure 'Tail Ratio' =
+			SELECTEDVALUE(return_tail_frequency_current[ratio])
+		displayFolder: Simulation
+		formatString: 0.0
+
+	measure 'Kurtosis' =
+			SELECTEDVALUE(return_tail_frequency_current[excess_kurtosis])
+		displayFolder: Simulation
+		formatString: 0.0
+
+	measure 'Three Sigma Ratio' =
+			CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=3)
+		displayFolder: Simulation
+		formatString: 0.0
+
+	measure 'Tail Kurtosis' =
+			CALCULATE([Kurtosis],REMOVEFILTERS(),return_tail_frequency_current[threshold]=3)
+		displayFolder: Simulation
+		formatString: 0.0
+
+	measure 'Sensitivity Difference B' =
+			IF(HASONEVALUE(v_hedge_sensitivity[hedge_ratio])&&HASONEVALUE(v_hedge_sensitivity[price_change_pct]),SELECTEDVALUE(v_hedge_sensitivity[hedged_cost_b])-SELECTEDVALUE(v_hedge_sensitivity[unhedged_cost_b]))
+		displayFolder: Scenario
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Break Even' =
+			EXP(0.04)-1
+		displayFolder: Scenario
+		formatString: 0.0%
+
+	measure 'Shock -30 Difference' =
+			CALCULATE([Sensitivity Difference B],REMOVEFILTERS(),v_hedge_sensitivity[hedge_ratio]=0.8,v_hedge_sensitivity[price_change_pct]=-30)
+		displayFolder: Scenario
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Shock 50 Difference' =
+			CALCULATE([Sensitivity Difference B],REMOVEFILTERS(),v_hedge_sensitivity[hedge_ratio]=0.8,v_hedge_sensitivity[price_change_pct]=50)
+		displayFolder: Scenario
+		formatString: +0.00;-0.00;0.00
+
+	measure 'Nominal Coverage' =
+			IF([Insights Ready],0.9)
+		displayFolder: Simulation
+		formatString: 0%
+
+	measure 'Effective Benchmark' =
+			IF([Insights Ready],0.8)
+		displayFolder: Proxy
+		formatString: 0.00
+
+	measure 'Historical P95 Price' =
+			[Latest Jet]*(1+[Historical P95 Move])
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Forward Price' =
+			[Latest Jet]*EXP(0.04)
+		displayFolder: Simulation
+		formatString: 0.000
+
+	measure 'Readiness Color' =
+			SWITCH([Readiness],"Ready","#2E8B57","Stale","#B85C38","#707070")
+		displayFolder: Status
+
+	measure 'Sensitivity Magnitude' =
+			VAR c=[Sensitivity Difference B] VAR cap=MAXX(ALL(v_hedge_sensitivity),ABS(v_hedge_sensitivity[hedged_cost_b]-v_hedge_sensitivity[unhedged_cost_b])) RETURN DIVIDE(ABS(c),cap)
+		displayFolder: Scenario
+
+	measure 'Sensitivity Color' =
+			VAR c=[Sensitivity Difference B] VAR s=[Sensitivity Magnitude] RETURN SWITCH(TRUE(),ISBLANK(c)||c=0,"#FFFFFF",c<0&&s>0.66,"#1F4E79",c<0&&s>0.33,"#82B5D5",c<0,"#D7E8F4",s>0.66,"#B85C38",s>0.33,"#E49C8D","#F3D9D3")
+		displayFolder: Scenario
+
+	measure 'Sensitivity Font' =
+			IF([Sensitivity Magnitude]>0.66,"#FFFFFF","#172B3A")
+		displayFolder: Scenario
+
+	measure 'Ratio Color' =
+			SWITCH(SELECTEDVALUE(hedge_backtest_windows_current[hedge_ratio]),0,"#DCEAF4",0.2,"#A6CCE3",0.4,"#6BAED6",0.6,"#3182BD",0.8,"#08519C","#707070")
+		displayFolder: Backtest
+
+	measure 'Proxy Color' =
+			SWITCH(SELECTEDVALUE(proxy_effectiveness_annual_current[proxy]),"HO","#2E8B57","WTI","#B85C38","BRENT","#7A6C9E","#707070")
+		displayFolder: Proxy
+
+	measure 'Title 1.1' =
+			IF([Insights Ready], VAR c=[Change Crack] VAR w=[Change WTI] RETURN IF(ABS(c)>=ABS(w),"Crack spread","WTI-equivalent") & " contributed " & FORMAT(IF(ABS(c)>=ABS(w),[Crack Share],1-[Crack Share]),"0.0%") & " of jet’s " & FORMAT([Change Jet],"+$0.000;-$0.000;$0.000") & "/gal trailing-year change", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 1.2' =
+			IF([Insights Ready], "Jet moved from $" & FORMAT([Prior Jet],"0.000") & " to $" & FORMAT([Latest Jet],"0.000") & "/gal: crude plus crack reconcile exactly", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 2.1' =
+			IF([Insights Ready], "Price levels: WTI " & FORMAT([Latest Price Level Correlation],"0.00") & "; daily returns: WTI " & FORMAT([Latest WTI Return Correlation],"0.00") & ", heating oil " & FORMAT([Latest HO Return Correlation],"0.00"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 2.2' =
+			IF([Insights Ready], IF([HO Wins Years]>[Years Compared]/2,"Heating oil","WTI") & " out-tracked " & IF([HO Wins Years]>[Years Compared]/2,"WTI","heating oil") & " in " & FORMAT(IF([HO Wins Years]>[Years Compared]/2,[HO Wins Years],[Years Compared]-[HO Wins Years]),"0") & " of " & FORMAT([Years Compared],"0") & " years; WTI cleared 0.80 R² in " & FORMAT([WTI Years Effective],"0"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 2.3' =
+			IF([Insights Ready], "WTI changed " & FORMAT([Change WTI],"+$0.000;-$0.000;$0.000") & " vs jet " & FORMAT([Change Jet],"+$0.000;-$0.000;$0.000") & "/gal (" & FORMAT([WTI Offset],"0.0%") & "); heating oil " & FORMAT([Change HO],"+$0.000;-$0.000;$0.000"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 3.1' =
+			IF([Insights Ready], "A one-year forward beat spot in " & FORMAT([Win Share],"0.0%") & " of " & FORMAT([Windows],"0") & " windows (mean " & FORMAT([Mean Savings Gal],"+$0.000;-$0.000;$0.000") & "/gal)", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 3.2' =
+			IF([Insights Ready], "80% cover moved historical P95 overrun from $" & FORMAT([Historical P95 0],"0.00") & "B to $" & FORMAT([Historical P95 80],"0.00") & "B; expected cost change " & FORMAT([Historical Hedge Cost B],"+$0.00;-$0.00;$0.00") & "B/yr", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 3.3' =
+			IF([Insights Ready]&&[Analytics Ready], "Synthetic " & FORMAT([Route Count],"0") & "-route schedule: " & IF(HASONEVALUE('Hedge Scenario'[scenario_id]),FORMAT(SELECTEDVALUE('Hedge Scenario'[hedge_ratio]),"0%") & " cover, " & FORMAT([Route Total Savings M],"+$0.00;-$0.00;$0.00") & "M savings","select one scenario") & "; " & FORMAT([B767 Share],"0.0%") & " of scheduled gallons on " & FORMAT([B767 Departures],"0") & " daily B767 departures", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 4.1' =
+			IF([Insights Ready]&&[Risk Ready], "Current drift " & FORMAT([Current mu],"0.0%") & "/yr ranks at " & FORMAT([Current mu_pct_rank],"0.0%") & " of " & FORMAT([Calibration Count],"0") & " calibrations; median " & FORMAT([Median Mu],"0.0%"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 4.2' =
+			IF([Insights Ready]&&[Risk Ready], "EWM band covered " & FORMAT([EWM Band Coverage],"0.0%") & " of outcomes (nominal 90%); high-drift outcomes below P05: " & FORMAT([EWM High Drift Below P05],"0.0%"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 4.3' =
+			IF([Insights Ready]&&[Risk Ready], "Model terminal median $" & FORMAT([Terminal Median],"0.000") & "/gal (" & FORMAT(DIVIDE([Terminal Median],[Latest Jet]),"0.0") & "× today); historical P95 average-price move " & FORMAT([Historical P95 Move],"+0.0%;-0.0%;0.0%"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 4.4' =
+			IF([Insights Ready]&&[Risk Ready], "3-sigma weekly moves occur " & FORMAT([Three Sigma Ratio],"0.0") & "× the normal-implied rate; excess kurtosis " & FORMAT([Tail Kurtosis],"0.0"), "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 5.1' =
+			IF([Insights Ready]&&[Risk Ready], "Unhedged mean $" & FORMAT([Mean Cost B 0],"0.00") & "B (" & FORMAT([Mean Versus Run Rate],"+0.0%;-0.0%;0.0%") & " vs $" & FORMAT([Spot Run Rate B],"0.00") & "B run-rate); CVaR95 $" & FORMAT([CVaR95 B 0],"0.00") & "B → $" & FORMAT([CVaR95 B 80],"0.00") & "B at 80%", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 5.2' =
+			IF([Insights Ready]&&[Risk Ready], "80% cover changes expected cost: model " & FORMAT([Simulation Hedge Cost B],"+$0.00;-$0.00;$0.00") & "B; history " & FORMAT([Historical Hedge Cost B],"+$0.00;-$0.00;$0.00") & "B. Interpret the drift–carry gap.", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Title 5.3' =
+			IF([Insights Ready]&&[Risk Ready], "Hedge break-even is " & FORMAT([Break Even],"0.0%") & "; 80% cover at −30%: " & FORMAT([Shock -30 Difference],"+$0.00;-$0.00;$0.00") & "B, at +50%: " & FORMAT([Shock 50 Difference],"+$0.00;-$0.00;$0.00") & "B", "Unavailable — complete a current-source publication")
+		displayFolder: Headlines
+
+	measure 'Subtitle 1.1' =
+			"Actual EIA monthly averages; full history. Latest month may be partial."
+		displayFolder: Headlines
+
+	measure 'Subtitle 1.2' =
+			"Crack $" & FORMAT([Latest Crack],"0.000") & "/gal = " & FORMAT([Crack Multiple],"0.0") & "× prior-years mean; jet full-sample rank " & FORMAT([Jet Rank],"0.0%")
+		displayFolder: Headlines
+
+	measure 'Subtitle 2.1' =
+			"90 calendar days, ≥20 paired log returns. Price-level, misleading (dashed grey)."
+		displayFolder: Headlines
+
+	measure 'Subtitle 2.2' =
+			"Weekly returns; missing weeks break returns. Benchmark 0.80; tooltip: minimum-variance beta."
+		displayFolder: Headlines
+
+	measure 'Subtitle 2.3' =
+			"Actual spot changes. Position table: Synthetic fixture; linear spot proxies, not forward valuation."
+		displayFolder: Headlines
+
+	measure 'Subtitle 3.1' =
+			"Latest complete window rank " & FORMAT([Latest Window Rank],"0.0%") & "; overlapping windows, descriptive evidence, no independent-trial claim."
+		displayFolder: Headlines
+
+	measure 'Subtitle 3.2' =
+			"Reference carrier, 1.5B gal/yr | P95 of complete one-year purchase windows; means are arithmetic averages."
+		displayFolder: Headlines
+
+	measure 'Subtitle 3.3' =
+			"Synthetic fixture | Latest complete historical window rank " & FORMAT([Latest Window Rank],"0.0%") & "; fixture calendar differs from weekly purchase windows."
+		displayFolder: Headlines
+
+	measure 'Subtitle 4.1' =
+			"EWM μ and σ; full-sample μ interquartile band. Not a forecast."
+		displayFolder: Headlines
+
+	measure 'Subtitle 4.2' =
+			"10,000 common paths/window/model; one-year purchase averages excluding S0. Log-RMSE in tooltip."
+		displayFolder: Headlines
+
+	measure 'Subtitle 4.3' =
+			"Extrapolation of trailing-year drift, not a forecast | P05–P95 outer, P25–P75 inner band; median solid | Reference carrier, 1.5B gal/yr"
+		displayFolder: Headlines
+
+	measure 'Subtitle 4.4' =
+			"Tail multiples: 2σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=2),"0.0") & "×; 3σ " & FORMAT([Three Sigma Ratio],"0.0") & "×; 4σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=4),"0.0") & "×. Drift can overstate levels while normal shocks understate tail frequency; the errors do not cancel."
+		displayFolder: Headlines
+
+	measure 'Subtitle 5.1' =
+			"Reference carrier, 1.5B gal/yr | Common-path GBM; not a forecast. Fixed 0% and 80% series."
+		displayFolder: Headlines
+
+	measure 'Subtitle 5.2' =
+			"Reference carrier, 1.5B gal/yr | VaR reduction equals coverage (20/40/60/80%) by construction."
+		displayFolder: Headlines
+
+	measure 'Subtitle 5.3' =
+			"Reference carrier, 1.5B gal/yr | Hedged minus unhedged cost; blue saving, red additional cost; signed labels."
+		displayFolder: Headlines
+
+	measure 'Page 1' =
+			"What actually drove the jet fuel spike?" & UNICHAR(10) & [Header]
+		displayFolder: Headlines
+
+	measure 'Page 2' =
+			"Which hedge instrument actually tracks jet fuel?" & UNICHAR(10) & [Header]
+		displayFolder: Headlines
+
+	measure 'Page 3' =
+			"Did hedging pay? 16 years of rolling evidence" & UNICHAR(10) & [Header]
+		displayFolder: Headlines
+
+	measure 'Page 4' =
+			"How far should we trust the simulation?" & UNICHAR(10) & [Header]
+		displayFolder: Headlines
+
+	measure 'Page 5' =
+			"What the model says about the hedge decision, read correctly" & UNICHAR(10) & [Header]
+		displayFolder: Headlines

@@ -1,0 +1,15 @@
+{
+  "host": "https://dbc-236f6036-39b4.cloud.databricks.com",
+  "job_id": 1025825966695931,
+  "schedule_enabled": true,
+  "source_hashes": {
+    "refresh_capture": "b65d06aedeb1ea86c8f3b88930c10c0b38289fa1b2d0ffc4dc381da601e48750",
+    "phase1_pipeline": "9e100c28da23dcd843647a30544282ba619e36a96217daa7a17f407b3f1624c4",
+    "refresh_operations": "82c2760743c1248929bfa644bdecbe2e87cf92cf198ac69265b05ad685336a23",
+    "phase3_risk": "c3f5ca036ab51ea2175278b9ea9a0f027c40d7aa1058304ae1fee82cf0db053d",
+    "reporting_contract": "32c3f50136fca8feba07f73d692a101b241c5cadfa5d5ca6dbee5dde21b1fbb3",
+    "phase2_gold": "56e2efe86d9848e96f7dd4ce62a75609a5ea8e3e81c31dad183231a2c45a07a0",
+    "phase5_insights": "d556b2128f9ddfbaccae32cd21c0d9ec628f0bd30fb2aad4283beb291ef6ab96"
+  },
+  "run_id": 906039088188452
+}

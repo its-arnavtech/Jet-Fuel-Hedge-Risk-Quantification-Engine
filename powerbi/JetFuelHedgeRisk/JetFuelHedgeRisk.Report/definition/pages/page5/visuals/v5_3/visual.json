@@ -1,0 +1,266 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "v5_3",
+  "position": {
+    "x": 20,
+    "y": 420,
+    "width": 1240,
+    "height": 279,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "v_hedge_sensitivity"
+                    }
+                  },
+                  "Property": "hedge_ratio"
+                }
+              },
+              "queryRef": "v_hedge_sensitivity.hedge_ratio",
+              "nativeQueryRef": "hedge_ratio"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "v_hedge_sensitivity"
+                    }
+                  },
+                  "Property": "price_change_pct"
+                }
+              },
+              "queryRef": "v_hedge_sensitivity.price_change_pct",
+              "nativeQueryRef": "price_change_pct"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Sensitivity Difference B"
+                }
+              },
+              "queryRef": "_Measures.Sensitivity Difference B",
+              "nativeQueryRef": "Sensitivity Difference B"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Readiness"
+                }
+              },
+              "queryRef": "_Measures.Readiness",
+              "nativeQueryRef": "Readiness"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 5.3"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Subtitle 5.3"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 5.3"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"transform\":[{\"joinaggregate\":[{\"op\":\"min\",\"field\":\"Sensitivity Difference B\",\"as\":\"MinCost\"},{\"op\":\"max\",\"field\":\"Sensitivity Difference B\",\"as\":\"MaxCost\"}]},{\"calculate\":\"datum[''Sensitivity Difference B''] / max(abs(datum.MinCost),abs(datum.MaxCost),1e-12)\",\"as\":\"Normalized\"}],\"encoding\":{\"x\":{\"field\":\"price_change_pct\",\"type\":\"ordinal\",\"title\":\"Spot price shock\",\"axis\":{\"labelAngle\":0,\"labelExpr\":\"datum.label + ''%''\"}},\"y\":{\"field\":\"hedge_ratio\",\"type\":\"ordinal\",\"title\":\"Hedge ratio\",\"axis\":{\"format\":\".0%\"}}},\"layer\":[{\"mark\":{\"type\":\"rect\",\"stroke\":\"#FFFFFF\"},\"encoding\":{\"color\":{\"field\":\"Normalized\",\"type\":\"quantitative\",\"scale\":{\"domain\":[-1,0,1],\"range\":[\"#1F4E79\",\"#FFFFFF\",\"#B85C38\"],\"interpolate\":\"rgb\"},\"legend\":null},\"tooltip\":[{\"field\":\"hedge_ratio\",\"type\":\"quantitative\",\"format\":\".0%\"},{\"field\":\"price_change_pct\",\"type\":\"quantitative\"},{\"field\":\"Sensitivity Difference B\",\"type\":\"quantitative\",\"format\":\"+.2f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"text\",\"fontSize\":12},\"encoding\":{\"text\":{\"field\":\"Sensitivity Difference B\",\"type\":\"quantitative\",\"format\":\"+.2f\"},\"color\":{\"condition\":{\"test\":\"abs(datum.Normalized) > 0.65\",\"value\":\"#FFFFFF\"},\"value\":\"#172B3A\"}},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"data\":{\"values\":[{\"message\":\"Unavailable \\u2014 complete current-source publication\"}]},\"transform\":[{\"filter\":\"length(data(''dataset'')) == 0 || data(''dataset'')[0].Readiness != ''Ready''\"}],\"mark\":{\"type\":\"text\",\"align\":\"center\",\"color\":\"#707070\",\"fontSize\":13},\"encoding\":{\"x\":{\"value\":240},\"y\":{\"value\":100},\"text\":{\"field\":\"message\"}}}],\"$schema\":\"https://vega.github.io/schema/vega-lite/v5.json\",\"data\":{\"name\":\"dataset\"},\"width\":\"container\",\"height\":\"container\",\"autosize\":{\"type\":\"fit\",\"contains\":\"padding\"},\"config\":{\"font\":\"Segoe UI\",\"axis\":{\"labelFontSize\":10,\"titleFontSize\":11},\"view\":{\"stroke\":null}}}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

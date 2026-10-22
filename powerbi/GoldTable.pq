@@ -6,9 +6,9 @@ let
         "dbc-236f6036-39b4.cloud.databricks.com",
         "/sql/1.0/warehouses/e4f1304cb2d303ea",
         [Catalog="workspace", Database="jet_fuel_gold", EnableAutomaticProxyDiscovery=null]),
-    Catalog = Source{[Name="workspace",Kind="Database"]}[Data],
-    Schema = Catalog{[Name="jet_fuel_gold",Kind="Schema"]}[Data],
-    Matches = Table.SelectRows(Schema, each [Name] = TableName),
+    // Catalog + Database scope the connector to a flat, qualified-name navigator.
+    QualifiedName = "workspace.jet_fuel_gold." & TableName,
+    Matches = Table.SelectRows(Source, each Text.Remove(Text.From([Name]), {"`", "'", """"}) = QualifiedName),
     Result = if Table.RowCount(Matches) <> 1 then error "Gold table/view not found uniquely" else Matches{0}[Data]
 in
     Result

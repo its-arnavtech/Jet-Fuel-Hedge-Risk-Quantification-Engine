@@ -1,0 +1,576 @@
+{
+  "dax_executed": true,
+  "ready": true,
+  "status": [
+    {
+      "Readiness": "Ready",
+      "Header": "Price as of 2026-10-20  |  Ready  |  Simulation completed 2026-10-22 04:36"
+    }
+  ],
+  "headlines": [
+    {
+      "Title 1.1": "Crack spread contributed 53.5% of jet’s +$2.539/gal trailing-year change",
+      "Title 1.2": "Jet moved from $2.093 to $4.632/gal: crude plus crack reconcile exactly",
+      "Title 2.1": "Price levels: WTI 0.91; daily returns: WTI 0.38, heating oil 0.90",
+      "Title 2.2": "Heating oil out-tracked WTI in 15 of 17 years; WTI cleared 0.80 R² in 1",
+      "Title 2.3": "WTI changed +$1.180 vs jet +$2.539/gal (46.5%); heating oil +$2.742",
+      "Title 3.1": "A one-year forward beat spot in 41.6% of 824 windows (mean -$0.069/gal)",
+      "Title 3.2": "80% cover moved historical P95 overrun from $1.22B to $0.34B; expected cost change +$0.08B/yr",
+      "Title 3.3": "Synthetic 8-route schedule: 80% cover, +$23.80M savings; 45.3% of scheduled gallons on 3 daily B767 departures",
+      "Title 4.1": "Current drift 97.1%/yr ranks at 95.0% of 824 calibrations; median 9.2%",
+      "Title 4.2": "EWM band covered 74.4% of outcomes (nominal 90%); high-drift outcomes below P05: 25.2%",
+      "Title 4.3": "Model terminal median $10.398/gal (2.2× today); historical P95 average-price move +48.4%",
+      "Title 4.4": "3-sigma weekly moves occur 5.5× the normal-implied rate; excess kurtosis 7.9",
+      "Title 5.1": "Unhedged mean $11.84B (+70.4% vs $6.95B run-rate); CVaR95 $24.65B → $10.72B at 80%",
+      "Title 5.2": "80% cover changes expected cost: model -$3.68B; history +$0.08B. Interpret the drift–carry gap.",
+      "Title 5.3": "Hedge break-even is 4.1%; 80% cover at −30%: +$1.89B, at +50%: -$2.55B"
+    }
+  ],
+  "numbers": [
+    {
+      "Market Date": "2026-10-20T00:00:00",
+      "Latest Jet": 4.632,
+      "Prior Jet": 2.093,
+      "Change Jet": 2.5389999999999997,
+      "Latest WTI": 2.5688095238095237,
+      "Prior WTI": 1.389047619047619,
+      "Change WTI": 1.1797619047619046,
+      "Latest HO": 4.832,
+      "Prior HO": 2.09,
+      "Change HO": 2.742,
+      "Latest Crack": 2.063190476190476,
+      "Prior Crack": 0.7039523809523809,
+      "Change Crack": 1.3592380952380951,
+      "WTI Monthly": 1.7208901733450843,
+      "Crack Monthly": 0.5566916966121983,
+      "Latest Monthly Jet": 4.456214285714286,
+      "Crack Historical Mean": 0.513586842761025,
+      "Crack Share": 0.5353438736660477,
+      "WTI Offset": 0.4646561263339522,
+      "Crack Multiple": 4.017218324945468,
+      "Jet Rank": 0.9985788725722407,
+      "Waterfall Value": null,
+      "Bridge Low": null,
+      "Bridge High": null,
+      "Change Per Gallon": null,
+      "Price Level Correlation": null,
+      "Latest Price Level Correlation": 0.9110525551949767,
+      "WTI Return Correlation": null,
+      "Latest WTI Return Correlation": 0.3750308257402676,
+      "HO Return Correlation": null,
+      "Latest HO Return Correlation": 0.8971714806936436,
+      "Proxy R2": null,
+      "Proxy Beta": null,
+      "HO R2": null,
+      "HO Beta": null,
+      "WTI R2": null,
+      "WTI Beta": null,
+      "BRENT R2": null,
+      "BRENT Beta": null,
+      "Years Compared": 17,
+      "HO Wins Years": 15,
+      "WTI Years Effective": 1,
+      "Windows": 824,
+      "Win Share": 0.4162621359223301,
+      "Mean Savings Gal": -0.06872787997789409,
+      "Latest Window Rank": 0.9854191980558931,
+      "Window Savings": null,
+      "Mean Overrun B": null,
+      "P95 Overrun B": null,
+      "Historical Mean 0": 0.03305307132188202,
+      "Historical P95 0": 1.219531730769231,
+      "Historical Mean 80": 0.11552652729535469,
+      "Historical P95 80": 0.3448198628089761,
+      "Historical Hedge Cost B": 0.08247345597347266,
+      "Historical P95 Move": 0.48430017734441344,
+      "Route Savings M": 23.803870759194552,
+      "Route Total Savings M": 23.803870759194552,
+      "Route Count": 8,
+      "Selected Hedge Ratio": 0.8,
+      "Route Cost M": 70.50972549080545,
+      "Route Unhedged M": 94.31359625,
+      "B767 Share": 0.4528985507246377,
+      "B767 Departures": 3,
+      "Current mu": 0.9705362465044853,
+      "Current sigma": 0.5698611495137433,
+      "Current mu_pct_rank": 0.9501822600243013,
+      "Current sigma_pct_rank": 0.8226002430133658,
+      "Calibration Count": 824,
+      "Median Mu": 0.09152340156077439,
+      "MU": null,
+      "SIGMA": null,
+      "Mu IQR Low": -0.1392342955610267,
+      "Mu IQR High": 0.4067534618526811,
+      "Band Coverage": 0.8035405872193437,
+      "Below P05": 0.12046632124352331,
+      "High Drift Below P05": 0.08393285371702638,
+      "Log RMSE": 0.2828272557991156,
+      "EWM Band Coverage": 0.7435233160621761,
+      "EWM High Drift Below P05": 0.2517985611510791,
+      "Fan P05": null,
+      "Fan P25": null,
+      "Fan Median": null,
+      "Fan P75": null,
+      "Fan P95": null,
+      "Terminal Median": 10.398344507697045,
+      "Mean Cost B 0": 11.835953779995958,
+      "Mean Cost B 80": 8.152433363270134,
+      "P95 Cost B 0": 20.511710765120146,
+      "P95 Cost B 80": 9.887584760294999,
+      "CVaR95 B 0": 24.65123821279642,
+      "CVaR95 B 80": 10.715490249830182,
+      "Spot Run Rate B": 6.9479999999999995,
+      "Simulation Hedge Cost B": -3.6835204167258233,
+      "Mean Versus Run Rate": 0.7035051496827804,
+      "Model History Cost": null,
+      "Histogram Paths": null,
+      "Observed Tail": null,
+      "Normal Tail": null,
+      "Tail Ratio": null,
+      "Kurtosis": 7.931229691539771,
+      "Three Sigma Ratio": 5.50306116055367,
+      "Tail Kurtosis": 7.931229691539771,
+      "Sensitivity Difference B": null,
+      "Break Even": 0.04081077419238821,
+      "Shock -30 Difference": 1.8943626072709696,
+      "Shock 50 Difference": -2.5523573927290313,
+      "Nominal Coverage": 0.9,
+      "Effective Benchmark": 0.8,
+      "Historical P95 Price": 6.875278421459323,
+      "Forward Price": 4.821035506059141
+    }
+  ],
+  "grains": [
+    [
+      {
+        "scenario_label": "0% futures",
+        "Mean Cost B": 11.835953779995958,
+        "P95 Cost B": 20.511710765120146,
+        "CVaR95 B": 24.65123821279642,
+        "Fuel Gallons": 29579100.0,
+        "Unhedged Cost USD": 94313596.25,
+        "Fuel Cost USD": 94313596.25
+      },
+      {
+        "scenario_label": "20% futures",
+        "Mean Cost B": 10.915073675814524,
+        "P95 Cost B": 17.85567926391386,
+        "CVaR95 B": 21.16730122205485,
+        "Fuel Gallons": 29579100.0,
+        "Unhedged Cost USD": 94313596.25,
+        "Fuel Cost USD": 88362628.56020133
+      },
+      {
+        "scenario_label": "40% futures",
+        "Mean Cost B": 9.994193571633087,
+        "P95 Cost B": 15.19964776270757,
+        "CVaR95 B": 17.683364231313337,
+        "Fuel Gallons": 29579100.0,
+        "Unhedged Cost USD": 94313596.25,
+        "Fuel Cost USD": 82411660.87040272
+      },
+      {
+        "scenario_label": "60% futures",
+        "Mean Cost B": 9.073313467451621,
+        "P95 Cost B": 12.543616261501287,
+        "CVaR95 B": 14.199427240571772,
+        "Fuel Gallons": 29579100.0,
+        "Unhedged Cost USD": 94313596.25,
+        "Fuel Cost USD": 76460693.18060409
+      },
+      {
+        "scenario_label": "80% futures",
+        "Mean Cost B": 8.152433363270134,
+        "P95 Cost B": 9.887584760294999,
+        "CVaR95 B": 10.715490249830182,
+        "Fuel Gallons": 29579100.0,
+        "Unhedged Cost USD": 94313596.25,
+        "Fuel Cost USD": 70509725.49080545
+      }
+    ],
+    [
+      {
+        "year": "2010",
+        "proxy": "HO",
+        "R2": 0.955883151902517,
+        "Beta": 0.9450856685178458
+      },
+      {
+        "year": "2026",
+        "proxy": "HO",
+        "R2": 0.870320798246874,
+        "Beta": 1.0032380802695784
+      },
+      {
+        "year": "2025",
+        "proxy": "HO",
+        "R2": 0.8758920596662768,
+        "Beta": 0.969333591735702
+      },
+      {
+        "year": "2024",
+        "proxy": "HO",
+        "R2": 0.5174233488731328,
+        "Beta": 0.6191824567121303
+      },
+      {
+        "year": "2023",
+        "proxy": "HO",
+        "R2": 0.6904156426297533,
+        "Beta": 1.271861252099153
+      },
+      {
+        "year": "2022",
+        "proxy": "HO",
+        "R2": 0.5638035289922337,
+        "Beta": 0.7437844937672266
+      },
+      {
+        "year": "2021",
+        "proxy": "HO",
+        "R2": 0.7305258762432345,
+        "Beta": 0.9092730954449315
+      },
+      {
+        "year": "2020",
+        "proxy": "HO",
+        "R2": 0.8509398015338459,
+        "Beta": 1.1882756301039097
+      },
+      {
+        "year": "2019",
+        "proxy": "HO",
+        "R2": 0.8754163727916645,
+        "Beta": 1.093272779739468
+      },
+      {
+        "year": "2018",
+        "proxy": "HO",
+        "R2": 0.9595760885644675,
+        "Beta": 0.9943372565452947
+      },
+      {
+        "year": "2017",
+        "proxy": "HO",
+        "R2": 0.6450202563884181,
+        "Beta": 1.1200993854602155
+      },
+      {
+        "year": "2016",
+        "proxy": "HO",
+        "R2": 0.715683327718408,
+        "Beta": 0.9788150710020846
+      },
+      {
+        "year": "2015",
+        "proxy": "HO",
+        "R2": 0.789648441485315,
+        "Beta": 0.8311412863076907
+      },
+      {
+        "year": "2014",
+        "proxy": "HO",
+        "R2": 0.5679938252842738,
+        "Beta": 0.8719432723928975
+      },
+      {
+        "year": "2013",
+        "proxy": "HO",
+        "R2": 0.7903864280321865,
+        "Beta": 0.9397648444633916
+      },
+      {
+        "year": "2012",
+        "proxy": "HO",
+        "R2": 0.9079032645583579,
+        "Beta": 1.0293117138745818
+      },
+      {
+        "year": "2011",
+        "proxy": "HO",
+        "R2": 0.9461600225157335,
+        "Beta": 0.9283528162388516
+      },
+      {
+        "year": "2010",
+        "proxy": "BRENT",
+        "R2": 0.8604046143781858,
+        "Beta": 1.0038167268624862
+      },
+      {
+        "year": "2026",
+        "proxy": "BRENT",
+        "R2": 0.6314236357314114,
+        "Beta": 0.7385836848158753
+      },
+      {
+        "year": "2025",
+        "proxy": "BRENT",
+        "R2": 0.4944660003819032,
+        "Beta": 0.8108279783176124
+      },
+      {
+        "year": "2024",
+        "proxy": "BRENT",
+        "R2": 0.5997552562372164,
+        "Beta": 0.8799395316728733
+      },
+      {
+        "year": "2023",
+        "proxy": "BRENT",
+        "R2": 0.426466206183988,
+        "Beta": 1.1270528190736016
+      },
+      {
+        "year": "2022",
+        "proxy": "BRENT",
+        "R2": 0.38834404273403994,
+        "Beta": 0.9678989802641146
+      },
+      {
+        "year": "2021",
+        "proxy": "BRENT",
+        "R2": 0.6078842713903158,
+        "Beta": 0.8521684722579662
+      },
+      {
+        "year": "2020",
+        "proxy": "BRENT",
+        "R2": 0.7730312415883762,
+        "Beta": 0.8674501502088005
+      },
+      {
+        "year": "2019",
+        "proxy": "BRENT",
+        "R2": 0.6138858634321042,
+        "Beta": 0.697491016349761
+      },
+      {
+        "year": "2018",
+        "proxy": "BRENT",
+        "R2": 0.8310229629872654,
+        "Beta": 0.7686425410126919
+      },
+      {
+        "year": "2017",
+        "proxy": "BRENT",
+        "R2": 0.34278451238157315,
+        "Beta": 0.8668121478297042
+      },
+      {
+        "year": "2016",
+        "proxy": "BRENT",
+        "R2": 0.5650977373306507,
+        "Beta": 0.7696737932475584
+      },
+      {
+        "year": "2015",
+        "proxy": "BRENT",
+        "R2": 0.5556877062094241,
+        "Beta": 0.6561248678710428
+      },
+      {
+        "year": "2014",
+        "proxy": "BRENT",
+        "R2": 0.637544851515276,
+        "Beta": 0.8870251226244167
+      },
+      {
+        "year": "2013",
+        "proxy": "BRENT",
+        "R2": 0.6368008110473532,
+        "Beta": 0.8484933407935277
+      },
+      {
+        "year": "2012",
+        "proxy": "BRENT",
+        "R2": 0.5921487796470595,
+        "Beta": 0.713272470175132
+      },
+      {
+        "year": "2011",
+        "proxy": "BRENT",
+        "R2": 0.8017622530431623,
+        "Beta": 0.8516866368340816
+      },
+      {
+        "year": "2010",
+        "proxy": "WTI",
+        "R2": 0.8808619831313355,
+        "Beta": 0.9006806079889615
+      },
+      {
+        "year": "2026",
+        "proxy": "WTI",
+        "R2": 0.581528470079004,
+        "Beta": 0.7634102012739967
+      },
+      {
+        "year": "2025",
+        "proxy": "WTI",
+        "R2": 0.579037053158839,
+        "Beta": 0.8781302480571969
+      },
+      {
+        "year": "2024",
+        "proxy": "WTI",
+        "R2": 0.6301385671998411,
+        "Beta": 0.8533035317690052
+      },
+      {
+        "year": "2023",
+        "proxy": "WTI",
+        "R2": 0.39392434681274535,
+        "Beta": 1.0877781281329526
+      },
+      {
+        "year": "2022",
+        "proxy": "WTI",
+        "R2": 0.3188102853535763,
+        "Beta": 0.8499590348846385
+      },
+      {
+        "year": "2021",
+        "proxy": "WTI",
+        "R2": 0.6196892529430077,
+        "Beta": 0.8157573644810906
+      },
+      {
+        "year": "2020",
+        "proxy": "WTI",
+        "R2": 0.4779129038660157,
+        "Beta": 0.5007593548199459
+      },
+      {
+        "year": "2019",
+        "proxy": "WTI",
+        "R2": 0.6417429126183375,
+        "Beta": 0.7238773684951004
+      },
+      {
+        "year": "2018",
+        "proxy": "WTI",
+        "R2": 0.755943002286373,
+        "Beta": 0.7484570221624729
+      },
+      {
+        "year": "2017",
+        "proxy": "WTI",
+        "R2": 0.21663259250965738,
+        "Beta": 0.6597431220052791
+      },
+      {
+        "year": "2016",
+        "proxy": "WTI",
+        "R2": 0.6526515232539798,
+        "Beta": 0.822463626584238
+      },
+      {
+        "year": "2015",
+        "proxy": "WTI",
+        "R2": 0.520704990522791,
+        "Beta": 0.6996062682036596
+      },
+      {
+        "year": "2014",
+        "proxy": "WTI",
+        "R2": 0.6702915385847406,
+        "Beta": 0.6711754802888912
+      },
+      {
+        "year": "2013",
+        "proxy": "WTI",
+        "R2": 0.48619366151958765,
+        "Beta": 0.6866785074958952
+      },
+      {
+        "year": "2012",
+        "proxy": "WTI",
+        "R2": 0.6141676281606339,
+        "Beta": 0.73803664318799
+      },
+      {
+        "year": "2011",
+        "proxy": "WTI",
+        "R2": 0.6584570205414916,
+        "Beta": 0.6339989199300102
+      },
+      {
+        "year": "ALL",
+        "proxy": "HO",
+        "R2": null,
+        "Beta": 0.9517034428312657
+      },
+      {
+        "year": "ALL",
+        "proxy": "BRENT",
+        "R2": null,
+        "Beta": 0.8389622798889628
+      },
+      {
+        "year": "ALL",
+        "proxy": "WTI",
+        "R2": null,
+        "Beta": 0.6889802108143552
+      }
+    ],
+    [
+      {
+        "hedge_ratio": 0.4,
+        "Mean Overrun B": 0.07428979930861833,
+        "P95 Overrun B": 0.787482646106417
+      },
+      {
+        "hedge_ratio": 0.6,
+        "Mean Overrun B": 0.09490816330198654,
+        "P95 Overrun B": 0.5720903428671757
+      },
+      {
+        "hedge_ratio": 0.8,
+        "Mean Overrun B": 0.11552652729535469,
+        "P95 Overrun B": 0.3448198628089761
+      },
+      {
+        "hedge_ratio": 0.0,
+        "Mean Overrun B": 0.03305307132188202,
+        "P95 Overrun B": 1.219531730769231
+      },
+      {
+        "hedge_ratio": 0.2,
+        "Mean Overrun B": 0.05367143531525034,
+        "P95 Overrun B": 1.0025405259326288
+      }
+    ],
+    [
+      {
+        "drift_model": "EWM",
+        "Coverage": 0.7435233160621761,
+        "Below P05": 0.15155440414507773,
+        "High Drift Below P05": 0.2517985611510791,
+        "Log RMSE": 0.348453507490982
+      },
+      {
+        "drift_model": "RISK_FREE",
+        "Coverage": 0.8303108808290155,
+        "Below P05": 0.11269430051813471,
+        "High Drift Below P05": 0.0,
+        "Log RMSE": 0.24213335297702734
+      },
+      {
+        "drift_model": "MARTINGALE",
+        "Coverage": 0.8367875647668394,
+        "Below P05": 0.09715025906735751,
+        "High Drift Below P05": 0.0,
+        "Log RMSE": 0.24479657342763136
+      }
+    ]
+  ],
+  "multiple_scenarios": [
+    {
+      "Savings": null,
+      "Cost": null
+    }
+  ],
+  "source": "Read-only ADOMD query of open Power BI Desktop model",
+  "checked_at": "2026-10-22T12:05:56.4712019Z"
+}

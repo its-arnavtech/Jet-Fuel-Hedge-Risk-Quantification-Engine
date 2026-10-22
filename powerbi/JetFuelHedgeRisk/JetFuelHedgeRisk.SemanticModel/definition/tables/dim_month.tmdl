@@ -1,0 +1,22 @@
+table 'dim_month'
+
+	column 'cost_month'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: cost_month
+		formatString: yyyy-MM-dd
+
+	column 'year'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: year
+
+	column 'month'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: month
+
+	partition 'dim_month' = m
+		mode: import
+		source =
+			GoldTable("dim_month")

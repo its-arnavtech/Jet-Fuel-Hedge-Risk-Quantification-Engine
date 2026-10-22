@@ -1,0 +1,75 @@
+table 'market_decomposition_current'
+
+	column 'price_date'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: price_date
+		formatString: yyyy-MM-dd
+
+	column 'jet_fuel_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: jet_fuel_gal
+		formatString: 0.000
+
+	column 'wti_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: wti_gal
+		formatString: 0.000
+
+	column 'crack_spread'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: crack_spread
+		formatString: 0.000
+
+	column 'heating_oil_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: heating_oil_gal
+		formatString: 0.000
+
+	column 'brent_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: brent_gal
+		formatString: 0.000
+
+	column 'jet_pct_rank_full_history'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: jet_pct_rank_full_history
+		formatString: 0.000
+
+	column 'crack_pct_rank_full_history'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: crack_pct_rank_full_history
+		formatString: 0.000
+
+	column 'insights_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: insights_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	column 'created_ts'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: created_ts
+		formatString: yyyy-MM-dd
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'market_decomposition_current' = m
+		mode: import
+		source =
+			GoldTable("market_decomposition_current")

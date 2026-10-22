@@ -1,0 +1,57 @@
+{
+  "desktop_rendered": true,
+  "visual_review_passed": true,
+  "reviewed_at_utc": "2026-10-22T12:15:13.884666+00:00",
+  "desktop_build": "2.159.883.0",
+  "price_as_of": "2026-10-20",
+  "import_refresh": "User confirmed successful Import; actual ADOMD Ready and all five final native pages independently observed",
+  "silver_run_id": "b88ebc88-6f08-4ee2-a72f-59a9a47ca873",
+  "insight_run_id": "22993b90-badc-4225-93d2-c95bee21dd48",
+  "analytics_run_id": "260e58e7-3aad-4a88-8b33-253733094773",
+  "simulation_run_id": "165ce1c3-d0d7-4271-be99-d970774b35e6",
+  "simulation_completed_utc": "2026-10-22T04:36:22.465Z",
+  "dax_evidence": "../powerbi_dax_results.json",
+  "screenshots": [
+    {
+      "file": "page-01.png",
+      "sha256": "a5725df4a91d9394a6acff5d4d4e79cdcde84a5a8d4ada4c56736816cf47256a",
+      "width": 1440,
+      "height": 762
+    },
+    {
+      "file": "page-02.png",
+      "sha256": "aa72b9f5dd26ba6546d11aaad1ce4d6c0bcb441487d14ffe8ffae634db678ae6",
+      "width": 1440,
+      "height": 762
+    },
+    {
+      "file": "page-03.png",
+      "sha256": "2d147ad3809fa80ccc889c24b5dff236df4b3840ca815e7a2246beffbc77cd79",
+      "width": 1440,
+      "height": 762
+    },
+    {
+      "file": "page-04.png",
+      "sha256": "0d174dab0e7fa77cda28a2ba8ec300993befb349de4b475c86b6ad137e702f03",
+      "width": 1440,
+      "height": 762
+    },
+    {
+      "file": "page-05.png",
+      "sha256": "2dff4c71b96e2724a728ce446c9c4ad2241df77f8aad25f3ec0a634eb52df412",
+      "width": 1440,
+      "height": 762
+    }
+  ],
+  "review_observations": [
+    "All five actual Desktop pages show source date, Ready and simulation completion; 15 narrative units fit without title overlap or clipping.",
+    "All eight certified Deneb units render with labels, markers, bands and benchmark rules.",
+    "Page 1 monthly annotation is $4.456; daily bridge ends at $4.632.",
+    "Page 2 proxy series have distinct named colors and 0.80 R2 reference.",
+    "Page 3 single-select dropdown visibly defaults to 80% futures; latest-window diamond, frontier ratio labels and all eight synthetic route bars are visible.",
+    "Page 4 coverage benchmark and 2/3/4-sigma multiples 1.0/5.5/144.3 are visible with drift/tail caveat.",
+    "Page 5 histogram rules/legend and full signed sensitivity grid render; zero cell is white.",
+    "Images are actual native Desktop captures, distinct from matplotlib and compiled Vega previews."
+  ],
+  "capture_encoding": "Native JPEG capture losslessly decoded to PNG; no cropping, resizing, annotations or content changes."
+}

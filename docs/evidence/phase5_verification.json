@@ -1,0 +1,274 @@
+{
+  "checked_at": "2026-10-22T05:01:24.680202+00:00",
+  "passed": true,
+  "live_verified": true,
+  "source": "live SQL Silver/Gold",
+  "source_pipeline_run_id": "b88ebc88-6f08-4ee2-a72f-59a9a47ca873",
+  "price_as_of": "2026-10-20",
+  "insights_run_id": "22993b90-badc-4225-93d2-c95bee21dd48",
+  "deterministic_tolerance": 1e-09,
+  "mc_value_tolerance": 1e-09,
+  "checks": {
+    "market_decomposition": {
+      "rows": 4223,
+      "columns": [
+        "price_date",
+        "jet_fuel_gal",
+        "wti_gal",
+        "crack_spread",
+        "heating_oil_gal",
+        "brent_gal",
+        "jet_pct_rank_full_history",
+        "crack_pct_rank_full_history"
+      ],
+      "max_absolute_errors": {
+        "jet_fuel_gal": 0.0,
+        "wti_gal": 4.440892098500626e-16,
+        "crack_spread": 0.0,
+        "heating_oil_gal": 0.0,
+        "brent_gal": 4.440892098500626e-16,
+        "jet_pct_rank_full_history": 1.1102230246251565e-16,
+        "crack_pct_rank_full_history": 1.1102230246251565e-16
+      }
+    },
+    "proxy_return_correlation": {
+      "rows": 4223,
+      "columns": [
+        "price_date",
+        "ret_corr_jet_ho_90d",
+        "ret_corr_jet_wti_90d",
+        "ret_corr_jet_brent_90d",
+        "price_level_corr_jet_wti_90d"
+      ],
+      "max_absolute_errors": {
+        "ret_corr_jet_ho_90d": 9.547918011776346e-15,
+        "ret_corr_jet_wti_90d": 3.1530333899354446e-14,
+        "ret_corr_jet_brent_90d": 4.440892098500626e-15,
+        "price_level_corr_jet_wti_90d": 0.0
+      }
+    },
+    "proxy_effectiveness_annual": {
+      "rows": 54,
+      "columns": [
+        "year",
+        "proxy",
+        "n_weeks",
+        "corr",
+        "r2",
+        "min_var_beta",
+        "meets_80pct_r2"
+      ],
+      "max_absolute_errors": {
+        "n_weeks": 0.0,
+        "corr": 1.1102230246251565e-16,
+        "r2": 2.220446049250313e-16,
+        "min_var_beta": 2.220446049250313e-16
+      }
+    },
+    "hedge_backtest_windows": {
+      "rows": 4120,
+      "columns": [
+        "window_start",
+        "hedge_ratio",
+        "s0",
+        "forward",
+        "realized_avg",
+        "savings_per_gal",
+        "hedge_won",
+        "budget_overrun_b",
+        "is_latest_complete",
+        "window_pct_rank"
+      ],
+      "max_absolute_errors": {
+        "s0": 0.0,
+        "forward": 8.881784197001252e-16,
+        "realized_avg": 1.7763568394002505e-15,
+        "savings_per_gal": 1.7763568394002505e-15,
+        "budget_overrun_b": 2.6645352591003757e-15,
+        "window_pct_rank": 1.1102230246251565e-16
+      }
+    },
+    "calibration_history": {
+      "rows": 824,
+      "columns": [
+        "week_ending",
+        "mu",
+        "sigma",
+        "is_current",
+        "mu_pct_rank",
+        "sigma_pct_rank"
+      ],
+      "max_absolute_errors": {
+        "mu": 8.881784197001252e-16,
+        "sigma": 4.440892098500626e-16,
+        "mu_pct_rank": 1.1102230246251565e-16,
+        "sigma_pct_rank": 1.1102230246251565e-16
+      }
+    },
+    "return_tail_frequency": {
+      "rows": 3,
+      "columns": [
+        "threshold",
+        "observed_share",
+        "normal_share",
+        "ratio",
+        "excess_kurtosis",
+        "skew",
+        "n_weeks"
+      ],
+      "max_absolute_errors": {
+        "observed_share": 5.724587470723463e-17,
+        "normal_share": 9.194034422677078e-17,
+        "ratio": 8.881784197001252e-16,
+        "excess_kurtosis": 0.0,
+        "skew": 5.551115123125783e-17,
+        "n_weeks": 0.0
+      }
+    },
+    "forecast_backtest": {
+      "rows": 2316,
+      "columns": [
+        "window_start",
+        "drift_model",
+        "p05",
+        "p50",
+        "p95",
+        "mean",
+        "realized_avg",
+        "inside_band",
+        "below_p05",
+        "above_p95",
+        "log_err_p50",
+        "high_drift",
+        "mu_ewm",
+        "n_paths",
+        "window_index",
+        "base_seed"
+      ],
+      "max_absolute_errors": {
+        "p05": 3.1086244689504383e-15,
+        "p50": 2.6645352591003757e-15,
+        "p95": 1.0658141036401503e-14,
+        "mean": 3.552713678800501e-15,
+        "realized_avg": 1.7763568394002505e-15,
+        "log_err_p50": 8.326672684688674e-16,
+        "mu_ewm": 8.881784197001252e-16,
+        "n_paths": 0.0,
+        "window_index": 0.0,
+        "base_seed": 0.0
+      }
+    }
+  },
+  "findings": {
+    "F1": {
+      "jet_change": 2.5389999999999997,
+      "wti_change": 1.1797619047619046,
+      "crack_change": 1.3592380952380951,
+      "crack_share": 0.5353438736660477,
+      "crack": 2.063190476190476,
+      "crack_multiple": 4.017218324945455,
+      "historical_crack_mean": 0.5135868427610266,
+      "jet_rank": 0.9985788725722407,
+      "crack_rank": 0.9947780678851175
+    },
+    "F2": {
+      "price_level": 0.9110525551949769,
+      "returns_wti": 0.3750308257402692,
+      "returns_ho": 0.8971714806936458
+    },
+    "F3": {
+      "ho_wins": 15,
+      "years": 17,
+      "wti_effective": 1,
+      "full_sample_r2": {
+        "HO": 0.732261977375812,
+        "WTI": 0.4751810700483325,
+        "BRENT": 0.5746651939507565
+      }
+    },
+    "F4": {
+      "jet_change": 2.5389999999999997,
+      "wti_change": 1.1797619047619046,
+      "ho_change": 2.742
+    },
+    "F5": {
+      "windows": 824,
+      "win_rate": 0.4162621359223301,
+      "mean_savings": -0.06872787997789394,
+      "p95_unhedged": 1.2195317307692315,
+      "p95_80": 0.3448198628089761,
+      "worst_unhedged": 2.0833846153846167,
+      "worst_80": 0.5114395407516485,
+      "expected_hedge_cost_b": 0.08247345597347273
+    },
+    "F6": {
+      "latest_savings": 1.0171426542753697,
+      "latest_rank": 0.9854191980558931,
+      "window_start": "2025-10-17 00:00:00"
+    },
+    "F7": {
+      "mu": 0.9705362465044853,
+      "sigma": 0.5698611495137433,
+      "mu_rank": 0.9501822600243013,
+      "sigma_rank": 0.8226002430133658,
+      "calibrations": 824,
+      "median_mu": 0.09152340156077428
+    },
+    "F8": {
+      "EWM": {
+        "coverage": 0.7435233160621761,
+        "below_p05": 0.15155440414507773,
+        "high_drift_below": 0.2517985611510791,
+        "log_rmse": 0.348453507490982,
+        "windows": 772
+      },
+      "MARTINGALE": {
+        "coverage": 0.8367875647668394,
+        "below_p05": 0.09715025906735751,
+        "high_drift_below": 0.0,
+        "log_rmse": 0.24479657342763125,
+        "windows": 772
+      },
+      "RISK_FREE": {
+        "coverage": 0.8303108808290155,
+        "below_p05": 0.11269430051813471,
+        "high_drift_below": 0.0,
+        "log_rmse": 0.2421333529770273,
+        "windows": 772
+      }
+    },
+    "F9": {
+      "ratio": 5.503061160553669,
+      "excess_kurtosis": 7.931229691539771,
+      "skew": -0.39128564243303837,
+      "observed_share": 0.014857142857142857,
+      "normal_share": 0.0026997960632601918
+    },
+    "F10": {
+      "simulation_hedge_change_b": -3.6835204167258233,
+      "historical_hedge_change_b": 0.08247345597347273,
+      "mean_cost_b": 11.835953779995958,
+      "spot_run_rate_b": 6.9479999999999995,
+      "mean_vs_spot": 0.7035051496827804,
+      "cvar_unhedged": 24.65123821279642,
+      "cvar_80": 10.715490249830182,
+      "terminal_median": 10.398344507697043,
+      "historical_p95_move": 0.4843001773444129,
+      "historical_median_move": 0.0033558775087291215
+    },
+    "F11": {
+      "break_even": 0.04081077419238823,
+      "minus30_cost_b": 1.8943626072709712,
+      "plus50_cost_b": -2.5523573927290295
+    },
+    "F12": {
+      "b767_departures": 3,
+      "departures": 23,
+      "b767_gallon_share": 0.4528985507246377,
+      "route_savings_80_m": 23.803870759194552
+    }
+  },
+  "expected_value_deviations": {
+    "F7": "Ranks/counts use all 824 valid historical calibrations; 772 have completed forward outcomes. Full-history current mu rank differs from a completed-window-only reference."
+  }
+}

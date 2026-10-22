@@ -1,0 +1,23 @@
+{
+  "offline": false,
+  "source": "live SQL Silver/Gold",
+  "price_as_of": "2026-10-20",
+  "visual_files": [
+    "dashboard\\plots\\insights\\1_1.png",
+    "dashboard\\plots\\insights\\1_2.png",
+    "dashboard\\plots\\insights\\2_1.png",
+    "dashboard\\plots\\insights\\2_2.png",
+    "dashboard\\plots\\insights\\2_3.png",
+    "dashboard\\plots\\insights\\3_1.png",
+    "dashboard\\plots\\insights\\3_2.png",
+    "dashboard\\plots\\insights\\3_3.png",
+    "dashboard\\plots\\insights\\4_1.png",
+    "dashboard\\plots\\insights\\4_2.png",
+    "dashboard\\plots\\insights\\4_3.png",
+    "dashboard\\plots\\insights\\4_4.png",
+    "dashboard\\plots\\insights\\5_1.png",
+    "dashboard\\plots\\insights\\5_2.png",
+    "dashboard\\plots\\insights\\5_3.png"
+  ],
+  "desktop_screenshots": false
+}
