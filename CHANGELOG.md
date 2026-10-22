@@ -22,7 +22,7 @@
 ## Next actions
 
 1. Complete native Import validation after the user applies external changes; see docs/audits/phase-05.md. Live insight/reporting reconciliation and all 50 warehouse headline checks pass.
-2. Close verified #12–#18 findings with evidence, push incremental commits and require both CI Python versions before main merge. All 15 live Gold storyboards and four embedded-spec previews were inspected.
+2. Only native connector audit #16 remains open; #12–#15, #17 and #18 closed with committed evidence. Milestone db0147d passed both CI Python versions. Keep main merge pending native confirmation and final changed-source CI. All 15 live Gold storyboards and four embedded-spec previews were inspected.
 3. Keep Desktop credential entry with the user; authenticate only in the connector dialog. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md.
 
 ## Blockers requiring external input
@@ -212,3 +212,9 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Desktop 2.159.883.0 opened the project; user authenticated in its Databricks dialog. Initial Import failed with navigator key mismatch (#16). GoldTable removes incorrect Kind keys and uniquely matches names. Native helper refuses Close/Apply clicks because the child is msedgewebview2.exe rather than PBIDesktop.exe; after one reactivation/fresh-state retry, handed those steps to the user. No authentication automation or security/ACL change.
 - Added read-only official ADOMD query helper `scripts/query_desktop_dax.ps1`. First attempt failed because the open model had not applied external changes and lacked Bridge High. No runtime pass/evidence file is claimed. Await user Apply external changes/Refresh; then execute/reconcile actual DAX and inspect five refreshed pages.
 - Generator now emits 157 measures with default-H080 query contracts and Selected Hedge Ratio. Exact commands with workspace-local TEMP/TMP/UV_CACHE_DIR: `uv run python -m unittest discover -s tests -v` (38 pass), `uv run ruff check .`, `uv run python -m compileall -q src scripts notebooks`, `uv run python scripts/check_repository.py` all pass; UTF-8/configured-credential scan covers 158 text/180 publishable files. `scripts/verify_tmdl.ps1 -AssemblyFolder .tmp/tom` parses 22 tables/six one-way relationships. README live findings, decision addendum, release/audit/plan and Desktop handoff reflect actual evidence.
+
+### 2026-10-22 — Verified milestone pushed; native action remains
+
+- Committed/pushed db0147d, preserving the unrelated untracked prompt. CI 39726018011 and 39726015400 passed both unit (3.10) and unit (3.12). Closed #12, #13, #14, #15, #17 and #18 using committed live numerical, publication, unit and visual evidence. `gh issue list --state open` confirms only #16 remains.
+- Tightened the warehouse headline verifier to require exactly 50 distinct input keys; empty/unready SQL results or duplicates fail. Live rerun, Ruff and credential/UTF-8 scan pass.
+- Desktop still displays the original failed Refresh modal. Manual Close, Apply external changes and Refresh remain the requested next action; no fresh authentication is needed unless Desktop itself requests it. Main merge remains pending this runtime check.

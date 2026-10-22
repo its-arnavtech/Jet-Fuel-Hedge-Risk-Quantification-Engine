@@ -105,6 +105,8 @@ def main():
         statement = (Path("powerbi/tests/headline_numbers.sql")).read_text(encoding="utf-8")
         statement = statement.replace("jet_fuel_gold.", settings.catalog+".jet_fuel_gold.")
         result = query(client, settings.warehouse_id, statement)
+        if len(result) != 50 or result.duplicated(["finding", "metric"]).any():
+            raise ValueError("Warehouse headline contract requires exactly 50 distinct inputs; empty/unready results fail closed")
         expected = json.loads(Path("docs/evidence/phase5_verification.json").read_text(encoding="utf-8"))["findings"]
         import numpy as np
         for row in result.to_dict("records"):
