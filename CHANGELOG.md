@@ -22,7 +22,7 @@
 ## Next actions
 
 1. Command approval is restored. Actual Desktop Import and DAX reconciliation pass (46 headline inputs, 157 grain values, multiple-scenario blanks). Finish loading/inspecting final native display fixes and capture all five pages; foreground handoff is pending after native activation failed twice.
-2. Current project has 171 measures/eight layered units and passes 40 tests/schema/TOM checks. Commit/push the verified milestone, close #16/#19 with actual evidence, then finish native visual #20 and changed-source CI before main merge. #12–#15, #17 and #18 are already closed; pushed cee48d2 passed CI 39726178195.
+2. Current project has 171 measures/eight layered units and passes 40 tests/schema/TOM checks. Milestone 999ea53 is pushed; CI 39741695457 passes Python 3.10/3.12. #16/#19 are closed with actual Desktop evidence. Only native visual #20 remains before main merge; #12–#19 are all closed.
 3. Keep Desktop credential entry with the user; authenticate only in the connector dialog. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md.
 
 ## Blockers requiring external input
@@ -239,3 +239,9 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Eight certified Deneb units now explicitly render bridge, instrument moves/jet reference, savings/latest-window diamond, insurance frontier, calibration/IQR, fan, histogram and signed grid. Histogram has percentage coverage labels plus separate statistical dash legend. Grid uses RGB interpolation so zero is exactly white (HCL preview produced a warm neutral despite a white midpoint); verified pixel (255,255,255). All eight exact specifications compile; opened new/changed previews. Added latest-month DAX annotation checked against verified Gold.
 - Final local commands: `uv run python -m unittest discover -s tests -v` (40 pass), Ruff, compileall, repository credential/UTF-8 scan (162 text/189 publishable files), schema/bindings and Microsoft TOM parse pass. Generator now produces 171 measures and 36 JSON files with 182 bindings/eight layered specs. Desktop may add hidden auto-date tables; metadata helper checks all project table identities and leaves Desktop-managed additions untouched.
 - Native page inspection reached all five pages and triggered the fixes above; a preliminary page-01 screenshot is actual Desktop evidence but is superseded by the final annotation/layout. Final capture/load pending: helper twice reported failed to activate captured window after fresh target recovery; requested user foreground handoff and stopped input. No final five-page render pass or main merge is claimed yet.
+
+### 2026-10-22 — Runtime milestone verified and audit issues closed
+
+- Committed/pushed 999ea53. CI 39741695457 passes unit (3.10) and unit (3.12), including 40 tests, Ruff and repository credential/UTF-8 checks.
+- Closed #16 (actual scoped Import/Ready and independent ADOMD values) and #19 (starter split/zero-count semantics, regression tests and actual DAX reconciliation). `gh issue list --state open` confirms only #20 remains.
+- Final native capture is pending the requested Power BI foreground handoff; no further input was issued after the helper's two activation failures. Main is not merged and no final five-page screenshot set is claimed.

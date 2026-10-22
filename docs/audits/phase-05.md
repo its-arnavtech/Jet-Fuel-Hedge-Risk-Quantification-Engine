@@ -4,6 +4,8 @@ Status: final live/native verification in progress. Branch phase-5-powerbi-insig
 
 Latest status: actual Desktop Import/Ready and numeric DAX reconciliation pass after the scoped-navigator and starter-parser fixes. The final 171-measure/eight-layered-unit display changes compile; 40 tests pass. All five native pages were inspected and exposed #20, whose final rendering/screenshots are pending foreground handoff. Command approval is restored; earlier usage-limit entries below are historical.
 
+Verified source milestone **999ea53** is pushed. CI **39741695457** passes unit (3.10) and unit (3.12). #16/#19 are closed with committed actual Import/ADOMD/independent reconciliation evidence; GitHub confirms only #20 is open. Main remains unmerged pending final display inspection/capture. The only unrelated local file is the user's untracked prompt; it is preserved.
+
 ## Scope and coverage
 
 Read the complete Phase 5 request and all required baseline docs, every SQL definition, medallion/risk notebooks, simulation/Silver/operations modules and deployment/reporting verifiers before implementation. Reviewed all new source, generated report/model/queries, credentials/encoding boundaries, refresh lineage, market/return units, missing observations/weeks, calibration alignment, deterministic RNG, purchase averages, nonadditivity, fixture/reference labels, honest source dates, five-page design, dependency lock/CI and release handoff. Source PDD and the user's pre-existing untracked docs/CODEX_POWERBI_PROMPT.md are preserved.
