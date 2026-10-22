@@ -3,7 +3,7 @@
 ## Current state — 2026-10-22
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 5 implementation in progress on `phase-5-powerbi-insights`; Phases 1–4 remain complete**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
+- Current phase: **Phase 5 live/model/native verification complete on `phase-5-powerbi-insights`; final audit/CI/main merge gate in progress**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,8 @@
 
 ## Next actions
 
-1. Command approval is restored. Actual Desktop Import and DAX reconciliation pass (46 headline inputs, 157 grain values, multiple-scenario blanks). Finish loading/inspecting final native display fixes and capture all five pages; foreground handoff is pending after native activation failed twice.
-2. Current project has 171 measures/eight layered units and passes 40 tests/schema/TOM checks. Milestone 999ea53 is pushed; CI 39741695457 passes Python 3.10/3.12. #16/#19 are closed with actual Desktop evidence. Only native visual #20 remains before main merge; #12–#19 are all closed.
-3. Keep Desktop credential entry with the user; authenticate only in the connector dialog. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md.
+1. Complete final changed-source CI on Python 3.10/3.12, close native display finding #20 with committed evidence, and merge/push main. All five final native page captures now pass review.
+2. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md. Future Import refreshes follow docs/POWER_BI.md; credential entry remains in Desktop.
 
 ## Blockers requiring external input
 
@@ -245,3 +244,12 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Committed/pushed 999ea53. CI 39741695457 passes unit (3.10) and unit (3.12), including 40 tests, Ruff and repository credential/UTF-8 checks.
 - Closed #16 (actual scoped Import/Ready and independent ADOMD values) and #19 (starter split/zero-count semantics, regression tests and actual DAX reconciliation). `gh issue list --state open` confirms only #20 remains.
 - Final native capture is pending the requested Power BI foreground handoff; no further input was issued after the helper's two activation failures. Main is not merged and no final five-page screenshot set is claimed.
+
+### 2026-10-22 — Final five-page Desktop review
+
+- Foreground handoff recovered native control; applied final report display changes and inspected all five actual Desktop pages. Captured page-01 through page-05 in docs/evidence/powerbi with source/run IDs, Desktop 2.159.883.0, SHA-256 image hashes and explicit visual observations. No screenshot is substituted by a storyboard or compiled Vega preview.
+- Added native dropdown mode so the 80% futures default is visible; displayed all 2/3/4-sigma observed/normal multiples in the tail subtitle. Final native inspection confirms all eight layered units, reference rules, latest monthly annotation, route bars, fan bands and signed grid render correctly.
+- Extended evidence consumption to verify current model-file hashes against actual TOM parse and all five captures against the reviewed manifest. Actual ADOMD remains a separate required numeric gate. Current final contract is run with --live --desktop-results, --tmdl-results and --desktop-evidence.
+- Initial final-check attempt omitted workspace-local TEMP/TMP and encountered temporary-directory test errors; reran with the documented local paths. Native helper supplies JPEG transport despite the screenshot filename; decoded original pixels to valid PNGs without visual edits and recorded encoding in the manifest.
+
+Final local commands passed: `python -m unittest discover -s tests -v` (40 tests), `ruff check .`, `python -m compileall -q src scripts notebooks`, `python scripts/check_repository.py`, `git diff --check`, and official TOM `verify_tmdl.ps1 -AssemblyFolder .tmp/tom`. The final live combined contract passes 36 JSON schemas, 182 field bindings, eight layered specs, 15 titles, current-hash TOM parse, 50 SQL inputs, 46 actual Desktop headline inputs, 157 grain values, latest-month annotation, scenario guard and all five reviewed captures. Evidence is committed in `docs/evidence/powerbi_contract.json`, `tmdl_validation.json`, `powerbi_dax_results.json` and `powerbi/verification.json`.

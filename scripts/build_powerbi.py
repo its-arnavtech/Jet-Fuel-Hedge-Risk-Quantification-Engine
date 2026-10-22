@@ -191,7 +191,7 @@ def measures():
         "4.1": '"EWM μ and σ; full-sample μ interquartile band. Not a forecast."',
         "4.2": '"10,000 common paths/window/model; one-year purchase averages excluding S0. Log-RMSE in tooltip."',
         "4.3": '"Extrapolation of trailing-year drift, not a forecast | P05–P95 outer, P25–P75 inner band; median solid | Reference carrier, 1.5B gal/yr"',
-        "4.4": '"Drift can overstate levels while normal shocks understate tail frequency; these errors do not cancel."',
+        "4.4": '"Tail multiples: 2σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=2),"0.0") & "×; 3σ " & FORMAT([Three Sigma Ratio],"0.0") & "×; 4σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=4),"0.0") & "×. Drift can overstate levels while normal shocks understate tail frequency; the errors do not cancel."',
         "5.1": '"Reference carrier, 1.5B gal/yr | Common-path GBM; not a forecast. Fixed 0% and 80% series."',
         "5.2": '"Reference carrier, 1.5B gal/yr | VaR reduction equals coverage (20/40/60/80%) by construction."',
         "5.3": '"Reference carrier, 1.5B gal/yr | Hedged minus unhedged cost; blue saving, red additional cost; signed labels."',
@@ -361,7 +361,7 @@ def report():
     visual("page3", "3.2", "scatterChart", {"Category": [(b, "hedge_ratio")], "X": ["Mean Overrun B"], "Y": ["P95 Overrun B"]}, [830, 112, 430, 270])
     visual("page3", "3.3", "lineClusteredColumnComboChart", {"Category": [("dim_month", "cost_month")], "Y": ["Route Cost M"], "Y2": ["Route Unhedged M"]}, [20, 400, 630, 299])
     visual("page3", "3_3_routes", "clusteredBarChart", {"Category": [("dim_route", "route_id")], "Series": [("dim_route", "aircraft_type")], "Y": ["Route Savings M"]}, [670, 400, 590, 299], title="Route Concentration Title", subtitle="Route Concentration Subtitle")
-    visual("page3", "3_slicer", "slicer", {"Values": [("Hedge Scenario", "scenario_label")]}, [840, 86, 420, 28], title="Readiness", subtitle="Readiness", objects={"selection": [{"properties": {"singleSelect": literal(True), "selectAllCheckboxEnabled": literal(False)}}]})
+    visual("page3", "3_slicer", "slicer", {"Values": [("Hedge Scenario", "scenario_label")]}, [840, 86, 420, 28], title="Readiness", subtitle="Readiness", objects={"data": [{"properties": {"mode": literal("Dropdown")}}], "selection": [{"properties": {"singleSelect": literal(True), "selectAllCheckboxEnabled": literal(False)}}]})
     visual("page4", "4.1", "lineChart", {"Category": [(h, "week_ending")], "Y": ["MU", "SIGMA"]}, [20, 112, 610, 275])
     visual("page4", "4.2", "clusteredBarChart", {"Category": [(f, "drift_model")], "Y": ["Band Coverage", "Below P05", "High Drift Below P05"], "Tooltips": ["Log RMSE"]}, [650, 112, 610, 275])
     visual("page4", "4.3", "lineChart", {"Category": [("price_fan_current", "step")], "Y": ["Fan P05", "Fan P25", "Fan Median", "Fan P75", "Fan P95", "Latest Jet", "Forward Price", "Historical P95 Price"]}, [20, 403, 610, 296])

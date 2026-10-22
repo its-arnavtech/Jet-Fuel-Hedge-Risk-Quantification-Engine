@@ -121,7 +121,7 @@ Implementation release: `docs/RELEASE.md`. User handoff actions: connect/build P
 
 ## Phase 5 — Insight-driven Power BI (2026-10-21)
 
-Status: implementation and local verification complete; live refresh/audit gate in progress on phase-5-powerbi-insights.
+Status: implementation, live verification and native five-page inspection complete; final CI/audit/main merge gate in progress on phase-5-powerbi-insights.
 
 - [x] Read all baseline docs, notebooks, simulation/Silver/operations, SQL and reporting/deployment source.
 - [x] Add testable historical decomposition, paired proxy returns, weekly effectiveness, complete hedge windows, calibration history, deterministic drift-model backtest and tail frequencies.
@@ -132,6 +132,6 @@ Status: implementation and local verification complete; live refresh/audit gate 
 - [x] Live current-source reconciliation, reporting adversarial cases and full seven-task managed refresh. All 50 warehouse headline numbers also reconcile.
 - [ ] Whole-repo audit, GitHub issue evidence/closure, both Python CI versions, main merge.
 - [x] Native Desktop authentication/Import and actual DAX reconciliation: 46 headline inputs, 157 grain values, scenario-safe totals and multiple-selection blanks.
-- [ ] Final native formatting inspection and five refreshed page screenshots, or explicit unavailable-access handoff per user allowance.
+- [x] Final native formatting inspection and five refreshed page screenshots with source/run IDs, Desktop build and reviewed image hashes.
 
 No production simulation default or existing data-history deletion is part of Phase 5.

@@ -771,7 +771,7 @@ table _Measures
 		displayFolder: Headlines
 
 	measure 'Subtitle 4.4' =
-			"Drift can overstate levels while normal shocks understate tail frequency; these errors do not cancel."
+			"Tail multiples: 2σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=2),"0.0") & "×; 3σ " & FORMAT([Three Sigma Ratio],"0.0") & "×; 4σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=4),"0.0") & "×. Drift can overstate levels while normal shocks understate tail frequency; the errors do not cancel."
 		displayFolder: Headlines
 
 	measure 'Subtitle 5.1' =

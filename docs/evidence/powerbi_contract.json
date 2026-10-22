@@ -42,13 +42,15 @@
   "field_bindings_checked": 182,
   "layered_specs_validated": 8,
   "titles": 15,
-  "tmdl_parsed": false,
+  "tmdl_parsed": true,
   "dax_executed": true,
-  "desktop_rendered": false,
+  "desktop_rendered": true,
   "sql_headline_numbers_checked": 50,
   "desktop_headline_inputs_reconciled": 46,
   "desktop_latest_month_annotation_reconciled": true,
   "desktop_grain_values_reconciled": 157,
   "scenario_multiplication_guard_passed": true,
-  "desktop_cost_sum_comparison_unit": "USD millions; absolute tolerance 1e-9 in displayed unit"
+  "desktop_cost_sum_comparison_unit": "USD millions; absolute tolerance 1e-9 in displayed unit",
+  "desktop_pages_reviewed": 5,
+  "desktop_evidence": "docs\\evidence\\powerbi\\verification.json"
 }

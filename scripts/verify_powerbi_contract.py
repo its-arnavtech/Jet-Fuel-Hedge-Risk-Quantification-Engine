@@ -1,6 +1,6 @@
 """Validate Microsoft schemas, model bindings and headline SQL contract.
 
-Does not claim to execute DAX. Native model parse and DAX execution are separate gates.
+Consumes separate actual TOM, ADOMD and reviewed Desktop evidence when supplied.
 """
 
 import argparse
@@ -36,6 +36,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--live", action="store_true")
     parser.add_argument("--desktop-results", help="Read actual ADOMD query output and compare headline inputs with live Python evidence")
+    parser.add_argument("--tmdl-results", help="Read official TOM parse evidence and verify current model file hashes")
+    parser.add_argument("--desktop-evidence", help="Verify the manifest of five actually inspected Desktop screenshots")
     args = parser.parse_args()
     measures()
     for name, (expression, _, _) in MEASURES.items():
@@ -209,6 +211,34 @@ def main():
         evidence["desktop_grain_values_reconciled"] = comparisons
         evidence["scenario_multiplication_guard_passed"] = True
         evidence["desktop_cost_sum_comparison_unit"] = "USD millions; absolute tolerance 1e-9 in displayed unit"
+    if args.tmdl_results:
+        parsed = json.loads(Path(args.tmdl_results).read_text(encoding="utf-8-sig"))
+        model_folder = PROJECT/"JetFuelHedgeRisk.SemanticModel/definition"
+        hashes = {p.relative_to(model_folder).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in model_folder.rglob("*.tmdl")}
+        if (not parsed["tmdl_parsed"] or parsed["tables"] != 22 or parsed["relationships"] != 6
+                or parsed.get("model_files_sha256") != hashes):
+            raise ValueError("Official TOM evidence does not match the current model")
+        evidence["tmdl_parsed"] = True
+    if args.desktop_evidence:
+        manifest_path = Path(args.desktop_evidence)
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if not args.desktop_results or not evidence["dax_executed"]:
+            raise ValueError("Reviewed Desktop evidence requires reconciled actual DAX results")
+        if not manifest["desktop_rendered"] or not manifest["visual_review_passed"]:
+            raise ValueError("Desktop visual review has not passed")
+        if manifest["price_as_of"] not in desktop["status"][0]["Header"]:
+            raise ValueError("Desktop screenshot and DAX source dates disagree")
+        screenshots = manifest["screenshots"]
+        if [row["file"] for row in screenshots] != [f"page-{i:02d}.png" for i in range(1, 6)]:
+            raise ValueError("Exactly five ordered Desktop screenshots are required")
+        for row in screenshots:
+            content = (manifest_path.parent/row["file"]).read_bytes()
+            if hashlib.sha256(content).hexdigest() != row["sha256"]:
+                raise ValueError("Desktop screenshot hash mismatch: "+row["file"])
+        evidence["desktop_rendered"] = True
+        evidence["desktop_pages_reviewed"] = len(screenshots)
+        evidence["desktop_evidence"] = str(manifest_path)
     out = Path("docs/evidence/powerbi_contract.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(evidence, indent=2), encoding="utf-8")

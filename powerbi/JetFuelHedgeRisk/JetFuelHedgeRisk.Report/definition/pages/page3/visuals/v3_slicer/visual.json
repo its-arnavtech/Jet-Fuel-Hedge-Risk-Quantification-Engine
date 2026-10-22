@@ -218,6 +218,19 @@
           }
         }
       ],
+      "data": [
+        {
+          "properties": {
+            "mode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown'"
+                }
+              }
+            }
+          }
+        }
+      ],
       "selection": [
         {
           "properties": {

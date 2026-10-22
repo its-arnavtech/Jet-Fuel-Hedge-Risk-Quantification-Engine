@@ -488,7 +488,7 @@ Subtitle 4.3 =
 "Extrapolation of trailing-year drift, not a forecast | P05–P95 outer, P25–P75 inner band; median solid | Reference carrier, 1.5B gal/yr"
 
 Subtitle 4.4 =
-"Drift can overstate levels while normal shocks understate tail frequency; these errors do not cancel."
+"Tail multiples: 2σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=2),"0.0") & "×; 3σ " & FORMAT([Three Sigma Ratio],"0.0") & "×; 4σ " & FORMAT(CALCULATE([Tail Ratio],REMOVEFILTERS(),return_tail_frequency_current[threshold]=4),"0.0") & "×. Drift can overstate levels while normal shocks understate tail frequency; the errors do not cancel."
 
 Subtitle 5.1 =
 "Reference carrier, 1.5B gal/yr | Common-path GBM; not a forecast. Fixed 0% and 80% series."
