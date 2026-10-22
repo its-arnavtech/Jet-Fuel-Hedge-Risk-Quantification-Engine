@@ -8,7 +8,7 @@ Independent live verification reconciles 4,223 decomposition/correlation dates, 
 
 Managed run **906039088188452** succeeded for all seven sequential tasks; canonical rank handling was published in append-only run **886166288914563** and verified independently. Daily scheduling remains enabled at **18:00 America/Chicago**, one concurrent run. Current-source readiness and all reporting adversarial fixtures pass. [Evidence and audit](audits/phase-05.md) record source/run IDs and resolved implementation findings #12–#20.
 
-All 40 local tests, Ruff, compilation and credential/UTF-8 checks pass. Final changed-source CI, issue #20 closure and main merge are the release gate being completed; prior source milestone 999ea53 passed both Python versions in CI 39741695457. The [Power BI guide](POWER_BI.md) supplies the future refresh/revalidation checklist. Historical Phase 1–4 release notes below describe their original handoff and are superseded by this Phase 5 Desktop verification.
+All 40 local tests, Ruff, compilation and credential/UTF-8 checks pass. Final implementation commit **1133f99** passed [CI 39777250175](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/39777250175) on Python 3.10 and 3.12. All audit findings #12–#20 are closed with committed evidence; the audited Phase 5 branch is complete for integration into main. The [Power BI guide](POWER_BI.md) supplies the future refresh/revalidation checklist. Historical Phase 1–4 release notes below describe their original handoff and are superseded by this Phase 5 Desktop verification.
 
 ---
 

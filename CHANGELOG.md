@@ -3,7 +3,7 @@
 ## Current state — 2026-10-22
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **Phase 5 live/model/native verification complete on `phase-5-powerbi-insights`; final audit/CI/main merge gate in progress**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
+- Current phase: **Phases 1–5 complete and audited; Phase 5 source 1133f99 passes both CI versions (39777250175), all findings #1–#20 closed**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,8 +21,8 @@
 
 ## Next actions
 
-1. Complete final changed-source CI on Python 3.10/3.12, close native display finding #20 with committed evidence, and merge/push main. All five final native page captures now pass review.
-2. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md. Future Import refreshes follow docs/POWER_BI.md; credential entry remains in Desktop.
+1. Future data refreshes follow docs/POWER_BI.md and the seven sequential managed tasks. The report's titles and readiness reflect its latest imported source date; current verified evidence is through 2026-10-20.
+2. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md. No implementation or Desktop validation gate remains; credential entry stays in Desktop.
 
 ## Blockers requiring external input
 
@@ -253,3 +253,10 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Initial final-check attempt omitted workspace-local TEMP/TMP and encountered temporary-directory test errors; reran with the documented local paths. Native helper supplies JPEG transport despite the screenshot filename; decoded original pixels to valid PNGs without visual edits and recorded encoding in the manifest.
 
 Final local commands passed: `python -m unittest discover -s tests -v` (40 tests), `ruff check .`, `python -m compileall -q src scripts notebooks`, `python scripts/check_repository.py`, `git diff --check`, and official TOM `verify_tmdl.ps1 -AssemblyFolder .tmp/tom`. The final live combined contract passes 36 JSON schemas, 182 field bindings, eight layered specs, 15 titles, current-hash TOM parse, 50 SQL inputs, 46 actual Desktop headline inputs, 157 grain values, latest-month annotation, scenario guard and all five reviewed captures. Evidence is committed in `docs/evidence/powerbi_contract.json`, `tmdl_validation.json`, `powerbi_dax_results.json` and `powerbi/verification.json`.
+
+### 2026-10-22 — Audit closure and main integration
+
+- Final implementation/evidence commit 1133f9989641f816029a902e0b7aa7c8f04af83f is pushed. CI 39777250175 passes Python 3.10 and 3.12 (40 tests, Ruff, locked dependencies and credential/encoding scan).
+- Closed #20 with actual five-page evidence: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/20#issuecomment-6340555967. GitHub confirms zero open issues. All Phase 5 findings #12–#20 are closed.
+- Read-only CI watch attempt was rejected because automatic permission review timed out. Its permitted single retry (`gh run view`) succeeded and independently confirmed both matrix jobs passed. No runtime or approval blocker remains.
+- Prepared this closure record for the audited non-fast-forward main integration. Preserve the source PDD, existing production defaults/history and the user's untracked prompt.

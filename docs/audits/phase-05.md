@@ -1,10 +1,10 @@
 # Phase 5 whole-repository audit
 
-Status: implementation, live reconciliation and all five final native page inspections pass. Final changed-source CI, #20 closure and main merge are being completed on phase-5-powerbi-insights. Native rendering is backed by actual Desktop captures, independent of schema/TMDL checks.
+Status: complete. Implementation, live reconciliation and all five final native page inspections pass. Final source CI 39777250175 passes Python 3.10/3.12; all Phase 5 findings #12–#20 are closed with evidence. The audited integration branch is phase-5-powerbi-insights. Native rendering is backed by actual Desktop captures, independent of schema/TMDL checks.
 
 The final 171-measure report passes actual Desktop Import/Ready, 46 headline inputs and 157 grain-value reconciliations, latest-month annotation and multiple-scenario blank guards. The [five-page review manifest](../evidence/powerbi/verification.json) records build 2.159.883.0, source 2026-10-20, run IDs, image hashes and observed rendering. All eight Deneb units, the 80% dropdown, reference rules, fan bands, tail multiples and full signed grid were inspected. No foreground handoff remains.
 
-Prior source milestone 999ea53 passed CI 39741695457 on Python 3.10/3.12. #12–#19 are closed; #20 now has final captured evidence for closure. Later sections preserve the diagnostic history; their earlier pending/blocker statements are superseded by this status and the final closure record. The user's unrelated untracked prompt and source PDD remain preserved.
+Final source milestone 1133f99 passed CI 39777250175 on Python 3.10/3.12. #12–#20 are closed, including the committed final native capture evidence. Later sections preserve the diagnostic history; their earlier pending/blocker statements are superseded by this status and the final closure record. The user's unrelated untracked prompt and source PDD remain preserved.
 
 ## Scope and coverage
 
@@ -66,3 +66,7 @@ All five final pages were inspected in the native Desktop window after Apply ext
 The combined contract verifier now consumes independent actual TOM/ADOMD/review records: TOM model hashes must match all current TMDL files; exactly five ordered screenshot hashes must match the reviewed manifest; screenshot source date must agree with reconciled actual DAX. Schema validity alone never marks native rendering complete.
 
 Final local commands passed: `python -m unittest discover -s tests -v` (40 tests), `ruff check .`, `python -m compileall -q src scripts notebooks`, `python scripts/check_repository.py`, `git diff --check`, and official TOM `verify_tmdl.ps1 -AssemblyFolder .tmp/tom`. The final live combined contract passes 36 JSON schemas, 182 field bindings, eight layered specs, 15 titles, current-hash TOM parse, 50 SQL inputs, 46 actual Desktop headline inputs, 157 grain values, latest-month annotation, scenario guard and all five reviewed captures. Evidence is committed in `docs/evidence/powerbi_contract.json`, `tmdl_validation.json`, `powerbi_dax_results.json` and `powerbi/verification.json`.
+
+## Closure gate
+
+Final source/evidence **1133f9989641f816029a902e0b7aa7c8f04af83f** passes [CI 39777250175](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/actions/runs/39777250175) on Python 3.10 and 3.12. [#20 closure](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/20#issuecomment-6340555967) links all actual screenshots and combined contract. GitHub reports zero open findings. All local, live, native and issue gates pass; this final documentation records the branch's audited main integration. No unresolved implementation finding or user authentication/foreground action remains.

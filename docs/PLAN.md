@@ -121,7 +121,7 @@ Implementation release: `docs/RELEASE.md`. User handoff actions: connect/build P
 
 ## Phase 5 — Insight-driven Power BI (2026-10-21)
 
-Status: implementation, live verification and native five-page inspection complete; final CI/audit/main merge gate in progress on phase-5-powerbi-insights.
+Status: implementation, live verification, native five-page inspection and whole-repository audit complete. All #12–#20 closed; final source CI 39777250175 passes both Python versions. Audited integration uses phase-5-powerbi-insights.
 
 - [x] Read all baseline docs, notebooks, simulation/Silver/operations, SQL and reporting/deployment source.
 - [x] Add testable historical decomposition, paired proxy returns, weekly effectiveness, complete hedge windows, calibration history, deterministic drift-model backtest and tail frequencies.
@@ -130,7 +130,7 @@ Status: implementation, live verification and native five-page inspection comple
 - [x] Independent pandas/Box–Muller oracle; every offline deterministic/Monte Carlo value reconciled to 1e-9. Published-schema validation and real Microsoft TOM parse pass.
 - [x] Render and inspect all 15 matplotlib narrative units from verified live Gold plus compile/inspect all eight final layered PBIR specifications. Keep storyboard and Desktop evidence distinct.
 - [x] Live current-source reconciliation, reporting adversarial cases and full seven-task managed refresh. All 50 warehouse headline numbers also reconcile.
-- [ ] Whole-repo audit, GitHub issue evidence/closure, both Python CI versions, main merge.
+- [x] Whole-repo audit, GitHub issue evidence/closure, both Python CI versions; audited branch prepared for main integration.
 - [x] Native Desktop authentication/Import and actual DAX reconciliation: 46 headline inputs, 157 grain values, scenario-safe totals and multiple-selection blanks.
 - [x] Final native formatting inspection and five refreshed page screenshots with source/run IDs, Desktop build and reviewed image hashes.
 
