@@ -38,6 +38,10 @@ def main():
     parser.add_argument("--desktop-results", help="Read actual ADOMD query output and compare headline inputs with live Python evidence")
     args = parser.parse_args()
     measures()
+    for name, (expression, _, _) in MEASURES.items():
+        for reference in re.findall(r"(?<![A-Za-z0-9_'])\[([^\]]+)\]", expression):
+            if reference not in MEASURES:
+                raise ValueError(f"Unknown measure dependency: {name} -> {reference}")
     validations = []
     for path in sorted(PROJECT.rglob("*")):
         if path.suffix not in {".json", ".pbip", ".pbir", ".pbism"} or ".pbi" in path.parts:
@@ -152,6 +156,59 @@ def main():
             raise ValueError("At least one Desktop headline is unavailable")
         evidence["dax_executed"] = True
         evidence["desktop_headline_inputs_reconciled"] = len(expected)
+        import pandas as pd
+        folder = Path("artifacts/insights_gold")
+        market = pd.read_csv(folder/"market_decomposition.csv", parse_dates=["price_date"])
+        latest_date = market.price_date.max()
+        latest_month = market.loc[market.price_date.dt.to_period("M").eq(latest_date.to_period("M")), "jet_fuel_gal"].mean()
+        np.testing.assert_allclose(values["Latest Monthly Jet"], latest_month, atol=1e-9, rtol=0)
+        evidence["desktop_latest_month_annotation_reconciled"] = True
+        grains = desktop["grains"]
+        if len(grains) != 4 or [len(rows) for rows in grains] != [5, 54, 5, 3]:
+            raise ValueError("Unexpected Desktop risk/proxy/frontier/coverage grains")
+        risk = pd.read_csv(folder/"risk_metrics.csv")
+        routes = pd.read_csv(folder/"route_fuel_costs.csv")
+        base_routes = routes.loc[routes.hedge_ratio.eq(0)]
+        comparisons = 0
+        def check(value, target, label):
+            nonlocal comparisons
+            if value is None:
+                raise ValueError("Unexpected blank Desktop grain: "+label)
+            np.testing.assert_allclose(float(value), target, atol=1e-9, rtol=0, err_msg=label)
+            comparisons += 1
+        for row in grains[0]:
+            ratio = float(row["scenario_label"].split("%", 1)[0])/100
+            actual_risk = risk.loc[np.isclose(risk.hedge_ratio, ratio)].iloc[0]
+            for title, column in [("Mean Cost B", "mean_cost_b"), ("P95 Cost B", "p95_cost_b"), ("CVaR95 B", "cvar_95_b")]:
+                check(row[title], actual_risk[column], title)
+            check(row["Fuel Gallons"], base_routes.monthly_gallons.sum(), "scenario-safe gallons")
+            # Compare monetary sums in the report's $M units: VertiPaq and NumPy
+            # reduction order differs at ~3e-8 USD on an 88M USD sum.
+            check(row["Unhedged Cost USD"]/1e6, base_routes.unhedged_cost_usd.sum()/1e6, "scenario-safe unhedged cost, $M")
+            check(row["Fuel Cost USD"]/1e6, routes.loc[np.isclose(routes.hedge_ratio, ratio), "hedged_cost_usd"].sum()/1e6, "single-scenario cost, $M")
+        annual = pd.read_csv(folder/"proxy_effectiveness_annual.csv")
+        for row in grains[1]:
+            source = annual.loc[annual.year.astype(str).eq(str(row["year"])) & annual.proxy.eq(row["proxy"])].iloc[0]
+            if str(row["year"]) == "ALL":
+                if row["R2"] is not None:
+                    raise ValueError("ALL R2 must not enter the annual chart")
+            else:
+                check(row["R2"], source.r2, "annual R2")
+            check(row["Beta"], source.min_var_beta, "annual beta")
+        windows = pd.read_csv(folder/"hedge_backtest_windows.csv")
+        for row in grains[2]:
+            source = windows.loc[np.isclose(windows.hedge_ratio, row["hedge_ratio"]), "budget_overrun_b"]
+            check(row["Mean Overrun B"], source.mean(), "frontier mean")
+            check(row["P95 Overrun B"], source.quantile(.95), "frontier P95")
+        for row in grains[3]:
+            source = f["F8"][row["drift_model"]]
+            for title, key in [("Coverage", "coverage"), ("Below P05", "below_p05"), ("High Drift Below P05", "high_drift_below"), ("Log RMSE", "log_rmse")]:
+                check(row[title], source[key], title)
+        if desktop["multiple_scenarios"] != [{"Savings": None, "Cost": None}]:
+            raise ValueError("Multiple scenarios must return blank costs/savings")
+        evidence["desktop_grain_values_reconciled"] = comparisons
+        evidence["scenario_multiplication_guard_passed"] = True
+        evidence["desktop_cost_sum_comparison_unit"] = "USD millions; absolute tolerance 1e-9 in displayed unit"
     out = Path("docs/evidence/powerbi_contract.json")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(evidence, indent=2), encoding="utf-8")

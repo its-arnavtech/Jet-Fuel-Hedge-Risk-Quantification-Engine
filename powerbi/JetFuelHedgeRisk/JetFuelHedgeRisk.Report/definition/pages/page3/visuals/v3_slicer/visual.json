@@ -3,9 +3,9 @@
   "name": "v3_slicer",
   "position": {
     "x": 940,
-    "y": 40,
+    "y": 8,
     "width": 320,
-    "height": 58,
+    "height": 88,
     "z": 1,
     "tabOrder": 0
   },
@@ -69,6 +69,17 @@
                   "Value": "true"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -106,6 +117,17 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
                 }
               }
             }

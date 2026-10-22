@@ -38,13 +38,20 @@ def main():
         "Bridge High": [prior_jet, max(prior_jet, wti_end), max(wti_end, current_jet), current_jet],
         "Bridge Label": [f"${prior_jet:.3f}", f"${f['F1']['wti_change']:+.3f}", f"${f['F1']['crack_change']:+.3f}", f"${current_jet:.3f}"],
         "Bridge Color": ["#1F4E79", "#B85C38", "#E0A100", "#1F4E79"]})
+    moves = pd.DataFrame({"Instrument": ["Jet", "HO", "WTI"], "Change Per Gallon": [f["F4"][name] for name in ["jet_change", "ho_change", "wti_change"]], "Change Jet": f["F4"]["jet_change"]})
+    backtest = pd.read_csv(folder/"hedge_backtest_windows.csv")
+    savings = backtest.loc[backtest.hedge_ratio.eq(0)].rename(columns={"savings_per_gal": "Window Savings"})
+    frontier = backtest.groupby("hedge_ratio").budget_overrun_b.agg(**{"Mean Overrun B": "mean", "P95 Overrun B": lambda x: x.quantile(.95)}).reset_index()
+    matrix = pd.read_csv(folder/"hedge_sensitivity.csv")
+    matrix["Sensitivity Difference B"] = matrix.hedged_cost_b-matrix.unhedged_cost_b
     for ratio in [0, 80]:
         row = risk[risk.hedge_ratio.eq(ratio/100)].iloc[0]
         for name, col in [("Mean Cost B", "mean_cost_b"), ("P95 Cost B", "p95_cost_b"), ("CVaR95 B", "cvar_95_b")]:
             hist[name+" "+str(ratio)] = row[col]
     out = Path("dashboard/plots/insights/pbir_previews")
     out.mkdir(parents=True, exist_ok=True)
-    for number, frame, page in [("1_2", bridge, 1), ("4_1", h, 4), ("4_3", fan, 4), ("5_1", hist, 5)]:
+    previews = [("1_2", bridge, 1), ("2_3", moves, 2), ("3_1", savings, 3), ("3_2", frontier, 3), ("4_1", h, 4), ("4_3", fan, 4), ("5_1", hist, 5), ("5_3", matrix, 5)]
+    for number, frame, page in previews:
         frame["Readiness"] = "Ready"
         obj = json.loads((REPORT/f"definition/pages/page{page}/visuals/v{number}/visual.json").read_text(encoding="utf-8"))
         raw = obj["visual"]["objects"]["vega"][0]["properties"]["jsonSpec"]["expr"]["Literal"]["Value"]
@@ -53,7 +60,7 @@ def main():
         spec["width"], spec["height"] = 1000, 470
         spec["title"] = "PBIR SPECIFICATION PREVIEW — "+("offline extracts" if args.offline else "verified Gold extracts")+"; not a Desktop screenshot"
         (out/(number+".png")).write_bytes(vlc.vegalite_to_png(spec, scale=1.2))
-    print("Compiled and rendered all four layered PBIR specifications")
+    print(f"Compiled and rendered all {len(previews)} layered PBIR specifications")
 
 
 if __name__ == "__main__":

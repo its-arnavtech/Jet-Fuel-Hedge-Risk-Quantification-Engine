@@ -1,10 +1,11 @@
 {
   "json_schemas_passed": true,
-  "json_files": 35,
+  "json_files": 36,
   "schema_validated_files": [
     "JetFuelHedgeRisk.pbip",
     "JetFuelHedgeRisk.Report\\definition\\pages\\page1\\page.json",
     "JetFuelHedgeRisk.Report\\definition\\pages\\page1\\visuals\\v1_1\\visual.json",
+    "JetFuelHedgeRisk.Report\\definition\\pages\\page1\\visuals\\v1_1_annotation\\visual.json",
     "JetFuelHedgeRisk.Report\\definition\\pages\\page1\\visuals\\v1_2\\visual.json",
     "JetFuelHedgeRisk.Report\\definition\\pages\\page1\\visuals\\v1_header\\visual.json",
     "JetFuelHedgeRisk.Report\\definition\\pages\\page2\\page.json",
@@ -38,11 +39,16 @@
     "JetFuelHedgeRisk.Report\\StaticResources\\RegisteredResources\\jet_fuel_theme.json",
     "JetFuelHedgeRisk.SemanticModel\\definition.pbism"
   ],
-  "field_bindings_checked": 174,
-  "layered_specs_validated": 4,
+  "field_bindings_checked": 182,
+  "layered_specs_validated": 8,
   "titles": 15,
   "tmdl_parsed": false,
-  "dax_executed": false,
+  "dax_executed": true,
   "desktop_rendered": false,
-  "sql_headline_numbers_checked": 50
+  "sql_headline_numbers_checked": 50,
+  "desktop_headline_inputs_reconciled": 46,
+  "desktop_latest_month_annotation_reconciled": true,
+  "desktop_grain_values_reconciled": 157,
+  "scenario_multiplication_guard_passed": true,
+  "desktop_cost_sum_comparison_unit": "USD millions; absolute tolerance 1e-9 in displayed unit"
 }

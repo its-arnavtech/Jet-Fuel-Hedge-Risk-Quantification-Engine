@@ -102,7 +102,7 @@ uv run ruff check .
 uv run python -m compileall -q src scripts notebooks
 ```
 
-Thirty-eight tests cover revisions, units, calendars, integrity/replay, synthetic grains/marks, EWM, GBM moments, seed invariance, deterministic drift, horizons, historical alignment and tails. Locked CI runs Python 3.10/3.12. Live verifiers check all Silver rows, all route costs, every insight cell, adversarial position inputs and reporting guards.
+Forty tests cover revisions, units, calendars, integrity/replay, synthetic grains/marks, EWM, GBM moments, seed invariance, deterministic drift, horizons, historical alignment, starter DAX preservation and tails. Locked CI runs Python 3.10/3.12. Live verifiers check all Silver rows, all route costs, every insight cell, adversarial position inputs and reporting guards. Actual refreshed Desktop DAX additionally reconciles headline and grain values.
 
 ## Reporting and operation
 

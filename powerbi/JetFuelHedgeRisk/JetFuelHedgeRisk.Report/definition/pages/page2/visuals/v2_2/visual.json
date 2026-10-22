@@ -31,24 +31,6 @@
             }
           ]
         },
-        "Series": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "proxy_effectiveness_annual_current"
-                    }
-                  },
-                  "Property": "proxy"
-                }
-              },
-              "queryRef": "proxy_effectiveness_annual_current.proxy",
-              "nativeQueryRef": "proxy"
-            }
-          ]
-        },
         "Y": {
           "projections": [
             {
@@ -59,11 +41,39 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Proxy R2"
+                  "Property": "HO R2"
                 }
               },
-              "queryRef": "_Measures.Proxy R2",
-              "nativeQueryRef": "Proxy R2"
+              "queryRef": "_Measures.HO R2",
+              "nativeQueryRef": "HO R2"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "WTI R2"
+                }
+              },
+              "queryRef": "_Measures.WTI R2",
+              "nativeQueryRef": "WTI R2"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "BRENT R2"
+                }
+              },
+              "queryRef": "_Measures.BRENT R2",
+              "nativeQueryRef": "BRENT R2"
             }
           ]
         },
@@ -77,11 +87,39 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Proxy Beta"
+                  "Property": "HO Beta"
                 }
               },
-              "queryRef": "_Measures.Proxy Beta",
-              "nativeQueryRef": "Proxy Beta"
+              "queryRef": "_Measures.HO Beta",
+              "nativeQueryRef": "HO Beta"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "WTI Beta"
+                }
+              },
+              "queryRef": "_Measures.WTI Beta",
+              "nativeQueryRef": "WTI Beta"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "BRENT Beta"
+                }
+              },
+              "queryRef": "_Measures.BRENT Beta",
+              "nativeQueryRef": "BRENT Beta"
             }
           ]
         }
@@ -123,6 +161,17 @@
                   "Value": "true"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -160,6 +209,17 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
                 }
               }
             }
@@ -223,28 +283,7 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "enableTitleDataLabel": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "titleContentType": {
-              "expr": {
-                "Literal": {
-                  "Value": "'Series name'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "8D"
+                  "Value": "false"
                 }
               }
             }
@@ -267,7 +306,7 @@
       "y1AxisReferenceLine": [
         {
           "selector": {
-            "metadata": "_Measures.Effective Benchmark"
+            "id": "0"
           },
           "properties": {
             "show": {
@@ -307,6 +346,20 @@
                 }
               }
             },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'front'"
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
             "dataLabelShow": {
               "expr": {
                 "Literal": {
@@ -324,7 +377,7 @@
             "dataLabelText": {
               "expr": {
                 "Literal": {
-                  "Value": "'NameAndValue'"
+                  "Value": "'ValueAndName'"
                 }
               }
             },
@@ -340,18 +393,52 @@
       ],
       "dataPoint": [
         {
+          "selector": {
+            "metadata": "_Measures.HO R2"
+          },
           "properties": {
             "fill": {
               "solid": {
                 "color": {
                   "expr": {
-                    "Measure": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "_Measures"
-                        }
-                      },
-                      "Property": "Proxy Color"
+                    "Literal": {
+                      "Value": "'#2E8B57'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "metadata": "_Measures.WTI R2"
+          },
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#B85C38'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "selector": {
+            "metadata": "_Measures.BRENT R2"
+          },
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#7A6C9E'"
                     }
                   }
                 }

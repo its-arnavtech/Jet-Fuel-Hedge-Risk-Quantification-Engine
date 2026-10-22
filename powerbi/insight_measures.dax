@@ -32,10 +32,18 @@ CALCULATE(SUM('Route Costs'[monthly_gallons]), REMOVEFILTERS('Route Costs'[scena
 
 Mean Cost B =
 SELECTEDVALUE('Risk Metrics'[mean_cost_b])
-P95 Cost B = SELECTEDVALUE('Risk Metrics'[p95_cost_b])
-Incremental VaR95 B = SELECTEDVALUE('Risk Metrics'[var_95_b])
-CVaR95 B = SELECTEDVALUE('Risk Metrics'[cvar_95_b])
-VaR Reduction = DIVIDE(SELECTEDVALUE('Risk Metrics'[var_reduction_pct]), 100)
+
+P95 Cost B =
+SELECTEDVALUE('Risk Metrics'[p95_cost_b])
+
+Incremental VaR95 B =
+SELECTEDVALUE('Risk Metrics'[var_95_b])
+
+CVaR95 B =
+SELECTEDVALUE('Risk Metrics'[cvar_95_b])
+
+VaR Reduction =
+DIVIDE(SELECTEDVALUE('Risk Metrics'[var_reduction_pct]), 100)
 
 Market Date =
 CALCULATE(MAX(market_decomposition_current[price_date]),REMOVEFILTERS())
@@ -81,6 +89,12 @@ AVERAGE(market_decomposition_current[wti_gal])
 
 Crack Monthly =
 AVERAGE(market_decomposition_current[crack_spread])
+
+Latest Monthly Jet =
+VAR d=[Market Date] RETURN AVERAGEX(FILTER(ALL(market_decomposition_current),YEAR(market_decomposition_current[price_date])=YEAR(d)&&MONTH(market_decomposition_current[price_date])=MONTH(d)),market_decomposition_current[jet_fuel_gal])
+
+Latest Month Annotation =
+IF([Insights Ready],"Latest month $" & FORMAT([Latest Monthly Jet],"0.000") & "/gal")
 
 Crack Historical Mean =
 VAR y=YEAR([Market Date]) RETURN AVERAGEX(FILTER(ALL(market_decomposition_current),YEAR(market_decomposition_current[price_date])<y),market_decomposition_current[crack_spread])
@@ -139,21 +153,39 @@ IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",SELECTEDVALUE(
 Proxy Beta =
 SELECTEDVALUE(proxy_effectiveness_annual_current[min_var_beta])
 
+HO R2 =
+CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="HO")
+
+HO Beta =
+IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="HO"))
+
+WTI R2 =
+CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="WTI")
+
+WTI Beta =
+IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="WTI"))
+
+BRENT R2 =
+CALCULATE([Proxy R2],proxy_effectiveness_annual_current[proxy]="BRENT")
+
+BRENT Beta =
+IF(SELECTEDVALUE(proxy_effectiveness_annual_current[year])<>"ALL",CALCULATE([Proxy Beta],proxy_effectiveness_annual_current[proxy]="BRENT"))
+
 Years Compared =
 COUNTROWS(FILTER(ALL(proxy_effectiveness_annual_current[year]),proxy_effectiveness_annual_current[year]<>"ALL"))
 
 HO Wins Years =
-VAR years=FILTER(ALL(proxy_effectiveness_annual_current[year]),proxy_effectiveness_annual_current[year]<>"ALL") RETURN COUNTROWS(FILTER(years,
-        CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="HO")>CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="WTI")))
+VAR years=FILTER(ALL(proxy_effectiveness_annual_current[year]),proxy_effectiveness_annual_current[year]<>"ALL") RETURN IF([Insights Ready],COUNTROWS(FILTER(years,
+        CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="HO")>CALCULATE(SELECTEDVALUE(proxy_effectiveness_annual_current[r2]),proxy_effectiveness_annual_current[proxy]="WTI")))+0)
 
 WTI Years Effective =
-COUNTROWS(FILTER(ALL(proxy_effectiveness_annual_current),proxy_effectiveness_annual_current[year]<>"ALL"&&proxy_effectiveness_annual_current[proxy]="WTI"&&proxy_effectiveness_annual_current[r2]>=0.8))
+IF([Insights Ready],COUNTROWS(FILTER(ALL(proxy_effectiveness_annual_current),proxy_effectiveness_annual_current[year]<>"ALL"&&proxy_effectiveness_annual_current[proxy]="WTI"&&proxy_effectiveness_annual_current[r2]>=0.8))+0)
 
 Windows =
 COUNTROWS(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0))
 
 Win Share =
-DIVIDE(COUNTROWS(FILTER(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),hedge_backtest_windows_current[hedge_won])),[Windows])
+DIVIDE(COUNTROWS(FILTER(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),hedge_backtest_windows_current[hedge_won]))+0,[Windows])
 
 Mean Savings Gal =
 AVERAGEX(FILTER(ALL(hedge_backtest_windows_current),hedge_backtest_windows_current[hedge_ratio]=0),hedge_backtest_windows_current[savings_per_gal])
@@ -212,6 +244,12 @@ DIVIDE(SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[avg
 B767 Departures =
 SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[daily_frequencies])
 
+Route Concentration Title =
+"B767s use " & FORMAT([B767 Share],"0.0%") & " of scheduled gallons"
+
+Route Concentration Subtitle =
+"Synthetic fixture | Hedge savings by route, $M"
+
 Current mu =
 CALCULATE(SELECTEDVALUE(calibration_history_current[mu]),REMOVEFILTERS(),calibration_history_current[is_current]=TRUE())
 
@@ -243,10 +281,10 @@ Mu IQR High =
 PERCENTILEX.INC(ALL(calibration_history_current),calibration_history_current[mu],0.75)
 
 Band Coverage =
-DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[inside_band])),COUNTROWS(forecast_backtest_current))
+DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[inside_band]))+0,COUNTROWS(forecast_backtest_current))
 
 Below P05 =
-DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[below_p05])),COUNTROWS(forecast_backtest_current))
+DIVIDE(COUNTROWS(FILTER(forecast_backtest_current,forecast_backtest_current[below_p05]))+0,COUNTROWS(forecast_backtest_current))
 
 High Drift Below P05 =
 CALCULATE([Below P05],forecast_backtest_current[high_drift]=TRUE())
@@ -462,16 +500,16 @@ Subtitle 5.3 =
 "Reference carrier, 1.5B gal/yr | Hedged minus unhedged cost; blue saving, red additional cost; signed labels."
 
 Page 1 =
-"What actually drove the jet fuel spike?"
+"What actually drove the jet fuel spike?" & UNICHAR(10) & [Header]
 
 Page 2 =
-"Which hedge instrument actually tracks jet fuel?"
+"Which hedge instrument actually tracks jet fuel?" & UNICHAR(10) & [Header]
 
 Page 3 =
-"Did hedging pay? 16 years of rolling evidence"
+"Did hedging pay? 16 years of rolling evidence" & UNICHAR(10) & [Header]
 
 Page 4 =
-"How far should we trust the simulation?"
+"How far should we trust the simulation?" & UNICHAR(10) & [Header]
 
 Page 5 =
-"What the model says about the hedge decision, read correctly"
+"What the model says about the hedge decision, read correctly" & UNICHAR(10) & [Header]

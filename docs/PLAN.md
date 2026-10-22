@@ -128,9 +128,10 @@ Status: implementation and local verification complete; live refresh/audit gate 
 - [x] Append-only insight registry/quality, seven guarded facts and additive readiness; sequential task immediately after Silver.
 - [x] Five-page PBIP/TMDL/PBIR, dedicated DAX folders/dynamic titles, exactly 15 narrative units, theme, labels/badges, alt text and query-view/SQL contracts.
 - [x] Independent pandas/Box–Muller oracle; every offline deterministic/Monte Carlo value reconciled to 1e-9. Published-schema validation and real Microsoft TOM parse pass.
-- [x] Render and inspect all 15 matplotlib narrative units from verified live Gold plus compile/inspect the actual four layered PBIR specifications. Keep storyboard and Desktop evidence distinct.
+- [x] Render and inspect all 15 matplotlib narrative units from verified live Gold plus compile/inspect all eight final layered PBIR specifications. Keep storyboard and Desktop evidence distinct.
 - [x] Live current-source reconciliation, reporting adversarial cases and full seven-task managed refresh. All 50 warehouse headline numbers also reconcile.
 - [ ] Whole-repo audit, GitHub issue evidence/closure, both Python CI versions, main merge.
-- [ ] Native Desktop authentication/refresh/DAX/page screenshots, or explicit unavailable-access handoff per user allowance.
+- [x] Native Desktop authentication/Import and actual DAX reconciliation: 46 headline inputs, 157 grain values, scenario-safe totals and multiple-selection blanks.
+- [ ] Final native formatting inspection and five refreshed page screenshots, or explicit unavailable-access handoff per user allowance.
 
 No production simulation default or existing data-history deletion is part of Phase 5.

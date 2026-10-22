@@ -133,6 +133,17 @@
                   "Value": "true"
                 }
               }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#172B3A'"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -170,6 +181,17 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#445566'"
+                    }
+                  }
                 }
               }
             }
@@ -260,10 +282,10 @@
           }
         }
       ],
-      "xAxisReferenceLine": [
+      "y1AxisReferenceLine": [
         {
           "selector": {
-            "metadata": "_Measures.Nominal Coverage"
+            "id": "0"
           },
           "properties": {
             "show": {
@@ -303,6 +325,20 @@
                 }
               }
             },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'front'"
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
             "dataLabelShow": {
               "expr": {
                 "Literal": {
@@ -320,7 +356,7 @@
             "dataLabelText": {
               "expr": {
                 "Literal": {
-                  "Value": "'NameAndValue'"
+                  "Value": "'ValueAndName'"
                 }
               }
             },

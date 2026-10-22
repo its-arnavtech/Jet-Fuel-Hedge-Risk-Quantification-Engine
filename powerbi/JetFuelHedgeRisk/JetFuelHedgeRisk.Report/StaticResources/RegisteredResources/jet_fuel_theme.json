@@ -36,7 +36,7 @@
         ],
         "lineStyles": [
           {
-            "showMarker": true
+            "showMarker": false
           }
         ]
       }

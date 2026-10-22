@@ -6,6 +6,7 @@ Run verify_powerbi_contract.py after generation; Desktop is a separate validatio
 
 import json
 from pathlib import Path
+import re
 
 import pandas as pd
 
@@ -31,6 +32,13 @@ def measure(name, expression, folder, fmt=None):
     MEASURES[name] = (expression, folder, fmt)
 
 
+def parse_starter_measures(text):
+    text = "\n".join(line for line in text.splitlines() if not line.startswith("//"))
+    declarations = list(re.finditer(r"(?m)^([A-Za-z][A-Za-z0-9 ]*)[ \t]*=", text))
+    return {item.group(1).strip(): text[item.end():declarations[i+1].start() if i+1 < len(declarations) else len(text)].strip()
+            for i, item in enumerate(declarations)}
+
+
 def measures():
     measure("Analytics Ready", "SELECTEDVALUE(reporting_readiness[analytics_ready],FALSE())", "Status")
     measure("Risk Ready", "SELECTEDVALUE(reporting_readiness[risk_ready],FALSE())", "Status")
@@ -41,9 +49,7 @@ def measures():
     measure("Scenario Selector", '"Synthetic fixture scenario"', "Status")
     # Starter measures retained verbatim in meaning and table naming.
     starter = (ROOT/"powerbi/measures.dax").read_text(encoding="utf-8")
-    import re
-    starter = "\n".join(x for x in starter.splitlines() if not x.startswith("//"))
-    for name, expression in re.findall(r"(?m)^([^\n=]+?)\s*=\s*([\s\S]*?)(?=\n\n|\Z)", starter):
+    for name, expression in parse_starter_measures(starter).items():
         measure(name.strip(), expression.strip(), "Simulation" if "Cost B" in name or "VaR" in name else "Backtest")
     market = "market_decomposition_current"
     measure("Market Date", f"CALCULATE(MAX({market}[price_date]),REMOVEFILTERS())", "Market", "yyyy-MM-dd")
@@ -53,6 +59,8 @@ def measures():
         measure(f"Change {label}", f"IF([Insights Ready],[Latest {label}]-[Prior {label}])", "Market", "+0.000;-0.000;0.000")
     measure("WTI Monthly", f"AVERAGE({market}[wti_gal])", "Market", "0.000")
     measure("Crack Monthly", f"AVERAGE({market}[crack_spread])", "Market", "0.000")
+    measure("Latest Monthly Jet", f"VAR d=[Market Date] RETURN AVERAGEX(FILTER(ALL({market}),YEAR({market}[price_date])=YEAR(d)&&MONTH({market}[price_date])=MONTH(d)),{market}[jet_fuel_gal])", "Market", "0.000")
+    measure("Latest Month Annotation", 'IF([Insights Ready],"Latest month $" & FORMAT([Latest Monthly Jet],"0.000") & "/gal")', "Headlines")
     measure("Crack Historical Mean", f"VAR y=YEAR([Market Date]) RETURN AVERAGEX(FILTER(ALL({market}),YEAR({market}[price_date])<y),{market}[crack_spread])", "Market", "0.000")
     measure("Crack Share", "DIVIDE([Change Crack],[Change Jet])", "Market", "0.0%")
     measure("WTI Offset", "DIVIDE([Change WTI],[Change Jet])", "Market", "0.0%")
@@ -71,14 +79,17 @@ def measures():
     annual = "proxy_effectiveness_annual_current"
     measure("Proxy R2", f'IF(SELECTEDVALUE({annual}[year])<>"ALL",SELECTEDVALUE({annual}[r2]))', "Proxy", "0.0%")
     measure("Proxy Beta", f"SELECTEDVALUE({annual}[min_var_beta])", "Proxy", "0.000")
+    for proxy in ["HO", "WTI", "BRENT"]:
+        measure(proxy+" R2", f'CALCULATE([Proxy R2],{annual}[proxy]="{proxy}")', "Proxy", "0.0%")
+        measure(proxy+" Beta", f'IF(SELECTEDVALUE({annual}[year])<>"ALL",CALCULATE([Proxy Beta],{annual}[proxy]="{proxy}"))', "Proxy", "0.000")
     measure("Years Compared", f'COUNTROWS(FILTER(ALL({annual}[year]),{annual}[year]<>"ALL"))', "Proxy", "0")
-    measure("HO Wins Years", f'''VAR years=FILTER(ALL({annual}[year]),{annual}[year]<>"ALL") RETURN COUNTROWS(FILTER(years,
-        CALCULATE(SELECTEDVALUE({annual}[r2]),{annual}[proxy]="HO")>CALCULATE(SELECTEDVALUE({annual}[r2]),{annual}[proxy]="WTI")))''', "Proxy", "0")
-    measure("WTI Years Effective", f'COUNTROWS(FILTER(ALL({annual}),{annual}[year]<>"ALL"&&{annual}[proxy]="WTI"&&{annual}[r2]>=0.8))', "Proxy", "0")
+    measure("HO Wins Years", f'''VAR years=FILTER(ALL({annual}[year]),{annual}[year]<>"ALL") RETURN IF([Insights Ready],COUNTROWS(FILTER(years,
+        CALCULATE(SELECTEDVALUE({annual}[r2]),{annual}[proxy]="HO")>CALCULATE(SELECTEDVALUE({annual}[r2]),{annual}[proxy]="WTI")))+0)''', "Proxy", "0")
+    measure("WTI Years Effective", f'IF([Insights Ready],COUNTROWS(FILTER(ALL({annual}),{annual}[year]<>"ALL"&&{annual}[proxy]="WTI"&&{annual}[r2]>=0.8))+0)', "Proxy", "0")
     bt = "hedge_backtest_windows_current"
     base = f"FILTER(ALL({bt}),{bt}[hedge_ratio]=0)"
     measure("Windows", f"COUNTROWS({base})", "Backtest", "0")
-    measure("Win Share", f"DIVIDE(COUNTROWS(FILTER({base},{bt}[hedge_won])),[Windows])", "Backtest", "0.0%")
+    measure("Win Share", f"DIVIDE(COUNTROWS(FILTER({base},{bt}[hedge_won]))+0,[Windows])", "Backtest", "0.0%")
     measure("Mean Savings Gal", f"AVERAGEX({base},{bt}[savings_per_gal])", "Backtest", "+$0.000;-$0.000;$0.000")
     measure("Latest Window Rank", f"CALCULATE(SELECTEDVALUE({bt}[window_pct_rank]),REMOVEFILTERS(),{bt}[hedge_ratio]=0,{bt}[is_latest_complete]=TRUE())", "Backtest", "0.0%")
     measure("Window Savings", f"CALCULATE(SELECTEDVALUE({bt}[savings_per_gal]),{bt}[hedge_ratio]=0)", "Backtest", "+0.000;-0.000;0.000")
@@ -97,6 +108,8 @@ def measures():
     measure("Route Unhedged M", "DIVIDE([Unhedged Cost USD],1000000)", "Backtest", "0.00")
     measure("B767 Share", 'DIVIDE(SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]),SUMX(ALL(dim_route),dim_route[avg_fuel_burn_gal]*dim_route[daily_frequencies]))', "Backtest", "0.0%")
     measure("B767 Departures", 'SUMX(FILTER(ALL(dim_route),dim_route[aircraft_type]="B767"),dim_route[daily_frequencies])', "Backtest", "0")
+    measure("Route Concentration Title", '"B767s use " & FORMAT([B767 Share],"0.0%") & " of scheduled gallons"', "Headlines")
+    measure("Route Concentration Subtitle", '"Synthetic fixture | Hedge savings by route, $M"', "Headlines")
     history = "calibration_history_current"
     for col in ["mu", "sigma", "mu_pct_rank", "sigma_pct_rank"]:
         measure("Current "+col, f"CALCULATE(SELECTEDVALUE({history}[{col}]),REMOVEFILTERS(),{history}[is_current]=TRUE())", "Simulation", "0.0%")
@@ -108,7 +121,7 @@ def measures():
         measure(label, f"PERCENTILEX.INC(ALL({history}),{history}[mu],{q})", "Simulation", "0.0%")
     forecast = "forecast_backtest_current"
     for label, condition in [("Band Coverage", f"{forecast}[inside_band]"), ("Below P05", f"{forecast}[below_p05]")]:
-        measure(label, f"DIVIDE(COUNTROWS(FILTER({forecast},{condition})),COUNTROWS({forecast}))", "Simulation", "0.0%")
+        measure(label, f"DIVIDE(COUNTROWS(FILTER({forecast},{condition}))+0,COUNTROWS({forecast}))", "Simulation", "0.0%")
     measure("High Drift Below P05", f"CALCULATE([Below P05],{forecast}[high_drift]=TRUE())", "Simulation", "0.0%")
     measure("Log RMSE", f"SQRT(AVERAGEX({forecast},{forecast}[log_err_p50]^2))", "Simulation", "0.000")
     for label in ["Band Coverage", "High Drift Below P05"]:
@@ -186,7 +199,7 @@ def measures():
     for number, expr in subtitles.items():
         measure("Subtitle "+number, expr, "Headlines")
     for p, question in enumerate(PAGES, 1):
-        measure("Page "+str(p), json.dumps(question, ensure_ascii=False), "Headlines")
+        measure("Page "+str(p), json.dumps(question, ensure_ascii=False)+' & UNICHAR(10) & [Header]', "Headlines")
 
 
 PAGES = ["What actually drove the jet fuel spike?", "Which hedge instrument actually tracks jet fuel?",
@@ -305,8 +318,8 @@ def visual(page, number, kind, roles, position, title=None, subtitle=None, objec
     title = title or "Title "+number
     subtitle = subtitle or "Subtitle "+number
     props = {
-        "title": [{"properties": {"show": literal(True), "text": dynamic(title), "fontSize": literal(13), "titleWrap": literal(True)}}],
-        "subTitle": [{"properties": {"show": literal(True), "text": dynamic(subtitle), "fontSize": literal(10), "titleWrap": literal(True)}}],
+        "title": [{"properties": {"show": literal(True), "text": dynamic(title), "fontSize": literal(13), "titleWrap": literal(True), "fontColor": {"solid": {"color": literal("#172B3A")}}}}],
+        "subTitle": [{"properties": {"show": literal(True), "text": dynamic(subtitle), "fontSize": literal(10), "titleWrap": literal(True), "fontColor": {"solid": {"color": literal("#445566")}}}}],
         "general": [{"properties": {"altText": dynamic(title)}}],
         "background": [{"properties": {"show": literal(True), "color": {"solid": {"color": literal("#FFFFFF")}}, "transparency": literal(0)}}],
     }
@@ -329,24 +342,25 @@ def report():
     theme = {"$schema": SCHEMAS["theme"], "name": "Jet fuel evidence", "dataColors": ["#1F4E79", "#B85C38", "#2E8B57", "#7A6C9E", "#E0A100"],
              "background": "#F3F5F7", "foreground": "#172B3A", "tableAccent": "#1F4E79",
              "textClasses": {"title": {"fontFace": "Segoe UI", "fontSize": 13}, "label": {"fontFace": "Segoe UI", "fontSize": 10}},
-             "visualStyles": {"*": {"*": {"labels": [{"show": True}], "legend": [{"show": True}], "lineStyles": [{"showMarker": True}]}}}}
+             "visualStyles": {"*": {"*": {"labels": [{"show": True}], "legend": [{"show": True}], "lineStyles": [{"showMarker": False}]}}}}
     save(REPORT/"StaticResources/RegisteredResources/jet_fuel_theme.json", theme)
     save(REPORT/"definition/pages/pages.json", {"$schema": SCHEMAS["pages"], "pageOrder": ["page"+str(i) for i in range(1, 6)], "activePageName": "page1"})
     for i, question in enumerate(PAGES, 1):
         page = "page"+str(i)
         save(REPORT/f"definition/pages/{page}/page.json", {"$schema": SCHEMAS["page"], "name": page, "displayName": question, "displayOption": "FitToPage", "width": 1280, "height": 720})
-        visual(page, f"{i}_header", "card", {"Values": ["Header"], "Tooltips": ["Simulation Run"]}, [20, 8, 1240, 88], title="Page "+str(i), subtitle="Readiness")
+        visual(page, f"{i}_header", "card", {"Data": ["Header"], "Tooltips": ["Simulation Run"]}, [20, 8, 1240, 88], title="Page "+str(i), subtitle="Header")
     m, c, a, b, h, f, t = [name+"_current" for name in ["market_decomposition", "proxy_return_correlation", "proxy_effectiveness_annual", "hedge_backtest_windows", "calibration_history", "forecast_backtest", "return_tail_frequency"]]
     visual("page1", "1.1", "stackedAreaChart", {"Category": [("dim_date", "cost_month")], "Y": ["WTI Monthly", "Crack Monthly"]}, [20, 112, 1240, 310])
+    visual("page1", "1_1_annotation", "card", {"Data": ["Latest Monthly Jet"]}, [980, 163, 275, 38], title="Latest Month Annotation", subtitle="Subtitle 1.1", objects={"labels": [{"properties": {"show": literal(False)}}]})
     visual("page1", "1.2", "waterfallChart", {"Category": [("Market Steps", "Step")], "Y": ["Waterfall Value"]}, [20, 434, 1240, 265])
     visual("page2", "2.1", "lineChart", {"Category": [(c, "price_date")], "Y": ["Price Level Correlation", "WTI Return Correlation", "HO Return Correlation"]}, [20, 112, 610, 275])
-    visual("page2", "2.2", "clusteredColumnChart", {"Category": [(a, "year")], "Series": [(a, "proxy")], "Y": ["Proxy R2"], "Tooltips": ["Proxy Beta"]}, [650, 112, 610, 275])
+    visual("page2", "2.2", "clusteredColumnChart", {"Category": [(a, "year")], "Y": ["HO R2", "WTI R2", "BRENT R2"], "Tooltips": ["HO Beta", "WTI Beta", "BRENT Beta"]}, [650, 112, 610, 275])
     visual("page2", "2.3", "clusteredBarChart", {"Category": [("Instruments", "Instrument")], "Y": ["Change Per Gallon"]}, [20, 403, 610, 296])
     visual("page2", "2_3_marks", "tableEx", {"Values": [("v_hedge_mtm", col) for col in ["underlying", "locked_price_gal", "current_spot_gal", "pnl_per_gallon", "hedge_status"]]}, [650, 403, 610, 296], title="Subtitle 2.3", subtitle="Header")
     visual("page3", "3.1", "clusteredColumnChart", {"Category": [(b, "window_start")], "Y": ["Window Savings"], "Series": [(b, "hedge_won")]}, [20, 112, 790, 270])
     visual("page3", "3.2", "scatterChart", {"Category": [(b, "hedge_ratio")], "X": ["Mean Overrun B"], "Y": ["P95 Overrun B"]}, [830, 112, 430, 270])
     visual("page3", "3.3", "lineClusteredColumnComboChart", {"Category": [("dim_month", "cost_month")], "Y": ["Route Cost M"], "Y2": ["Route Unhedged M"]}, [20, 400, 630, 299])
-    visual("page3", "3_3_routes", "clusteredBarChart", {"Category": [("dim_route", "route_id")], "Series": [("dim_route", "aircraft_type")], "Y": ["Route Savings M"]}, [670, 400, 590, 299], title="Title 3.3", subtitle="Subtitle 3.3")
+    visual("page3", "3_3_routes", "clusteredBarChart", {"Category": [("dim_route", "route_id")], "Series": [("dim_route", "aircraft_type")], "Y": ["Route Savings M"]}, [670, 400, 590, 299], title="Route Concentration Title", subtitle="Route Concentration Subtitle")
     visual("page3", "3_slicer", "slicer", {"Values": [("Hedge Scenario", "scenario_label")]}, [840, 86, 420, 28], title="Readiness", subtitle="Readiness", objects={"selection": [{"properties": {"singleSelect": literal(True), "selectAllCheckboxEnabled": literal(False)}}]})
     visual("page4", "4.1", "lineChart", {"Category": [(h, "week_ending")], "Y": ["MU", "SIGMA"]}, [20, 112, 610, 275])
     visual("page4", "4.2", "clusteredBarChart", {"Category": [(f, "drift_model")], "Y": ["Band Coverage", "Below P05", "High Drift Below P05"], "Tooltips": ["Log RMSE"]}, [650, 112, 610, 275])
@@ -395,6 +409,32 @@ the certified visual from AppSource; there is no vendored executable or credenti
                 "y": encoding("Bridge Low", title="$/gal"), "y2": {"field": "Bridge High"}, "color": encoding("Bridge Color", "nominal", scale=None, legend=None),
                 "tooltip": [{"field": "Bridge Label", "type": "nominal"}]}},
             {"mark": {"type": "text", "dy": -8, "fontSize": 11}, "encoding": {"x": encoding("Step", "ordinal", sort={"field": "Ordinal", "order": "ascending"}), "y": encoding("Bridge High"), "text": {"field": "Bridge Label"}}}]})
+    layer_chart(2, "2.3", [("Instruments", "Instrument"), "Change Per Gallon", "Change Jet"], {
+        "transform": [{"calculate": "datum.Instrument == 'Jet' ? '#1F4E79' : datum.Instrument == 'HO' ? '#2E8B57' : '#B85C38'", "as": "Tint"}],
+        "layer": [
+            {"mark": "bar", "encoding": {"y": encoding("Instrument", "nominal", sort=["Jet", "HO", "WTI"], title=None), "x": encoding("Change Per Gallon", title="Trailing-year change, $/gal"), "color": encoding("Tint", "nominal", scale=None, legend=None), "tooltip": [encoding("Instrument", "nominal"), encoding("Change Per Gallon", format="+.3f")]}},
+            {"mark": {"type": "text", "align": "left", "dx": 5}, "encoding": {"y": encoding("Instrument", "nominal", sort=["Jet", "HO", "WTI"]), "x": encoding("Change Per Gallon"), "text": encoding("Change Per Gallon", format="+.3f")}},
+            {"transform": [{"aggregate": [{"op": "max", "field": "Change Jet", "as": "JetReference"}]}], "mark": {"type": "rule", "color": "#1F4E79", "strokeDash": [5, 3]}, "encoding": {"x": encoding("JetReference"), "tooltip": [encoding("JetReference", title="Jet reference", format=".3f")]}}]})
+    backtest = "hedge_backtest_windows_current"
+    layer_chart(3, "3.1", [(backtest, "window_start"), (backtest, "hedge_won"), (backtest, "is_latest_complete"), "Window Savings"], {
+        "transform": [{"calculate": "datum.hedge_won ? 'Hedge won' : 'Hedge lost'", "as": "Outcome"}],
+        "encoding": {"x": encoding("window_start", "temporal", title="Window start"), "y": encoding("Window Savings", title="Realized average minus forward, $/gal")},
+        "layer": [
+            {"mark": {"type": "bar", "width": 1}, "encoding": {"color": encoding("Outcome", "nominal", scale={"domain": ["Hedge won", "Hedge lost"], "range": ["#1F4E79", "#B85C38"]}, legend={"orient": "top", "title": None}), "tooltip": [encoding("window_start", "temporal"), encoding("Window Savings", format="+.3f"), encoding("Outcome", "nominal")]}},
+            {"transform": [{"filter": "datum.is_latest_complete"}], "mark": {"type": "point", "shape": "diamond", "filled": True, "size": 80, "color": "#E0A100", "stroke": "#172B3A"}},
+            {"transform": [{"filter": "datum.is_latest_complete"}], "mark": {"type": "text", "align": "right", "dy": -13}, "encoding": {"text": encoding("Window Savings", format="+.3f")}}]})
+    layer_chart(3, "3.2", [(backtest, "hedge_ratio"), "Mean Overrun B", "P95 Overrun B"], {
+        "encoding": {"x": encoding("Mean Overrun B", title="Mean budget overrun, $B", scale={"zero": False}), "y": encoding("P95 Overrun B", title="P95 budget overrun, $B", scale={"zero": False})},
+        "layer": [
+            {"mark": {"type": "point", "filled": True, "size": 100, "stroke": "#172B3A"}, "encoding": {"color": encoding("hedge_ratio", scale={"domain": [0, .8], "range": ["#DCEAF4", "#08519C"]}, legend=None), "tooltip": [encoding("hedge_ratio", format=".0%"), encoding("Mean Overrun B", format=".3f"), encoding("P95 Overrun B", format=".3f")]}},
+            {"mark": {"type": "text", "dy": -13}, "encoding": {"text": encoding("hedge_ratio", format=".0%")}}]})
+    layer_chart(5, "5.3", [("v_hedge_sensitivity", "hedge_ratio"), ("v_hedge_sensitivity", "price_change_pct"), "Sensitivity Difference B"], {
+        "transform": [{"joinaggregate": [{"op": "min", "field": "Sensitivity Difference B", "as": "MinCost"}, {"op": "max", "field": "Sensitivity Difference B", "as": "MaxCost"}]},
+                      {"calculate": "datum['Sensitivity Difference B'] / max(abs(datum.MinCost),abs(datum.MaxCost),1e-12)", "as": "Normalized"}],
+        "encoding": {"x": encoding("price_change_pct", "ordinal", title="Spot price shock", axis={"labelAngle": 0, "labelExpr": "datum.label + '%'"}), "y": encoding("hedge_ratio", "ordinal", title="Hedge ratio", axis={"format": ".0%"})},
+        "layer": [
+            {"mark": {"type": "rect", "stroke": "#FFFFFF"}, "encoding": {"color": encoding("Normalized", scale={"domain": [-1, 0, 1], "range": ["#1F4E79", "#FFFFFF", "#B85C38"], "interpolate": "rgb"}, legend=None), "tooltip": [encoding("hedge_ratio", format=".0%"), encoding("price_change_pct"), encoding("Sensitivity Difference B", format="+.2f")]}},
+            {"mark": {"type": "text", "fontSize": 12}, "encoding": {"text": encoding("Sensitivity Difference B", format="+.2f"), "color": {"condition": {"test": "abs(datum.Normalized) > 0.65", "value": "#FFFFFF"}, "value": "#172B3A"}}}]})
     layer_chart(4, "4.1", [(h, "week_ending"), "MU", "SIGMA", "Mu IQR Low", "Mu IQR High", (h, "is_current")], {
         "resolve": {"scale": {"y": "independent"}}, "layer": [
             {"layer": [
@@ -411,17 +451,21 @@ the certified visual from AppSource; there is no vendored executable or credenti
             {"mark": {"type": "line", "color": "#1F4E79", "strokeWidth": 2}, "encoding": {"y": encoding("Fan Median"), "tooltip": [encoding("Fan Median", format=".3f"), encoding("Fan P05", format=".3f"), encoding("Fan P95", format=".3f")]}},
             *[{"mark": {"type": "line", "color": tint, "strokeDash": dash}, "encoding": {"y": encoding(name), "tooltip": [encoding(name, format=".3f")]}} for name, tint, dash in [
                 ("Latest Jet", "#333333", [2, 2]), ("Forward Price", "#B85C38", [6, 2, 2, 2]), ("Historical P95 Price", "#2E8B57", [6, 3])]]]})
-    layer_chart(5, "5.1", [("cost_histogram_current", c) for c in ["bin_lower_cost_b", "bin_upper_cost_b", "hedge_ratio"]]+["Histogram Paths", "Spot Run Rate B", "Mean Cost B 0", "P95 Cost B 0", "CVaR95 B 0", "Mean Cost B 80", "P95 Cost B 80", "CVaR95 B 80"], {
+    rule_names = ["Spot Run Rate B", "Mean Cost B 0", "P95 Cost B 0", "CVaR95 B 0", "Mean Cost B 80", "P95 Cost B 80", "CVaR95 B 80"]
+    coverage_color = encoding("Coverage", "nominal", scale={"domain": ["0% cover", "80% cover", "Spot run-rate"], "range": ["#B85C38", "#1F4E79", "#333333"]}, legend={"orient": "bottom", "title": None})
+    layer_chart(5, "5.1", [("cost_histogram_current", c) for c in ["bin_lower_cost_b", "bin_upper_cost_b", "hedge_ratio"]]+["Histogram Paths"]+rule_names, {
         "transform": [{"filter": "datum.hedge_ratio == 0 || datum.hedge_ratio == 0.8"}], "layer": [
             {"mark": {"type": "bar", "opacity": .4, "binSpacing": 0}, "encoding": {
                 "x": encoding("bin_lower_cost_b", bin="binned", title="Annual cost, $B"), "x2": {"field": "bin_upper_cost_b"},
-                "y": encoding("Histogram Paths", title="Paths per bin"), "color": encoding("hedge_ratio", "nominal", scale={"domain": [0, .8], "range": ["#B85C38", "#1F4E79"]}, title="Coverage"),
-                "tooltip": [encoding("hedge_ratio", format=".0%"), encoding("bin_lower_cost_b", format=".2f"), encoding("Histogram Paths")] }},
-            *[{"transform": [{"aggregate": [{"op": "max", "field": name, "as": "rule_"+name}]}], "mark": {"type": "rule", "color": tint, "strokeDash": dash},
-                "encoding": {"x": encoding("rule_"+name), "tooltip": [{"field": "rule_"+name, "type": "quantitative", "title": name, "format": ".2f"}]}}
-              for name, tint, dash in [("Spot Run Rate B", "#333333", [3, 2, 1, 2]),
-                 ("Mean Cost B 0", "#B85C38", [1, 0]), ("P95 Cost B 0", "#B85C38", [5, 3]), ("CVaR95 B 0", "#B85C38", [2, 2]),
-                 ("Mean Cost B 80", "#1F4E79", [1, 0]), ("P95 Cost B 80", "#1F4E79", [5, 3]), ("CVaR95 B 80", "#1F4E79", [2, 2])]]]})
+                "y": encoding("Histogram Paths", title="Paths per bin"), "color": coverage_color,
+                "tooltip": [encoding("hedge_ratio", format=".0%"), encoding("bin_lower_cost_b", format=".2f"), encoding("Histogram Paths")] }, "transform": [{"calculate": "format(datum.hedge_ratio,'.0%') + ' cover'", "as": "Coverage"}]},
+            {"transform": [{"aggregate": [{"op": "max", "field": name, "as": "stat_"+name} for name in rule_names]}, {"fold": ["stat_"+name for name in rule_names], "as": ["Key", "Cost"]},
+                {"calculate": "replace(datum.Key,'stat_','')", "as": "Rule"},
+                {"calculate": "datum.Rule == 'Spot Run Rate B' ? 'Spot run-rate' : substring(datum.Rule,length(datum.Rule)-2) == '80' ? '80% cover' : '0% cover'", "as": "Coverage"},
+                {"calculate": "datum.Rule == 'Spot Run Rate B' ? 'Spot run-rate' : indexof(datum.Rule,'Mean') == 0 ? 'Mean' : indexof(datum.Rule,'P95') == 0 ? 'P95' : 'CVaR95'", "as": "Statistic"}],
+             "mark": {"type": "rule"}, "encoding": {"x": encoding("Cost"), "color": coverage_color,
+                "strokeDash": encoding("Statistic", "nominal", scale={"domain": ["Mean", "P95", "CVaR95", "Spot run-rate"], "range": [[1, 0], [5, 3], [2, 2], [3, 2, 1, 2]]}, legend={"orient": "bottom", "title": None}),
+                "tooltip": [encoding("Rule", "nominal"), encoding("Cost", format=".2f")]}}]})
 
 
 def decorate_report():
@@ -436,16 +480,17 @@ def decorate_report():
     def color(value):
         return {"solid": {"color": literal(value)}}
     def lines(names):
-        return [{"selector": {"metadata": "_Measures."+name}, "properties": {
+        return [{"selector": {"id": str(i)}, "properties": {
             "show": literal(True), "value": dynamic(name), "lineColor": color(tint),
-            "style": literal("dashed"), "dataLabelShow": literal(True), "displayName": literal(name),
-            "dataLabelText": literal("NameAndValue"), "dataLabelDecimalPoints": literal(2)}} for name, tint in names]
+            "style": literal("dashed"), "position": literal("front"), "transparency": literal(0),
+            "dataLabelShow": literal(True), "displayName": literal(name),
+            "dataLabelText": literal("ValueAndName"), "dataLabelDecimalPoints": literal(2)}} for i, (name, tint) in enumerate(names)]
     def ref(page, number, names, axis="y1AxisReferenceLine"):
         change(page, number, lambda v: v["objects"].update({axis: lines(names)}))
     ref(1, "1.1", [("Crack Historical Mean", "#777777")])
     ref(2, "2.2", [("Effective Benchmark", "#555555")])
-    ref(2, "2.3", [("Change Jet", "#1F4E79")], "xAxisReferenceLine")
-    ref(4, "4.2", [("Nominal Coverage", "#555555")], "xAxisReferenceLine")
+    ref(2, "2.3", [("Change Jet", "#1F4E79")])
+    ref(4, "4.2", [("Nominal Coverage", "#555555")])
     ref(4, "4.3", [("Latest Jet", "#333333"), ("Forward Price", "#B85C38"), ("Historical P95 Price", "#2E8B57")])
     ref(5, "5.1", [("Spot Run Rate B", "#333333"), ("Mean Cost B 0", "#B85C38"),
                       ("P95 Cost B 0", "#B85C38"), ("CVaR95 B 0", "#B85C38"),
@@ -467,16 +512,17 @@ def decorate_report():
             "fontColor": {"solid": {"color": dynamic("Sensitivity Font")}}, "labelPrecision": literal(2)}}],
         "subTotals": [{"properties": {"rowSubtotals": literal(False), "columnSubtotals": literal(False)}}]}))
     change(2, "2.2", lambda v: v["objects"].update({
-        "dataPoint": [{"properties": {"fill": {"solid": {"color": dynamic("Proxy Color")}}}}],
-        "labels": [{"properties": {"show": literal(True), "enableTitleDataLabel": literal(True), "titleContentType": literal("Series name"), "fontSize": literal(8)}}]}))
+        "dataPoint": [{"selector": {"metadata": "_Measures."+name}, "properties": {"fill": color(tint)}} for name, tint in [("HO R2", "#2E8B57"), ("WTI R2", "#B85C38"), ("BRENT R2", "#7A6C9E")]],
+        "labels": [{"properties": {"show": literal(False)}}]}))
     change(3, "3.2", lambda v: v["objects"].update({
         "dataPoint": [{"properties": {"fill": {"solid": {"color": dynamic("Ratio Color")}}}}],
         "categoryLabels": [{"properties": {"show": literal(True)}}]}))
     for page in range(1, 6):
         def header_style(v):
-            v["objects"].update({"labels": [{"properties": {"fontSize": literal(11), "color": {"solid": {"color": dynamic("Readiness Color")}}}}],
+            v["objects"].update({"labels": [{"properties": {"show": literal(False), "fontSize": literal(11), "color": {"solid": {"color": dynamic("Readiness Color")}}}}],
                                  "categoryLabels": [{"properties": {"show": literal(False)}}]})
-            v["visualContainerObjects"]["title"][0]["properties"]["fontSize"] = literal(19)
+            v["visualContainerObjects"]["title"][0]["properties"]["fontSize"] = literal(15)
+            v["visualContainerObjects"]["subTitle"][0]["properties"]["show"] = literal(False)
             v["visualContainerObjects"]["background"][0]["properties"]["color"] = color("#EAF0F5")
         change(page, f"{page}_header", header_style)
     # Persist a selected scenario, without restricting the slicer's list of choices.
@@ -486,10 +532,11 @@ def decorate_report():
             "Values": [[{"Literal": {"Value": "'80% futures'"}}]]}}}]}}}}]}))
     target = path(3, "3_slicer")
     content = json.loads(target.read_text(encoding="utf-8"))
-    content["position"].update(x=940, y=40, width=320, height=58, z=1)
+    content["position"].update(x=940, y=8, width=320, height=88, z=1)
     content["visual"]["visualContainerObjects"]["title"][0]["properties"]["text"] = dynamic("Scenario Selector")
     content["visual"]["visualContainerObjects"]["subTitle"][0]["properties"]["show"] = literal(False)
     save(target, content)
+    change(1, "1_1_annotation", lambda v: (v["visualContainerObjects"]["subTitle"][0]["properties"].update(show=literal(False)), v["visualContainerObjects"]["title"][0]["properties"].update(fontSize=literal(10))))
     target = path(3, "3_header")
     content = json.loads(target.read_text(encoding="utf-8"))
     content["position"]["width"] = 900
