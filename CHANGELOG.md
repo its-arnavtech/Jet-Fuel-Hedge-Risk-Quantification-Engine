@@ -1,9 +1,9 @@
 # Implementation changelog and handoff
 
-## Current state — 2026-10-10
+## Current state — 2026-10-21
 
 - Active goal: implement the full PDD with a phase → whole-repo audit → GitHub issues → fixes gate after every phase, and deploy medallion data on Databricks Free Edition for Power BI.
-- Current phase: **all four implementation phases complete and audited, merged and pushed to main**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
+- Current phase: **Phase 5 implementation in progress on `phase-5-powerbi-insights`; Phases 1–4 remain complete**. Phase 4 main merge `31b70da`; implementation `30b0238` and CI `38101978789` pass; all #1–#11 closed. User handoff documented in `docs/RELEASE.md`.
 - Start here: `docs/PLAN.md` (tasks and exit criteria), `docs/DECISIONS.md` (PDD corrections), then latest `docs/audits/` report.
 - Repository started with only README and PDD at commit `41efc69`, branch `main`; no pre-existing implementation or AGENTS.md found.
 
@@ -21,9 +21,9 @@
 
 ## Next actions
 
-1. User: connect Power BI Import to guarded Gold views using docs/POWER_BI.md; create the report with supplied Power Query/DAX.
-2. User: record/upload the prepared five-minute Loom walkthrough if needed for the portfolio.
-3. Future maintainer: inspect daily job 1025825966695931 and reporting_readiness for current state; follow RUNBOOK.md on failures or source changes. No unresolved implementation work remains.
+1. Complete current Phase 5 live reconciliation and native Import validation; see docs/audits/phase-05.md.
+2. Verify all 15 storyboards and headline SQL equivalents, close #12–#17 with evidence, push incremental commits and require both CI Python versions before main merge.
+3. Keep Desktop credential entry with the user; authenticate only in the connector dialog. Preserve the user's untracked docs/CODEX_POWERBI_PROMPT.md.
 
 ## Blockers requiring external input
 
@@ -174,3 +174,31 @@ Append dated entries after meaningful implementation/checks, include exact comma
 - Executed walkthrough and all 29 tests, Ruff/compile, UTF-8/credential scan pass. Non-secret evidence committed under docs/evidence; source PDD unchanged.
 - Power BI data-ready notification delivered. Desktop report connection/creation, interactive dashboard rendering and Loom recording are explicitly unperformed external handoff actions. Final implementation release/report in docs/RELEASE.md.
 - Closure commit `b87c5c5`; Phase 4 merged and pushed main as `31b70da`. Main contains all four audited phases; this final handoff entry records the merge without a self-referential commit hash.
+
+### 2026-10-21 — Phase 5 foundation and environment checks
+
+- Read all requested baseline source/docs/SQL before implementation; created `phase-5-powerbi-insights` from main. Preserved pre-existing untracked `docs/CODEX_POWERBI_PROMPT.md`.
+- Added pure pandas/NumPy insight calculations and eight tests for no look-ahead, future purchases excluding S0, missing weeks, calendar correlations, percentile ties and explicit SeedSequence(base_seed,window_index,path_id) equivalence. Production simulation code/defaults unchanged.
+- Added append-only insight facts, STARTED/SUCCESS registry, per-table quality/count guards, additive readiness flag and sequential refresh task immediately after Silver. Chosen execution: serverless mapInPandas, 10,000 paths/window/model.
+- Commands: `.venv\Scripts\python -m unittest discover -s tests -p test_insights.py -v` passed eight tests. `uv add --optional dev 'jsonschema>=4.23,<5' 'matplotlib>=3.8,<4'` updated lock. Initial `uv run` failed on sandbox cache ACLs; use workspace-local UV_CACHE_DIR. Initial `git switch -c phase-5-powerbi-insights main` needed host permissions for .git; host rerun passed.
+- `gh repo view --json nameWithOwner` passed. Configured Databricks SQL rejected query: "The request could not be processed by the warehouse." Warehouse is STOPPED; explicit start rejected: "Cannot create the resource, please try again later." Live validation pending; no fabricated success.
+- Power BI Desktop Store package 2.159.883.0 is installed (not in standard Program Files location); native open/refresh validation remains pending.
+
+### 2026-10-21 — Phase 5 independent audit and report source
+
+- Filed [#12](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/12) (price levels vs returns), [#13](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/13) (model validation/publication) and [#14](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/14) (zero-window entropy).
+- `.venv\Scripts\python scripts/deploy_phase5.py` imported additive versioned source but job submission failed: "Triggering new runs for organization 7474649671460509 is currently disabled temporarily." User is restoring compute. Existing tables were not overwritten; deployment/live gate remains pending.
+- `scripts/build_local_insights.py` completed all 770 × 3 walk-forward rows at 10K paths, using actual local Silver through 2026-10-06, plus local fixture costs and a real 100K-path histogram. These are explicitly offline development extracts, not verified live Gold.
+- Independent `scripts/insights_oracle.py` found a first-window-only RNG mismatch: composing window zero into an integer dropped the middle entropy word. Fixed `window_path_ids()` to encode window+path*2^32; explicit tests verify SeedSequence([base,0,path]) and repartition invariance. Recomputing independent evidence before closure. Also fixed a verifier Series.skew attribute collision (indexing the column explicitly).
+- `scripts/build_powerbi.py` generates five PBIR pages and a 22-table TMDL Import model with 143 measures. `scripts/verify_powerbi_contract.py` passed 35 JSON schemas and 141 field bindings. The Microsoft published embedded schema has a dotted/hyphenated filename alias; validator resolves the published alias without changing schema contents.
+- `scripts/verify_tmdl.ps1 -AssemblyFolder .tmp/tom` parsed 22 tables/six one-way relationships using official Microsoft.AnalysisServices 19.118.3 TOM from NuGet. Installed Store DLL access was denied; no file permissions changed. Native app control approval timed out before opening the project; no Desktop rendering or DAX execution claimed.
+- Exact local checks with workspace-local TEMP/TMP/UV_CACHE_DIR: `uv run python -m unittest discover -s tests -v` (37 pass), `uv run ruff check .` and `uv run python -m compileall -q src scripts notebooks` pass. Initial all-tests attempt used sandbox default temp and two existing filesystem tests hit WinError 5; documented runbook workaround passed.
+
+### 2026-10-21 — Phase 5 deployment and visual verification
+
+- Standalone `scripts/deploy_phase5.py` run 809389860354170 SUCCESS in 285.986s, serverless mapInPandas, source hash 65d112a563671fbf58492720a8dde92d9ee64b27852c8153db37432047fed257. Later inclusive-boundary correlation fix is in the new managed source.
+- `scripts/deploy_refresh_job.py --enable-schedule --run-now` deployed seven sequential tasks, preserved enabled daily schedule, and submitted 906039088188452. Insight source d556b2128f9ddfbaccae32cd21c0d9ec628f0bd30fb2aad4283beb291ef6ab96; capture, Silver, insights and operations have succeeded, later tasks pending at this entry.
+- Independent offline verification passes all seven tables and every one of 770×3 Monte Carlo rows, to 1e-9. RANGE must include the observation exactly 90 days earlier; added boundary test, reproducing WTI 0.4955168161 and HO 0.9122025614. First open-left calculation gave 0.4854/0.9043 and was corrected, rather than changing Silver.
+- Disclosed expected-value deviations: SQL full-sample minimum-tie ranks give crack 99.52% (supplied approximate 99.3%); annual Brent R² 0.57895 under explicit missing/nonpositive-week rejection; all 822 calibration ranks give μ 94.3% / σ 83.7% and median μ 9.1%, whereas the supplied 770 completed-outcome subset differs. EWM MC coverage 74.55%, within 0.5 pp of supplied 74.2%; high-drift miss rate 25.18% matches.
+- Filed visual QA [#15](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/15): corrected a development Windows ANSI transcode, added mojibake rejection, disabled matplotlib math parsing of currency labels, wrapped long titles to canvas. First renderer attempt failed at currency mathtext; rerender passed 15 units. Three exact PBIR layered specs compile using vl-convert; an aggregated-rule alias collision was found visually and fixed with unique aliases.
+- Added certified Deneb bindings for real bands/histogram layers following its published PBIR guide, without vendoring executable code. Added CVD preview and redundant series labels/markers/dashes. Local checks now 38 tests + Ruff/compile pass. Model source has 152 measures and published-schema/binding validation; actual Desktop parsing/open is being attempted after native access became available.

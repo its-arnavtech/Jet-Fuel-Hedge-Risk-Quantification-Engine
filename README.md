@@ -2,7 +2,7 @@
 
 Actual EIA prices → revision-aware medallion data → synthetic route analytics → 100,000 distributed GBM paths → Power BI-ready hedge risk on **Databricks Free Edition**.
 
-The complete [PDD](pdd_airline_fuel_hedge_engine.docx) was reviewed before implementation. All four implementation phases are complete and audited; see the [release and handoff](docs/RELEASE.md). Start with the [plan](docs/PLAN.md), [handoff changelog](CHANGELOG.md), [PDD corrections](docs/DECISIONS.md), [audits](docs/audits) and [runbook](docs/RUNBOOK.md). Phase findings are filed on GitHub and resolved before advancing.
+The complete [PDD](pdd_airline_fuel_hedge_engine.docx) was reviewed before implementation. Phases 1–4 are complete and audited; Phase 5 evidence and release status are tracked separately in docs/audits/phase-05.md; see the [release and handoff](docs/RELEASE.md). Start with the [plan](docs/PLAN.md), [handoff changelog](CHANGELOG.md), [PDD corrections](docs/DECISIONS.md), [audits](docs/audits) and [runbook](docs/RUNBOOK.md). Phase findings are filed on GitHub and resolved before advancing.
 
 ## Architecture and provenance
 
@@ -41,6 +41,25 @@ Full distributed job `386315486361989` succeeded. Simulation `e35d376c-398b-4bea
 ![Verified fan, distribution, tail risk and sensitivity](dashboard/plots/risk_overview.png)
 
 EWM annual arithmetic drift is 0.92914 and volatility 0.60505, using 52 weekly returns from 2025-10-03 through 2026-10-02. Latest daily S0 is from 2026-10-06. High historical drift drives broad uncertainty and high simulated costs; this extrapolation is not a forecast of airline spending. [Exact results/provenance](dashboard/plots/provenance.json) are committed.
+
+## What we learned — refreshed measures, not fixed forecasts
+
+Phase 5 supplies a five-page [Power BI Project](powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip), [15 insight storyboards](dashboard/plots/insights) and an independent [verification workflow](docs/POWER_BI.md). The report recomputes its titles from guarded current facts. The following findings describe the 2026-10-06 development extract; current live verification and source/run IDs supersede these numbers after refresh. Routes and positions are synthetic; annual budget costs use a separate 1.5B-gallon reference carrier. GBM is not a forecast.
+
+- F1: crack expansion supplied 63.9% of the +$2.224/gal trailing-year jet move; the crack was about 4× its prior-years mean.
+- F2: WTI's price-level correlation was 0.941, while paired daily-return correlation was 0.496; heating oil's was 0.912.
+- F3: heating oil out-tracked WTI in 15 of 17 years; WTI reached weekly-return R²≥0.80 in one year.
+- F4: WTI-equivalent rose $0.804/gal versus jet's $2.224; heating oil rose $2.348.
+- F5: the forward beat spot in 41.5% of 822 windows. At 80% cover, historical P95 budget overrun fell $1.21B→$0.34B, with +$0.09B/year mean cost.
+- F6: the latest complete saving ranked at 98.3% of rolling windows; the fixture's unusually profitable year is not a typical-year expectation.
+- F7: current drift ranked at 94.3% of all 822 valid calibrations. Only 770 have completed forward outcomes; the supplied narrower benchmark gives different ranks/medians (DECISIONS #21).
+- F8: EWM-drift bands covered 74.5% of realized purchase averages versus nominal 90%; 25.2% of high-drift outcomes fell below P05. Zero/risk-free drift covered about 84%/83%.
+- F9: three-sigma weekly moves occurred 5.5× the normal-implied rate; excess kurtosis was 7.9.
+- F10: 80% cover lowered model mean cost $3.24B but raised historical mean cost $0.09B. The model's drift–carry gap drives its apparent saving.
+- F11: simplified forward carry creates a 4.1% break-even price rise; an 80% hedge adds $1.78B under a −30% shock and saves $2.39B under +50%.
+- F12: three daily B767 departures consumed 45.3% of the synthetic fixture's scheduled gallons.
+
+[Publication and interpretation decisions](docs/DECISIONS.md) define inclusive return windows, missing-price/week handling, full-sample ranks, overlapping-window dependence and nonadditive measures. Do not sum percentile/risk/correlation rows or present affine VaR reduction as an empirical discovery.
 
 ## Mathematics and interpretation
 
@@ -89,7 +108,7 @@ Twenty-nine tests cover revisions, units, calendars, integrity/replay, synthetic
 
 [Databricks dashboard](https://dbc-236f6036-39b4.cloud.databricks.com/dashboardsv3/01f1c50e22881d6ea243de94f87b3f46). Definition/query checks pass; browser rendering remains unverified because the console restricts automated control. The exported chart above was visually inspected.
 
-Power BI hostname: `dbc-236f6036-39b4.cloud.databricks.com`; HTTP path: `/sql/1.0/warehouses/e4f1304cb2d303ea`; catalog `workspace`; schema `jet_fuel_gold`. Start with Import and guarded `*_current` views. See [connection/data contract](docs/POWER_BI.md), [Power Query function](powerbi/GoldTable.pq) and [DAX starter](powerbi/measures.dax). Power BI Desktop connection/report creation are user handoff actions.
+Power BI hostname: `dbc-236f6036-39b4.cloud.databricks.com`; HTTP path: `/sql/1.0/warehouses/e4f1304cb2d303ea`; catalog `workspace`; schema `jet_fuel_gold`. Start with Import and guarded `*_current` views. See [connection/data contract](docs/POWER_BI.md), [Power Query function](powerbi/GoldTable.pq) and [DAX starter](powerbi/measures.dax). A PBIP/TMDL/PBIR report is now supplied; native authentication, refresh, DAX execution and page screenshots follow the explicit checklist in docs/POWER_BI.md.
 
 The managed job recaptures EIA, rebuilds Silver, generates current-date synthetic fixtures, rebuilds analytics, simulates risk and publishes reporting guards sequentially. One concurrent run, bounded timeouts and source/run lineage protect publication. Free Edition quotas may interrupt compute. Require readiness before Import refresh; unavailable rows mean stale/incomplete publication, not zero risk. [Five-minute demo script](docs/DEMO.md) is ready; Loom recording/upload requires the user's recorder/account.
 

@@ -1,0 +1,85 @@
+table 'hedge_backtest_windows_current'
+
+	column 'window_start'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: window_start
+		formatString: yyyy-MM-dd
+
+	column 'hedge_ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_ratio
+		formatString: 0.0%
+
+	column 's0'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: s0
+		formatString: 0.000
+
+	column 'forward'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: forward
+		formatString: 0.000
+
+	column 'realized_avg'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: realized_avg
+		formatString: 0.000
+
+	column 'savings_per_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: savings_per_gal
+		formatString: 0.000
+
+	column 'hedge_won'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: hedge_won
+
+	column 'budget_overrun_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: budget_overrun_b
+		formatString: 0.00
+
+	column 'is_latest_complete'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_latest_complete
+
+	column 'window_pct_rank'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: window_pct_rank
+		formatString: 0.000
+
+	column 'insights_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: insights_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	column 'created_ts'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: created_ts
+		formatString: yyyy-MM-dd
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'hedge_backtest_windows_current' = m
+		mode: import
+		source =
+			GoldTable("hedge_backtest_windows_current")

@@ -6,8 +6,8 @@ let
         "dbc-236f6036-39b4.cloud.databricks.com",
         "/sql/1.0/warehouses/e4f1304cb2d303ea",
         [Catalog="workspace", Database="jet_fuel_gold", EnableAutomaticProxyDiscovery=null]),
-    Catalog = Source{[Name="workspace",Kind="Database"]}[Data],
-    Schema = Catalog{[Name="jet_fuel_gold",Kind="Schema"]}[Data],
+    Catalog = Source{[Name="workspace"]}[Data],
+    Schema = Catalog{[Name="jet_fuel_gold"]}[Data],
     Matches = Table.SelectRows(Schema, each [Name] = TableName),
     Result = if Table.RowCount(Matches) <> 1 then error "Gold table/view not found uniquely" else Matches{0}[Data]
 in

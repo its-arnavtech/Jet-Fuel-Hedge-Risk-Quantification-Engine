@@ -11,7 +11,8 @@ from fuel_hedge.config import load_env
 def main():
     load_env()
     files=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard'],text=True).splitlines()
-    extensions={'.py','.md','.json','.ipynb','.sql','.toml','.lock','.yml','.yaml','.pq','.dax'}
+    extensions={'.py','.md','.json','.ipynb','.sql','.toml','.lock','.yml','.yaml','.pq','.dax',
+                '.tmdl','.pbip','.pbir','.pbism','.ps1'}
     secrets=[os.environ.get(name,'').encode() for name in ['EIA_API_KEY','DATABRICKS_TOKEN']]
     checked=0
     for name in files:
@@ -22,7 +23,9 @@ def main():
         if any(secret and secret in raw for secret in secrets):
             raise ValueError('Configured credential in publishable file: '+name)
         if path.suffix in extensions or path.name in {'.env.example','.gitignore'}:
-            raw.decode('utf-8')
+            text = raw.decode('utf-8')
+            if re.search(r'\u00e2\u20ac|\u00c3\u00a2|\u00c2[\u00b0-\u00bf]', text):
+                raise ValueError('Possible Windows ANSI/UTF-8 mojibake in publishable file: '+name)
             if re.search(rb'dapi[0-9a-f]{32}\b',raw):
                 raise ValueError('Possible Databricks token in publishable file: '+name)
             checked+=1

@@ -1,0 +1,14 @@
+// Run in Desktop DAX query view after a successful Import refresh.
+// Each row is a legitimate grain. Never total the R2, correlation or percentile columns.
+EVALUATE SUMMARIZECOLUMNS('Hedge Scenario'[scenario_label],
+ "Mean Cost B",[Mean Cost B],"P95 Cost B",[P95 Cost B],"CVaR95 B",[CVaR95 B],
+ "Fuel Gallons",[Fuel Gallons],"Unhedged Cost USD",[Unhedged Cost USD],"Fuel Cost USD",[Fuel Cost USD])
+
+EVALUATE SUMMARIZECOLUMNS(proxy_effectiveness_annual_current[year],proxy_effectiveness_annual_current[proxy],
+ "R2",[Proxy R2],"Beta",[Proxy Beta])
+
+EVALUATE SUMMARIZECOLUMNS(hedge_backtest_windows_current[hedge_ratio],
+ "Mean Overrun B",[Mean Overrun B],"P95 Overrun B",[P95 Overrun B])
+
+EVALUATE SUMMARIZECOLUMNS(forecast_backtest_current[drift_model],
+ "Coverage",[Band Coverage],"Below P05",[Below P05],"High Drift Below P05",[High Drift Below P05],"Log RMSE",[Log RMSE])

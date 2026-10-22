@@ -1,0 +1,37 @@
+table 'dim_route'
+
+	column 'route_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: route_id
+
+	column 'origin'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: origin
+
+	column 'destination'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: destination
+
+	column 'aircraft_type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: aircraft_type
+
+	column 'avg_fuel_burn_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: avg_fuel_burn_gal
+		formatString: 0.000
+
+	column 'daily_frequencies'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: daily_frequencies
+
+	partition 'dim_route' = m
+		mode: import
+		source =
+			GoldTable("dim_route")

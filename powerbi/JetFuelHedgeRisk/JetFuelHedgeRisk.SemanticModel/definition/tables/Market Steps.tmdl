@@ -1,0 +1,17 @@
+table 'Market Steps'
+
+	column 'Step'
+		sortByColumn: Ordinal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Step]
+
+	column 'Ordinal'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: [Ordinal]
+
+	partition 'Market Steps' = calculated
+		mode: import
+		source =
+			DATATABLE("Step",STRING,"Ordinal",INTEGER,{{"Start",0},{"WTI change",1},{"Crack change",2},{"Latest",3}})

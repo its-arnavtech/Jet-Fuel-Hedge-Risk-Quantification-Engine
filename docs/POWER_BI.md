@@ -46,15 +46,62 @@ Import `latest_simulation_run` as a one-row run selector; filter `risk_metrics`,
 
 `risk_metrics` grain: simulation ID × hedge ratio. `price_fan`: run × weekly step. `cost_histogram`: run × ratio × occupied bin; sum `path_count`, not bin boundaries. `simulation_quality`: one row per completed candidate run. Import aggregate Gold rather than all raw paths. Incremental VaR is P95 minus mean; CVaR is the mean at/above absolute P95. Both are USD billions, not percentages. The 80% hedge has exactly 80% incremental VaR reduction under this common-path affine model; this identity does not establish a real-world optimal hedge.
 
-## Guarded Import starter and report layout
+## Phase 5 project and model
 
-Prefer `route_fuel_costs_current`, `risk_metrics_current`, `price_fan_current`, `cost_histogram_current` plus `reporting_readiness`. The views fail closed when publication/source/quality IDs do not agree. Before refreshing Import, query readiness and require both flags true; an empty view indicates unavailable data, not zero cost/risk. Power BI imports multiple tables separately, so schedule Import after the full job succeeds and avoid concurrent manual publishers. Source data can lag today's date; display `price_as_of` prominently.
+Open `powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip`. It references the adjacent `JetFuelHedgeRisk.SemanticModel` (TMDL) and `JetFuelHedgeRisk.Report` (PBIR). Rebuild source with `uv run python scripts/build_powerbi.py`; validate JSON/bindings with `uv run python scripts/verify_powerbi_contract.py`. Theme: `JetFuelHedgeRisk.Report/StaticResources/RegisteredResources/jet_fuel_theme.json`. Published schemas and a real Microsoft TOM serializer check are independent of Desktop rendering.
 
-1. Create a blank query, paste `powerbi/GoldTable.pq` in Advanced Editor, and name it `GoldTable`. It uses the documented AWS OAuth entry point `DatabricksMultiCloud.Catalogs`; authenticate through the connector dialog. For PAT-based access, use the Azure Databricks connector's generated source and substitute that source in the function. Do not embed credentials in M.
-2. Add queries such as `= GoldTable("risk_metrics_current")`. Import the current facts, readiness and `dim_route`, `dim_month`, `dim_hedge_scenario`. Rename the route fact **Route Costs**, risk fact **Risk Metrics**, and scenario dimension **Hedge Scenario** to match the DAX starter.
-3. Connect dimensions one-to-many, single direction. Scenario ID relates to route fact. For risk, relate `Hedge Scenario.hedge_ratio` to `Risk Metrics.hedge_ratio` (unique in both current tables); keep filtering from dimension to fact. Do not create bidirectional fact-to-fact relationships.
-4. Add measures from `powerbi/measures.dax` individually. Use a single-select scenario slicer. Mean/P95/VaR/CVaR return blank when several scenarios are selected; do not sum percentiles. Independent gallons/unhedged totals explicitly remove scenario filters to avoid fivefold duplication.
-5. Page 1: source date/readiness cards, historical price/correlation trend, route costs and MTM table. Page 2: mean/P95/VaR/CVaR cards, coverage comparison, fan lines/bands and histogram. Page 3: sensitivity matrix (shock × coverage), synthetic fleet mix and assumptions text.
+The credential-free GoldTable function remains the sole Databricks data-access path. Every fact imports a guarded current view; existing MTM/sensitivity queries are additionally gated on analytics readiness. Import mode only. Never add a credential to M, TMDL, PBIR or a screenshot. `_Measures` contains folders Headlines, Market, Proxy, Backtest, Simulation, Scenario and Status. The old `powerbi/measures.dax` meanings are retained, including scenario-safe gallons/unhedged totals and nonadditive SELECTEDVALUE risk metrics. Daily facts relate to dim_date; route facts relate to route/month/scenario, risk to scenario ratio. All relationships filter dimension→fact in one direction. Windows/calibrations/backtest/tails stay disconnected.
 
-The Power Query source shape and DAX column names were checked against official documentation/live schemas. Power BI Desktop parsing, authentication and report rendering have not been executed by the agent; connect/import in Desktop as the handoff validation. The published Databricks definition and dataset queries are separately verified.
+| Additional guarded view | Grain / purpose |
+| --- | --- |
+| market_decomposition_current; alias v_market_decomposition | Price date; converted crude, crack and full-sample price ranks |
+| proxy_return_correlation_current | Price date; inclusive 90-day calendar RANGE log-return correlations and distinctly named legacy price-level correlation |
+| proxy_effectiveness_annual_current | Year or ALL × proxy; paired weekly correlation/R²/beta and sample count |
+| hedge_backtest_windows_current | Weekly start × ratio; 52 future purchases excluding S0, savings/rank and reference-carrier overrun |
+| calibration_history_current | Week ending; unchanged production EWM calibration and full-history ranks |
+| forecast_backtest_current | Window start × drift model; 10K-path average-price bands and realized outcomes |
+| return_tail_frequency_current | Threshold 2/3/4; observed/normal tail frequencies, skew and excess kurtosis |
+| insights_runs; insights_quality | Append-only publication registry and seven positive per-table count expectations |
 
+All facts carry insight/source IDs, created timestamp and a source flag. Historical prices/validation are not synthetic operations. Reference-carrier costs are assumptions about volume; route/position views are explicitly synthetic fixtures. The full-history calibration chart has 822 calibrations, while only 770 can have a complete realized year; see DECISIONS #21 for the disclosed departure from the supplied completed-window benchmark.
+
+The five 1280×720 pages contain 15 narrative units (some contain two chart/table panels):
+
+1. What drove the jet fuel spike: monthly crude/crack stack and exact daily bridge.
+2. Which instrument tracks jet: price-level vs return correlation, annual proxy R²/beta, trailing-year moves and synthetic linear marks.
+3. Did hedging pay: complete rolling windows, reference-carrier insurance frontier, scenario-selected synthetic route counterfactual and B767 concentration.
+4. How much to trust GBM: calibration extremes, walk-forward band coverage/below-P05 regimes, actual fan bands and observed fat tails.
+5. Read model hedge decisions correctly: 0%/80% overlaid histogram/tail rules, model-vs-history mean change and signed sensitivity heatmap. VaR-reduction identity is a note, never a chart.
+
+Three layered units use the certified Deneb AppSource visual. Desktop must allow the certified visual to load. Their exact embedded Vega-Lite specs are schema-validated and can be compiled/rendered with `scripts/render_powerbi_specs.py`; those previews are **not Desktop screenshots**. All headline/subtitle numbers and alt text bind to DAX measures over current views. Titles use signed changes or comparator branches, so refresh cannot silently preserve a reversed empirical claim. `powerbi/tests/headlines.dax` and `headline_numbers.dax` are query-view tests; `headline_numbers.sql` checks the warehouse equivalents against independent Python evidence with `scripts/verify_powerbi_contract.py --live`. SQL checks do not execute DAX.
+
+## Refresh and verification sequence
+
+Managed refresh order is **capture → Silver → Phase 5 insights → operations fixture → analytics Gold → production risk → reporting contract → Power BI Import**. One concurrent managed run; do not start manual publishers concurrently. Standalone initial deployment uses `scripts/deploy_phase5.py`, waits for the printed job SUCCESS, then `scripts/verify_phase5.py`. The managed job deployer publishes the next sequential task with a content-addressed notebook path.
+
+Require analytics_ready, risk_ready **and insights_ready** true before Import. Guarded views return empty when source/registry/counts disagree; do not replace blanks with zero. Separate Import queries are not transactional, so refresh only after complete job success. The header displays source price date, simulation completion, readiness and run ID in the tooltip. Historical EIA observation lag is visible; it is not erased by a successful pipeline timestamp.
+
+```powershell
+uv run python scripts/deploy_phase5.py
+# Wait for the printed job to reach SUCCESS.
+uv run python scripts/verify_phase5.py
+uv run python scripts/verify_reporting.py
+uv run python scripts/verify_powerbi_contract.py --live
+uv run python scripts/render_insight_storyboard.py
+uv run python scripts/render_powerbi_specs.py
+```
+
+Offline development is explicit: `scripts/build_local_insights.py`, `scripts/verify_phase5.py --offline`, then both renderers with `--offline`. Evidence and plot badges clearly distinguish these from live Gold. Independent MC verification caches are keyed by complete calibration/window input plus oracle function source; changed inputs require new work.
+
+## Desktop handoff and native validation checklist
+
+Power BI Desktop Store version 2.159.883.0 is installed. Native control approval timed out before project open during the initial attempt. **No Desktop report open, authentication, Import refresh, DAX execution or five-page screenshots have been claimed.** Follow these steps if native access remains unavailable:
+
+1. Finish live publication and require all three readiness flags; run the verifiers above.
+2. Open `powerbi/JetFuelHedgeRisk/JetFuelHedgeRisk.pbip` in Desktop. Enable supported project/developer settings if your installation requests them. Resolve any parser error before continuing; do not discard model source.
+3. In Databricks' credential dialog authenticate with your existing OAuth or supported PAT flow. You enter credentials yourself; they never go into repository files. Approve the certified Deneb visual according to your organization's existing policy, if prompted.
+4. Refresh Import only after the whole managed refresh succeeds. Confirm all headers show the current `price_as_of`, simulation completion and Ready. Empty facts must remain unavailable, not zero.
+5. On page 3 select exactly one scenario (80% for the default comparison), then check route monthly totals, route savings and gallons; multi-selection must return blank for scenario-dependent cost/saving.
+6. Run both headline DAX query-view files and the grain queries in `powerbi/tests/`. Compare their numeric output with live phase5_verification.json and the SQL contract. Record actual DAX execution evidence separately; TOM parsing alone does not evaluate measures.
+7. Inspect all five 16:9 pages: no clipped titles, correct colors/labels/markers, reference lines and fan bands, zero-centred matrix colors, no totals of nonadditive quantities. Inspect all layered visual tooltips. Check unavailable-state behavior using a copy of the model or a held Import snapshot, not destructive production mutations.
+8. Save screenshots as `docs/evidence/powerbi/page-01.png` through `page-05.png` and record Desktop build, source/run IDs, actual refresh time and DAX test results. Only then mark Desktop validation complete. The matplotlib storyboards and compiled-spec previews must not be put in this directory as substitutes.

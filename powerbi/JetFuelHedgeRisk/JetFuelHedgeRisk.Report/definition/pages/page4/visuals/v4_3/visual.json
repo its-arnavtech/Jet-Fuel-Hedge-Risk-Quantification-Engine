@@ -1,0 +1,328 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "v4_3",
+  "position": {
+    "x": 20,
+    "y": 403,
+    "width": 610,
+    "height": 296,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "deneb7E15AEF80B9E4D4F8E12924291ECE89A",
+    "query": {
+      "queryState": {
+        "dataset": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "price_fan_current"
+                    }
+                  },
+                  "Property": "step"
+                }
+              },
+              "queryRef": "price_fan_current.step",
+              "nativeQueryRef": "step"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Fan P05"
+                }
+              },
+              "queryRef": "_Measures.Fan P05",
+              "nativeQueryRef": "Fan P05"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Fan P25"
+                }
+              },
+              "queryRef": "_Measures.Fan P25",
+              "nativeQueryRef": "Fan P25"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Fan Median"
+                }
+              },
+              "queryRef": "_Measures.Fan Median",
+              "nativeQueryRef": "Fan Median"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Fan P75"
+                }
+              },
+              "queryRef": "_Measures.Fan P75",
+              "nativeQueryRef": "Fan P75"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Fan P95"
+                }
+              },
+              "queryRef": "_Measures.Fan P95",
+              "nativeQueryRef": "Fan P95"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Latest Jet"
+                }
+              },
+              "queryRef": "_Measures.Latest Jet",
+              "nativeQueryRef": "Latest Jet"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Forward Price"
+                }
+              },
+              "queryRef": "_Measures.Forward Price",
+              "nativeQueryRef": "Forward Price"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Historical P95 Price"
+                }
+              },
+              "queryRef": "_Measures.Historical P95 Price",
+              "nativeQueryRef": "Historical P95 Price"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Readiness"
+                }
+              },
+              "queryRef": "_Measures.Readiness",
+              "nativeQueryRef": "Readiness"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 4.3"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "13D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Subtitle 4.3"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "10D"
+                }
+              }
+            },
+            "titleWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Title 4.3"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "vega": [
+        {
+          "properties": {
+            "jsonSpec": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{\"encoding\":{\"x\":{\"field\":\"step\",\"type\":\"quantitative\",\"title\":\"Future week\"}},\"layer\":[{\"mark\":{\"type\":\"area\",\"opacity\":0.16,\"color\":\"#1F4E79\"},\"encoding\":{\"y\":{\"field\":\"Fan P05\",\"type\":\"quantitative\",\"title\":\"$/gal\"},\"y2\":{\"field\":\"Fan P95\"}},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"area\",\"opacity\":0.33,\"color\":\"#1F4E79\"},\"encoding\":{\"y\":{\"field\":\"Fan P25\",\"type\":\"quantitative\"},\"y2\":{\"field\":\"Fan P75\"}},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"line\",\"color\":\"#1F4E79\",\"strokeWidth\":2},\"encoding\":{\"y\":{\"field\":\"Fan Median\",\"type\":\"quantitative\"},\"tooltip\":[{\"field\":\"Fan Median\",\"type\":\"quantitative\",\"format\":\".3f\"},{\"field\":\"Fan P05\",\"type\":\"quantitative\",\"format\":\".3f\"},{\"field\":\"Fan P95\",\"type\":\"quantitative\",\"format\":\".3f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"line\",\"color\":\"#333333\",\"strokeDash\":[2,2]},\"encoding\":{\"y\":{\"field\":\"Latest Jet\",\"type\":\"quantitative\"},\"tooltip\":[{\"field\":\"Latest Jet\",\"type\":\"quantitative\",\"format\":\".3f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"line\",\"color\":\"#B85C38\",\"strokeDash\":[6,2,2,2]},\"encoding\":{\"y\":{\"field\":\"Forward Price\",\"type\":\"quantitative\"},\"tooltip\":[{\"field\":\"Forward Price\",\"type\":\"quantitative\",\"format\":\".3f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"mark\":{\"type\":\"line\",\"color\":\"#2E8B57\",\"strokeDash\":[6,3]},\"encoding\":{\"y\":{\"field\":\"Historical P95 Price\",\"type\":\"quantitative\"},\"tooltip\":[{\"field\":\"Historical P95 Price\",\"type\":\"quantitative\",\"format\":\".3f\"}]},\"transform\":[{\"filter\":\"datum.Readiness == ''Ready''\"}]},{\"data\":{\"values\":[{\"message\":\"Unavailable \\u2014 complete current-source publication\"}]},\"transform\":[{\"filter\":\"length(data(''dataset'')) == 0 || data(''dataset'')[0].Readiness != ''Ready''\"}],\"mark\":{\"type\":\"text\",\"align\":\"center\",\"color\":\"#707070\",\"fontSize\":13},\"encoding\":{\"x\":{\"value\":240},\"y\":{\"value\":100},\"text\":{\"field\":\"message\"}}}],\"$schema\":\"https://vega.github.io/schema/vega-lite/v5.json\",\"data\":{\"name\":\"dataset\"},\"width\":\"container\",\"height\":\"container\",\"autosize\":{\"type\":\"fit\",\"contains\":\"padding\"},\"config\":{\"font\":\"Segoe UI\",\"axis\":{\"labelFontSize\":10,\"titleFontSize\":11},\"view\":{\"stroke\":null}}}'"
+                }
+              }
+            },
+            "jsonConfig": {
+              "expr": {
+                "Literal": {
+                  "Value": "'{}'"
+                }
+              }
+            },
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'vegaLite'"
+                }
+              }
+            },
+            "renderMode": {
+              "expr": {
+                "Literal": {
+                  "Value": "'svg'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

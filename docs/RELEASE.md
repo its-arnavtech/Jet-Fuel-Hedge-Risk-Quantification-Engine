@@ -1,3 +1,17 @@
+# Phase 5 release status — 2026-10-21
+
+Phase 5 is under final live/audit verification on `phase-5-powerbi-insights`. The implementation adds seven run-keyed historical insight facts, guarded current views, additive insights_ready, a sequential refresh task and a five-page PBIP/TMDL/PBIR report. Production simulation defaults and prior history are preserved.
+
+Local independent evidence: docs/evidence/phase5_offline_verification.json reconciles 4,213 decomposition/correlation dates, 54 proxy-year/full-sample rows, 4,110 hedge windows, 822 calibrations, 2,310 forecast rows and three tail thresholds. Every deterministic and Monte Carlo value agrees within 1e-9. Current development source date is 2026-10-06. This is not live Gold evidence.
+
+Microsoft schemas validate the project, all pages/visuals/theme and three embedded layered specifications; the official Microsoft TOM serializer parses 22 tables and six one-way relationships. Exact layered specifications compile to labelled previews; 15 matplotlib narrative units are rendered and visually audited. DAX runtime/Power BI rendering are separate checks. Native app control approval timed out before opening the project; Desktop authentication, refresh, DAX tests and screenshots remain the explicit handoff in POWER_BI.md. No Desktop screenshot has been fabricated.
+
+First standalone live run 809389860354170 succeeded in 285.986 seconds end to end. The corrected inclusive-RANGE source is deployed in seven-task managed refresh 906039088188452; final live reconciliation and CI/merge evidence follow in CHANGELOG.md and audits/phase-05.md. Initial compute-disabled attempts are recorded there. Daily schedule remains enabled at 18:00 America/Chicago, one concurrent run.
+
+Audit findings #12–#15 are tracked with actual URLs and evidence in the Phase 5 audit. Do not mark the phase gate closed until final live checks, both CI Python versions and issue closure are recorded.
+
+---
+
 # Implementation release and handoff — 2026-10-10
 
 All four implementation phases completed, each with a whole-repository audit, GitHub findings and fixes before advancing. Source PDD preserved. Phase branches use descriptive names; each audited phase is merged/pushed to main.

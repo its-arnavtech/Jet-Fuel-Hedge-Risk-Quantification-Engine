@@ -9,6 +9,7 @@ from pathlib import Path
 from fuel_hedge.config import Settings,load_env
 from fuel_hedge.databricks import ensure_project_schemas,workspace_client
 from deploy_phase2 import build_source
+from deploy_phase5 import build_source as build_insights_source
 
 
 def main():
@@ -37,13 +38,14 @@ def main():
     sources['refresh_capture']=sources['refresh_capture'].replace('# INJECT_EIA_MODULE',(root/'src/fuel_hedge/eia.py').read_text(encoding='utf-8'))
     sources['refresh_operations']=sources['refresh_operations'].replace('# INJECT_OPERATIONS_MODULE',(root/'src/fuel_hedge/operations.py').read_text(encoding='utf-8'))
     sources['phase2_gold']=build_source(root)
+    sources['phase5_insights']=build_insights_source(root,include_reporting=False)
     sources['phase3_risk']=sources['phase3_risk'].replace('# INJECT_SIMULATION_MODULE',(root/'src/fuel_hedge/simulation.py').read_text(encoding='utf-8')).replace('# INJECT_RISK_SQL','spark.sql('+repr((root/'sql/04_risk_metrics.sql').read_text(encoding='utf-8'))+')')
     reporting='\n'.join('spark.sql('+repr(sql.strip())+')' for sql in
         (root/'sql/07_reporting_contract.sql').read_text(encoding='utf-8').split(';') if sql.strip())
     sources['reporting_contract']=sources['reporting_contract'].replace('# INJECT_REPORTING_SQL',reporting)
     tasks=[]
     previous=None
-    for name in ['refresh_capture','phase1_pipeline','refresh_operations','phase2_gold','phase3_risk','reporting_contract']:
+    for name in ['refresh_capture','phase1_pipeline','phase5_insights','refresh_operations','phase2_gold','phase3_risk','reporting_contract']:
         # Versioned job-specific paths cannot silently alter previously deployed jobs.
         digest=hashlib.sha256(sources[name].encode()).hexdigest()
         remote=f'{folder}/refresh/{name}_{digest[:16]}'
@@ -83,6 +85,7 @@ def main():
     state_path.write_text(json.dumps(state,indent=2), encoding='utf-8')
     if args.run_now:
         state['run_id']=client.jobs.run_now(job_id).run_id
+        state_path.write_text(json.dumps(state,indent=2), encoding='utf-8')
     print(json.dumps(state,indent=2))
 
 

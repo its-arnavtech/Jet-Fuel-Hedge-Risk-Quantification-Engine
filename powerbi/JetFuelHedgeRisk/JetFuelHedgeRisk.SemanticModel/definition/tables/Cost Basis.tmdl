@@ -1,0 +1,17 @@
+table 'Cost Basis'
+
+	column 'Basis'
+		sortByColumn: Ordinal
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Basis]
+
+	column 'Ordinal'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: [Ordinal]
+
+	partition 'Cost Basis' = calculated
+		mode: import
+		source =
+			DATATABLE("Basis",STRING,"Ordinal",INTEGER,{{"Simulation",0},{"History",1}})

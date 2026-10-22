@@ -1,0 +1,41 @@
+relationship r0
+	fromColumn: 'Route Costs'.'route_id'
+	toColumn: 'dim_route'.'route_id'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection
+
+relationship r1
+	fromColumn: 'Route Costs'.'cost_month'
+	toColumn: 'dim_month'.'cost_month'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection
+
+relationship r2
+	fromColumn: 'Route Costs'.'scenario_id'
+	toColumn: 'Hedge Scenario'.'scenario_id'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection
+
+relationship r3
+	fromColumn: 'Risk Metrics'.'hedge_ratio'
+	toColumn: 'Hedge Scenario'.'hedge_ratio'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection
+
+relationship r4
+	fromColumn: 'market_decomposition_current'.'price_date'
+	toColumn: 'dim_date'.'calendar_date'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection
+
+relationship r5
+	fromColumn: 'proxy_return_correlation_current'.'price_date'
+	toColumn: 'dim_date'.'calendar_date'
+	fromCardinality: many
+	toCardinality: one
+	crossFilteringBehavior: oneDirection

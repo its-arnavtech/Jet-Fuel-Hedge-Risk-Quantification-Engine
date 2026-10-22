@@ -1,0 +1,22 @@
+table 'Hedge Scenario'
+
+	column 'scenario_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: scenario_id
+
+	column 'hedge_ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_ratio
+		formatString: 0.0%
+
+	column 'scenario_label'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: scenario_label
+
+	partition 'Hedge Scenario' = m
+		mode: import
+		source =
+			GoldTable("dim_hedge_scenario")

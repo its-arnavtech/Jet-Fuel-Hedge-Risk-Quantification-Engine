@@ -1,0 +1,43 @@
+table 'reporting_readiness'
+
+	column 'analytics_ready'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: analytics_ready
+
+	column 'risk_ready'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: risk_ready
+
+	column 'insights_ready'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: insights_ready
+
+	column 'price_as_of'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: price_as_of
+		formatString: yyyy-MM-dd
+
+	column 'simulation_completed_at'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: simulation_completed_at
+		formatString: yyyy-MM-dd
+
+	column 'simulation_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: simulation_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	partition 'reporting_readiness' = m
+		mode: import
+		source =
+			GoldTable("reporting_readiness")

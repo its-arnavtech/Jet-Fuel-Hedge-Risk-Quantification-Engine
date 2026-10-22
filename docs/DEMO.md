@@ -1,15 +1,15 @@
-# Five-minute walkthrough recording script
+# Five-minute insight report walkthrough
 
-Use the published Databricks dashboard, `notebooks/walkthrough.ipynb`, the repository and Power BI Navigator. Do not show `.env`, access-token pages, secret values or raw EIA request URLs. Record with your preferred screen recorder; a Loom upload/link requires your Loom account. No Loom recording has been published by this project.
+Use the five PBIP report pages only after Import refresh and all three readiness flags are true. If Desktop access is unavailable, narrate explicitly labelled verified Gold storyboards; never imply they are Desktop screenshots. Do not show .env, credential dialogs, secret values or raw EIA request URLs. No Loom recording/upload has been performed.
 
-| Time | Screen and narration |
+| Time | Page and narration |
 | --- | --- |
-| 0:00–0:35 | README architecture. “We turn actual EIA jet fuel and proxy prices into revision-aware medallion data, synthetic route analytics and calibrated reference-carrier hedge risk on Free Edition.” |
-| 0:35–1:20 | Catalog Bronze/Silver and quality. Show 4,213 daily / 874 weekly samples and observation watermark. Explain immutable redacted events, revision handling, quarantines, gallon/barrel conversion and calendar-gap flags. |
-| 1:20–2:05 | Route costs and positions. Clearly identify synthetic routes/flights/positions. Show matching-underlying MTM and historical scenario costs; distinguish 29.58M fixture gallons from 1.5B reference-carrier gallons. |
-| 2:05–3:05 | Walkthrough calibration and MLflow. Explain lambda .94, weekly annualization, latest S0, Box–Muller, partition-invariant seeds and source/code lineage. Show full 100K job and FINISHED experiment. |
-| 3:05–4:10 | Price fan, histogram, tail metrics and sensitivity. Explain absolute P95 versus incremental VaR and CVaR. Show 80% hedge reduction is an affine model identity; highlight downside opportunity costs and unstable historical drift. |
-| 4:10–4:40 | Refresh job's sequential tasks and guarded reporting readiness. Show the verified successful run and daily schedule. Mention Free Edition quotas and visible failure states. |
-| 4:40–5:00 | Power BI hostname/path and guarded Gold views. Show single-select hedge scenario and non-additive risk measures. End on plan/changelog/audits and reproducibility commands. |
+| 0:00–0:15 | Header: state actual source date, readiness, EIA provenance, synthetic fixture/reference-carrier distinction, and that GBM is not a forecast. |
+| 0:15–1:00 | Page 1: monthly crude/crack stack and exact bridge. Read the current dynamic title: refining margin versus crude contribution, current full-sample rank, prior-years benchmark. The components must reconcile to jet. |
+| 1:00–1:50 | Page 2: contrast level correlation with paired returns; compare annual proxy R² against 0.80 and inspect beta. Explain proxy basis risk; synthetic position MTM is a linear spot proxy. |
+| 1:50–2:50 | Page 3: historical hedge win rate versus tail insurance. Explain all 822 overlapping one-year windows, excluding S0 from the 52 purchases. The frontier trades mean cost for tail protection. Select one scenario for the synthetic fixture, point out exceptional-year rank and B767 concentration. |
+| 2:50–4:00 | Page 4: read current calibration rank and disclose all-calibration versus completed-outcome populations. Compare actual versus nominal band coverage, including high-drift misses. Fan bands extrapolate drift, not forecasts. Explain normal shocks' fat-tail miss separately from drift bias. |
+| 4:00–4:45 | Page 5: histogram tails versus spot run-rate; simulated mean savings versus historical expected cost. Read the signed sensitivity matrix and financing break-even. State VaR reduction equals coverage by construction; it is not an optimal-hedge finding. |
+| 4:45–5:00 | Show sequential refresh and source/run IDs in the status tooltip, then audit/reproducibility commands. Describe actual validation limits and any remaining Desktop handoff. |
 
-Before recording: open the relevant pages, collapse unrelated tabs and verify `reporting_readiness.analytics_ready` and `risk_ready`. Refresh the report only after the whole daily job succeeds. After recording: watch the entire video, confirm labels/units are readable, check no credentials appear, and add your approved Loom link to the README.
+Use numbers shown by current measures, not memorized figures. Before recording, verify live phase5_verification.json, reporting_readiness, single-scenario behavior, readable units and complete titles. After recording, watch the entire video, check all data badges and privacy, and add only the user's approved recording link.

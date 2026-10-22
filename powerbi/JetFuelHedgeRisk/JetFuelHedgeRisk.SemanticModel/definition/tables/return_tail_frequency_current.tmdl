@@ -1,0 +1,67 @@
+table 'return_tail_frequency_current'
+
+	column 'threshold'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: threshold
+
+	column 'observed_share'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: observed_share
+		formatString: 0.0%
+
+	column 'normal_share'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: normal_share
+		formatString: 0.0%
+
+	column 'ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ratio
+		formatString: 0.000
+
+	column 'excess_kurtosis'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: excess_kurtosis
+		formatString: 0.000
+
+	column 'skew'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: skew
+		formatString: 0.000
+
+	column 'n_weeks'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_weeks
+
+	column 'insights_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: insights_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	column 'created_ts'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: created_ts
+		formatString: yyyy-MM-dd
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'return_tail_frequency_current' = m
+		mode: import
+		source =
+			GoldTable("return_tail_frequency_current")

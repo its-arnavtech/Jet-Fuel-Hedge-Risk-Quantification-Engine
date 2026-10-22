@@ -1,0 +1,67 @@
+table 'Route Costs'
+
+	column 'route_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: route_id
+
+	column 'aircraft_type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: aircraft_type
+
+	column 'cost_month'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: cost_month
+		formatString: yyyy-MM-dd
+
+	column 'scenario_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: scenario_id
+
+	column 'hedge_ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_ratio
+		formatString: 0.0%
+
+	column 'monthly_flights'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: monthly_flights
+
+	column 'monthly_gallons'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: monthly_gallons
+		formatString: 0.000
+
+	column 'hedged_cost_usd'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedged_cost_usd
+		formatString: 0.000
+
+	column 'unhedged_cost_usd'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: unhedged_cost_usd
+		formatString: 0.000
+
+	column 'hedge_savings_usd'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_savings_usd
+		formatString: 0.000
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'Route Costs' = m
+		mode: import
+		source =
+			GoldTable("route_fuel_costs_current")

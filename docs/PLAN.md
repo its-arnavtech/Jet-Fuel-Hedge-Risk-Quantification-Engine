@@ -117,3 +117,20 @@ Status: **complete and audited; #10–#11 resolved, final refresh/verifiers/CI p
 - https://www.eia.gov/opendata/browser/petroleum/pri/spt
 
 Implementation release: `docs/RELEASE.md`. User handoff actions: connect/build Power BI report, record/upload the prepared Loom walkthrough. No unresolved implementation blocker.
+
+
+## Phase 5 — Insight-driven Power BI (2026-10-21)
+
+Status: implementation and local verification complete; live refresh/audit gate in progress on phase-5-powerbi-insights.
+
+- [x] Read all baseline docs, notebooks, simulation/Silver/operations, SQL and reporting/deployment source.
+- [x] Add testable historical decomposition, paired proxy returns, weekly effectiveness, complete hedge windows, calibration history, deterministic drift-model backtest and tail frequencies.
+- [x] Append-only insight registry/quality, seven guarded facts and additive readiness; sequential task immediately after Silver.
+- [x] Five-page PBIP/TMDL/PBIR, dedicated DAX folders/dynamic titles, exactly 15 narrative units, theme, labels/badges, alt text and query-view/SQL contracts.
+- [x] Independent pandas/Box–Muller oracle; every offline deterministic/Monte Carlo value reconciled to 1e-9. Published-schema validation and real Microsoft TOM parse pass.
+- [x] Render and inspect all 15 matplotlib narrative units plus compile the actual three layered PBIR specifications. Keep offline and Desktop evidence distinct.
+- [ ] Live current-source reconciliation, reporting adversarial cases and full seven-task managed refresh.
+- [ ] Whole-repo audit, GitHub issue evidence/closure, both Python CI versions, main merge.
+- [ ] Native Desktop authentication/refresh/DAX/page screenshots, or explicit unavailable-access handoff per user allowance.
+
+No production simulation default or existing data-history deletion is part of Phase 5.

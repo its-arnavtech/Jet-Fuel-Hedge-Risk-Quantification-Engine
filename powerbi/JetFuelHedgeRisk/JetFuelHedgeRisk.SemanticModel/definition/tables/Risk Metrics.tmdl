@@ -1,0 +1,71 @@
+table 'Risk Metrics'
+
+	column 'hedge_ratio'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: hedge_ratio
+		formatString: 0.0%
+
+	column 'simulation_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: simulation_run_id
+
+	column 'mean_cost_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: mean_cost_b
+		formatString: 0.00
+
+	column 'p50_cost_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p50_cost_b
+		formatString: 0.00
+
+	column 'p95_cost_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p95_cost_b
+		formatString: 0.00
+
+	column 'var_95_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: var_95_b
+		formatString: 0.00
+
+	column 'cvar_95_b'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: cvar_95_b
+		formatString: 0.00
+
+	column 'var_reduction_pct'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: var_reduction_pct
+		formatString: 0.000
+
+	column 's0'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: s0
+		formatString: 0.000
+
+	column 'mu_calibrated'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: mu_calibrated
+		formatString: 0.000
+
+	column 'sigma_calibrated'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: sigma_calibrated
+		formatString: 0.000
+
+	partition 'Risk Metrics' = m
+		mode: import
+		source =
+			GoldTable("risk_metrics_current")

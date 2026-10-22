@@ -1,0 +1,57 @@
+table 'proxy_return_correlation_current'
+
+	column 'price_date'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: price_date
+		formatString: yyyy-MM-dd
+
+	column 'ret_corr_jet_ho_90d'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ret_corr_jet_ho_90d
+		formatString: 0.000
+
+	column 'ret_corr_jet_wti_90d'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ret_corr_jet_wti_90d
+		formatString: 0.000
+
+	column 'ret_corr_jet_brent_90d'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: ret_corr_jet_brent_90d
+		formatString: 0.000
+
+	column 'price_level_corr_jet_wti_90d'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: price_level_corr_jet_wti_90d
+		formatString: 0.000
+
+	column 'insights_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: insights_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	column 'created_ts'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: created_ts
+		formatString: yyyy-MM-dd
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'proxy_return_correlation_current' = m
+		mode: import
+		source =
+			GoldTable("proxy_return_correlation_current")

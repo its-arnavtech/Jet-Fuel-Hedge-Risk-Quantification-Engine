@@ -1,0 +1,47 @@
+table 'price_fan_current'
+
+	column 'step'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: step
+
+	column 'time_years'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: time_years
+		formatString: 0.000
+
+	column 'p05_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p05_price_gal
+		formatString: 0.000
+
+	column 'p25_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p25_price_gal
+		formatString: 0.000
+
+	column 'p50_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p50_price_gal
+		formatString: 0.000
+
+	column 'p75_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p75_price_gal
+		formatString: 0.000
+
+	column 'p95_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p95_price_gal
+		formatString: 0.000
+
+	partition 'price_fan_current' = m
+		mode: import
+		source =
+			GoldTable("price_fan_current")

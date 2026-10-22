@@ -1,0 +1,7 @@
+{
+  "tmdl_parsed": true,
+  "tables": 22,
+  "relationships": 6,
+  "parser": "Microsoft.AnalysisServices.Tabular.TmdlSerializer (official Microsoft TOM assembly)",
+  "dax_executed": false
+}

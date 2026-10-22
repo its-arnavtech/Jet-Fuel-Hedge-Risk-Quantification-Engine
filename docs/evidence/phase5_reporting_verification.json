@@ -1,0 +1,95 @@
+{
+  "insights_adversarial_cases": [
+    {
+      "status": "SUCCESS",
+      "source": "S1",
+      "row_count_mismatch": false,
+      "ready": "true"
+    },
+    {
+      "status": "STARTED",
+      "source": "S1",
+      "row_count_mismatch": false,
+      "ready": "false"
+    },
+    {
+      "status": "SUCCESS",
+      "source": "S2",
+      "row_count_mismatch": false,
+      "ready": "false"
+    },
+    {
+      "status": "SUCCESS",
+      "source": "S1",
+      "row_count_mismatch": true,
+      "ready": "false"
+    }
+  ],
+  "passed": true,
+  "readiness": [
+    {
+      "source_pipeline_run_id": "b88ebc88-6f08-4ee2-a72f-59a9a47ca873",
+      "analytics_pipeline_run_id": "260e58e7-3aad-4a88-8b33-253733094773",
+      "simulation_run_id": "165ce1c3-d0d7-4271-be99-d970774b35e6",
+      "price_as_of": "2026-10-20",
+      "n_paths": "100000",
+      "simulation_completed_at": "2026-10-22T04:36:22.465Z",
+      "analytics_ready": "true",
+      "risk_ready": "true",
+      "insights_ready": "true"
+    }
+  ],
+  "counts": {
+    "route_fuel_costs_current": 520,
+    "risk_metrics_current": 5,
+    "price_fan_current": 53
+  },
+  "dashboard_rows": {
+    "price_trend": 251,
+    "route_cost": 8,
+    "hedge_marks": 3,
+    "risk_metrics": 5,
+    "price_fan": 53,
+    "cost_histogram": 48,
+    "hedge_effectiveness": 5,
+    "sensitivity": 30,
+    "reporting_readiness": 1
+  },
+  "adversarial_cases": [
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "true"
+    },
+    {
+      "source_status": "STARTED",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S2",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "STARTED",
+      "cost_rows": 500000,
+      "risk_ready": "false"
+    },
+    {
+      "source_status": "SUCCESS",
+      "source_id": "S1",
+      "analytics_status": "SUCCESS",
+      "cost_rows": 499999,
+      "risk_ready": "false"
+    }
+  ]
+}

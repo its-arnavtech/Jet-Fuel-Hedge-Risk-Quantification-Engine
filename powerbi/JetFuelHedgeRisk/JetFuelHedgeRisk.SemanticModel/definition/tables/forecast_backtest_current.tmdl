@@ -1,0 +1,115 @@
+table 'forecast_backtest_current'
+
+	column 'window_start'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: window_start
+		formatString: yyyy-MM-dd
+
+	column 'drift_model'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: drift_model
+
+	column 'p05'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p05
+		formatString: 0.000
+
+	column 'p50'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p50
+		formatString: 0.000
+
+	column 'p95'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: p95
+		formatString: 0.000
+
+	column 'mean'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: mean
+		formatString: 0.000
+
+	column 'realized_avg'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: realized_avg
+		formatString: 0.000
+
+	column 'inside_band'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: inside_band
+
+	column 'below_p05'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: below_p05
+
+	column 'above_p95'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: above_p95
+
+	column 'log_err_p50'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: log_err_p50
+		formatString: 0.000
+
+	column 'high_drift'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: high_drift
+
+	column 'mu_ewm'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: mu_ewm
+		formatString: 0.000
+
+	column 'n_paths'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: n_paths
+
+	column 'window_index'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: window_index
+
+	column 'base_seed'
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: base_seed
+
+	column 'insights_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: insights_run_id
+
+	column 'source_pipeline_run_id'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_pipeline_run_id
+
+	column 'created_ts'
+		dataType: dateTime
+		summarizeBy: none
+		sourceColumn: created_ts
+		formatString: yyyy-MM-dd
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'forecast_backtest_current' = m
+		mode: import
+		source =
+			GoldTable("forecast_backtest_current")

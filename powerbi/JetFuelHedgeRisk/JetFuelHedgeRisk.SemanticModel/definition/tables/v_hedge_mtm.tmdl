@@ -1,0 +1,39 @@
+table 'v_hedge_mtm'
+
+	column 'underlying'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: underlying
+
+	column 'locked_price_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: locked_price_gal
+		formatString: 0.000
+
+	column 'current_spot_gal'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: current_spot_gal
+		formatString: 0.000
+
+	column 'pnl_per_gallon'
+		dataType: double
+		summarizeBy: none
+		sourceColumn: pnl_per_gallon
+		formatString: 0.000
+
+	column 'hedge_status'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: hedge_status
+
+	column 'is_synthetic'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_synthetic
+
+	partition 'v_hedge_mtm' = m
+		mode: import
+		source =
+			let Ready=GoldTable("reporting_readiness"), Data=GoldTable("v_hedge_mtm") in if (try Ready{0}[analytics_ready] otherwise false) then Data else Table.FirstN(Data,0)
