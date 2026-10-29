@@ -1,5 +1,5 @@
 {
-  "host": "https://dbc-236f6036-39b4.cloud.databricks.com",
+  "host": "https://<your-workspace>.cloud.databricks.com",
   "job_id": 1025825966695931,
   "schedule_enabled": true,
   "source_hashes": {

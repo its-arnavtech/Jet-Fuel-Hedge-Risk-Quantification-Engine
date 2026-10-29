@@ -3,8 +3,8 @@
 (TableName as text) as table =>
 let
     Source = DatabricksMultiCloud.Catalogs(
-        "dbc-236f6036-39b4.cloud.databricks.com",
-        "/sql/1.0/warehouses/e4f1304cb2d303ea",
+        "<your-workspace>.cloud.databricks.com",
+        "/sql/1.0/warehouses/<warehouse-id>",
         [Catalog="workspace", Database="jet_fuel_gold", EnableAutomaticProxyDiscovery=null]),
     // Catalog + Database scope the connector to a flat, qualified-name navigator.
     QualifiedName = "workspace.jet_fuel_gold." & TableName,

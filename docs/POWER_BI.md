@@ -4,8 +4,8 @@ Analytics and simulation Gold are **deployed and verified as of 2026-10-10**: 52
 
 | Setting | Value |
 | --- | --- |
-| Server hostname | `dbc-236f6036-39b4.cloud.databricks.com` |
-| HTTP path | `/sql/1.0/warehouses/e4f1304cb2d303ea` |
+| Server hostname | `<your-workspace>.cloud.databricks.com` |
+| HTTP path | `/sql/1.0/warehouses/<warehouse-id>` |
 | Catalog | `workspace` |
 | Reporting schema | `jet_fuel_gold` |
 | Authentication | Databricks connector OAuth, or Azure Databricks connector with workspace PAT as supported by the selected connector |

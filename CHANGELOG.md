@@ -81,7 +81,7 @@
 - Initial Gold run `1122134599329967` SUCCESS.
 - Filed audit [#6](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/6) for NULL/nonfinite hedge valuation inputs, [#7](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/7) for missing upstream publication lineage. Fixes implemented in SQL, Gold notebook/deployment and verifier.
 - Audit-fix run `498442545839233` SUCCESS. Full live reconciliation/adversarial position checks and dashboard dataset queries running.
-- Published initial AI/BI dashboard `01f1c50e22881d6ea243de94f87b3f46`: https://dbc-236f6036-39b4.cloud.databricks.com/dashboardsv3/01f1c50e22881d6ea243de94f87b3f46 . Three datasets: EIA trend, synthetic route ranking, synthetic position marks. Future updates must reuse this ID (`artifacts/dashboard.json` or `--dashboard-id`).
+- Published initial AI/BI dashboard `<dashboard-id>`: https://<your-workspace>.cloud.databricks.com/dashboardsv3/<dashboard-id> . Three datasets: EIA trend, synthetic route ranking, synthetic position marks. Future updates must reuse this ID (`artifacts/dashboard.json` or `--dashboard-id`).
 - Added `docs/POWER_BI.md` with verified connection settings, model grains/relationships, synthetic flags, cost/P&L meanings and publication readiness checks.
 - 22 local tests pass; Ruff/compile checks pass. Audit closure, latest CI and main merge pending.
 
@@ -123,14 +123,14 @@
 
 - User requested incremental commits/pushes and audited-phase merges to main with descriptive branch names. Renamed current branch to `phase-1-ingestion-silver` and pushed it; previous `codex/pdd-implementation` branch contains the initial milestones and is superseded.
 - Pushed Phase 1 implementation baseline `13bf91e`. GitHub Actions passed on Python 3.10/3.12 for that baseline: run `38098719232` on phase branch.
-- Databricks authentication succeeded. Discovered `workspace` catalog and serverless starter warehouse `e4f1304cb2d303ea`, HTTP path `/sql/1.0/warehouses/e4f1304cb2d303ea`. Saved warehouse ID locally.
+- Databricks authentication succeeded. Discovered `workspace` catalog and serverless starter warehouse `<warehouse-id>`, HTTP path `/sql/1.0/warehouses/<warehouse-id>`. Saved warehouse ID locally.
 - EIA actual ingestion (2010-01-01 through 2026-10-09) captured four pages / 16,876 observations. Latest available source date is 2026-10-06.
 - Live API units are `$/GAL` and `$/BBL`; initial descriptive-only validation rejected all rows. Filed issue #4, corrected local/cloud contracts, added a credential-free real-response fixture.
 - Local transformation now produces 4,213 daily rows, 874 complete weekly samples, zero quarantined observations, and six long-return gaps flagged. Daily volatility is suppressed across long gaps; prices are not imputed.
 - Whole-repo audit filed [#1](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/1), [#2](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/2), [#3](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/3), [#4](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/4). Fixes written; closure waits for live validation and fix commit.
 - Dedicated `jet_fuel_bronze`, `jet_fuel_silver`, `jet_fuel_gold` schemas require project ownership marker. Silver candidates are validated before publication; STARTED/SUCCESS registry guards interrupted multi-table updates.
 - All 17 local tests pass; Ruff and compilation pass. Added dependency lock and locked CI setup (latest changes not yet pushed/CI-verified).
-- Submitted Databricks run `176651287504745`, task run `419058721053701`; still RUNNING at last check. Run URL: https://dbc-236f6036-39b4.cloud.databricks.com/?o=7474649671460509#job/216704330708562/run/176651287504745
+- Submitted Databricks run `176651287504745`, task run `419058721053701`; still RUNNING at last check. Run URL: https://<your-workspace>.cloud.databricks.com/?o=<workspace-org-id>#job/216704330708562/run/176651287504745
 - `scripts/verify_phase1.py` will reconcile every daily/weekly row and calendar metric between local and cloud SQL, and verify publication status/watermark.
 
 ### 2026-10-10 — Phase 1 local checks and deployment code
@@ -186,7 +186,7 @@ Append dated entries after meaningful implementation/checks, include exact comma
 ### 2026-10-21 — Phase 5 independent audit and report source
 
 - Filed [#12](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/12) (price levels vs returns), [#13](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/13) (model validation/publication) and [#14](https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engine/issues/14) (zero-window entropy).
-- `.venv\Scripts\python scripts/deploy_phase5.py` imported additive versioned source but job submission failed: "Triggering new runs for organization 7474649671460509 is currently disabled temporarily." User is restoring compute. Existing tables were not overwritten; deployment/live gate remains pending.
+- `.venv\Scripts\python scripts/deploy_phase5.py` imported additive versioned source but job submission failed: "Triggering new runs for organization <workspace-org-id> is currently disabled temporarily." User is restoring compute. Existing tables were not overwritten; deployment/live gate remains pending.
 - `scripts/build_local_insights.py` completed all 770 × 3 walk-forward rows at 10K paths, using actual local Silver through 2026-10-06, plus local fixture costs and a real 100K-path histogram. These are explicitly offline development extracts, not verified live Gold.
 - Independent `scripts/insights_oracle.py` found a first-window-only RNG mismatch: composing window zero into an integer dropped the middle entropy word. Fixed `window_path_ids()` to encode window+path*2^32; explicit tests verify SeedSequence([base,0,path]) and repartition invariance. Recomputing independent evidence before closure. Also fixed a verifier Series.skew attribute collision (indexing the column explicitly).
 - `scripts/build_powerbi.py` generates five PBIR pages and a 22-table TMDL Import model with 143 measures. `scripts/verify_powerbi_contract.py` passed 35 JSON schemas and 141 field bindings. The Microsoft published embedded schema has a dotted/hyphenated filename alias; validator resolves the published alias without changing schema contents.

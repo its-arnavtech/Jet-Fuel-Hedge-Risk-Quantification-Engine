@@ -31,7 +31,7 @@ Current lineage: Silver `5a0bd934-5f04-4458-ba77-995fcef3c61f`; analytics `b5873
 
 ## User handoff and validation limits
 
-Power BI data is ready in `workspace.jet_fuel_gold`. Hostname `dbc-236f6036-39b4.cloud.databricks.com`; HTTP path `/sql/1.0/warehouses/e4f1304cb2d303ea`. Follow `docs/POWER_BI.md`; start with guarded current views and Import. Desktop authentication/report creation remains the user's requested next step. M/DAX source and schemas were reviewed; Desktop execution is not claimed.
+Power BI data is ready in `workspace.jet_fuel_gold`. Hostname `<your-workspace>.cloud.databricks.com`; HTTP path `/sql/1.0/warehouses/<warehouse-id>`. Follow `docs/POWER_BI.md`; start with guarded current views and Import. Desktop authentication/report creation remains the user's requested next step. M/DAX source and schemas were reviewed; Desktop execution is not claimed.
 
 Dashboard definition publication and SQL were API-verified; interactive console rendering remains unverified because Databricks restricts automated console control. The exported static chart was visually inspected. The Loom script/checklist is delivered; recording/upload/link requires the user's recorder/account and has not been performed.
 

@@ -27,7 +27,7 @@ GitHub: https://github.com/its-arnavtech/Jet-Fuel-Hedge-Risk-Quantification-Engi
 - Correct unit-aware long-futures sign and 100-based fleet share implemented.
 - All six SQL definitions present; risk query uses exact P95/mean/CVaR and explicit run grouping; empty raw table has no fabricated Phase 3 results.
 - Initial live job `1122134599329967` and fixed run `498442545839233`: SUCCESS. Full Gold/adversarial/dashboard query reconciliation/CI pending.
-- Published initial dashboard `01f1c50e22881d6ea243de94f87b3f46` with price trend, route ranking and hedge status. Widget schema follows Databricks' official reference; datasets independently executed by verifier. Browser rendering not yet inspected.
+- Published initial dashboard `<dashboard-id>` with price trend, route ranking and hedge status. Widget schema follows Databricks' official reference; datasets independently executed by verifier. Browser rendering not yet inspected.
 - Dedicated schemas, credentials, immutable staging and bounded APIs preserve Phase 1 protections.
 
 ## Closure
